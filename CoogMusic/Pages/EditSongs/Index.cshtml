@@ -1,0 +1,38 @@
+﻿@page
+@model CoogMusic.Pages.Edit.IndexModel
+@{
+}
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Edit/Delete Songs</title>
+</head>
+<body>
+	<h1>Edit/Delete Songs</h1>
+
+	<table>
+		<thead>
+			<tr>
+				<th>Song Name</th>
+				<th>Artist</th>
+				<th>Genre</th>
+				<th>Edit</th>
+				<th>Delete</th>
+			</tr>
+		</thead>
+		<tbody>
+			<!-- Loop through all songs in the database and display them -->
+			@foreach (var song in Model.songInfo)
+			{
+				<tr>
+					<td>@song.title</td>
+					<td>@song.artist</td>
+					<td>@song.genre</td>
+					<td><a href="/edit?id=@song.id">Edit</a></td>
+					<td><a href="/delete?id=@song.id">Delete</a></td>
+				</tr>
+			}
+		</tbody>
+	</table>
+</body>
+</html>
