@@ -22,7 +22,7 @@
 		</thead>
 		<tbody>
 			<!-- Loop through all songs in the database and display them -->
-			@foreach (var song in Model.songInfo)
+			@*foreach (var song in Model.songInfo)
 			{
 				<tr>
 					<td>@song.title</td>
@@ -31,7 +31,7 @@
 					<td><a href="/edit?id=@song.id">Edit</a></td>
 					<td><a href="/delete?id=@song.id">Delete</a></td>
 				</tr>
-			}
+			}*@
 		</tbody>
 	</table>
 </body>
