@@ -1,0 +1,106 @@
+﻿.music-player {
+    display: flex;
+    align-items: center;
+}
+
+#song-name {
+    margin: 0;
+    font-size: 24px;
+    font-weight: bold;
+    color: #5E5E5E;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+#music-progress {
+    flex: 1;
+    margin: 0 1rem;
+}
+
+    #music-progress::-webkit-progress-bar {
+        background-color: #eee;
+        border-radius: 10px;
+    }
+
+    #music-progress::-webkit-progress-value {
+        background-color: #1c88c7;
+        border-radius: 10px;
+    }
+
+/* Play/Pause Button */
+#play-pause-button {
+    background-color: #3E3E3E;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+    #play-pause-button:hover {
+        background-color: #5E5E5E;
+    }
+
+    #play-pause-button.playing {
+        background-color: #ff6666;
+    }
+
+/* Skip Button */
+#skip-button {
+    background-color: #3E3E3E;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+    #skip-button:hover {
+        background-color: #5E5E5E;
+    }
+
+/* Previous Button */
+#prev-button {
+    background-color: #3E3E3E;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+    #prev-button:hover {
+        background-color: #5E5E5E;
+    }
+
+#current-time {
+    font-size: 14px;
+    background-color: #3E3E3E;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 16px;
+    margin-left: 1rem;
+}
+
+.volume-slider-container {
+    display: flex;
+    flex-direction: column;
+    width: 80px; /* set the width of the container */
+    height: 100px; /* set the height of the container */
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.volume-slider {
+    writing-mode: bt-lr; /* for volume orientation */
+    transform: rotate(180deg); /* to flip the slider */
+}
+
+    .volume-slider + i {
+        margin-left: 10px;
+    }
