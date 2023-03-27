@@ -8,7 +8,7 @@
 Contains a way for the User (Listner and Artist) to create reports
 Artist Report: View ratings of Artist (themselves) || List of each of song w/ ratings
 Listener Report: Hours of music streamed || Top 3 songs and Top 3 artists
- *@
+ 
 <div>
     <h1 class="text-center">Rating Reports</h1>
     <p id="title">Song name</p>
@@ -28,4 +28,31 @@ Listener Report: Hours of music streamed || Top 3 songs and Top 3 artists
 
 
 
+</div>*@
+<div>
+    <h1 class="text-center">Rating Reports</h1>
+
+    <form class="form-container">
+        <label for="song-name">Song name:</label>
+        <input type="text" id="song-name" name="song-name">
+        <button type="button" id="add-song-btn">Add another song</button>
+
+        <hr>
+
+        <label for="artist-name">Artist name:</label>
+        <input type="text" id="artist-name" name="artist-name">
+        <label>
+            <input type="checkbox" name="include-all-songs">
+            Include all artist's song ratings
+        </label>
+        <button type="button" id="add-artist-btn">Add another artist</button>
+
+        <hr>
+
+        <button type="submit" id="submit-btn">Submit</button>
+    </form>
+
+    <h1 class="text-center">Streaming Reports</h1>
+
+    <button type="button" id="generate-report-btn">Generate my streaming report</button>
 </div>
