@@ -7,51 +7,41 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Configuration;
 using MySql.Data.MySqlClient;
 using static Org.BouncyCastle.Math.EC.ECCurve;
+using System.Data.SqlClient;
 
 namespace CoogMusic.Pages.Upload
 {
     public class IndexModel : PageModel
     {
-        private readonly IConfiguration _config;
-
-        public IndexModel(IConfiguration config)
-        {
-            _config = config;
-        }
-        public void OnGet()
-        {
-        }
-        public IActionResult submitBtn_Click(object sender, EventArgs e, IFormatProvider file)
-        {
-
-            byte[] fileData;
-
+        public List<SongInfo> listSongs = new List<SongInfo>();
+        public void OnGet() {
             try
             {
-                string connectionString = "Server=coogmusic.mysql.database.azure.com;User=qalksktvpv;Password=coogmusic1!;Database=coogmusicdb";
-
-                /*using (var connection = new MySqlConnection(connectionString))
+                String connectionStr = "Server=coogmusic.mysql.database.azure.com;User ID=qalksktvpv;Password=coogmusic1!;Database=coogmusicdb";
+                using (MySqlConnection connection = new MySqlConnection(connectionStr))
                 {
                     connection.Open();
-
-                    using (var command = new MySqlCommand())
+                    String sql = "SELECT * FROM artist";
+                    using (MySqlCommand command = new MySqlCommand(sql, connection))
                     {
-                        command.Connection = connection;
-                        command.CommandText = "INSERT INTO Songs (title, artist, genre, file_path) VALUES (@Title, @Artist, @Genre, @FilePath)";
-                        command.Parameters.AddWithValue("@Title", Title);
-                        command.Parameters.AddWithValue("@Genre", Genre);
-                        command.Parameters.AddWithValue("@FilePath", FilePath);
+                        using (MySqlDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                SongInfo songInfo = new SongInfo();
+                                songInfo.Name = reader.GetString(2);
+                                songInfo.RecordLabel = reader.GetString(4);
+                                songInfo.CreateDate = reader.GetDateTime(5).ToString();
 
-                        command.ExecuteNonQuery();
+                                listSongs.Add(songInfo);
+                            }
+                        }
                     }
-                }*/
-
-                return RedirectToPage("./Index");
+                }
             }
             catch (Exception ex)
             {
-                /*MessageBox.Show(ex.Message);*/
-                return Page();
+                Console.WriteLine("Exception" + ex.ToString());
             }
         }
         public void OnPost()
@@ -77,6 +67,23 @@ namespace CoogMusic.Pages.Upload
                 // Log the exception here or display an error message to the user
                 System.Diagnostics.Debug.WriteLine(ex.Message);
             }*/
+        }
+        public class SongInfo
+        {
+            public int ArtistId;
+            public int UserId;
+            public String Name;
+            public String Description;
+            public String RecordLabel;
+            public String CreateDate;
+            //public int Id { get; set; }
+            //public int ArtistId { get; set; }
+            //public string Title { get; set; }
+            //public string Genre { get; set; }
+            //public DateTime UploadDate { get; set; }
+            //public TimeSpan Duration { get; set; }
+            //public int Likes { get; set; }
+            //public byte[] Track { get; set; }
         }
     }
 }

@@ -1,0 +1,109 @@
+﻿#songs-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.song-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 300px;
+    height: 400px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0px 0px 8px #ddd;
+    overflow: hidden;
+}
+
+    .song-card img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+    }
+
+    .song-card h2 {
+        margin: 16px;
+    }
+
+    .song-card p {
+        margin: 0 16px 16px 16px;
+    }
+
+    .song-card button {
+        margin: 16px;
+        padding: 8px 16px;
+        border: none;
+        border-radius: 4px;
+        background-color: #4CAF50;
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+        .song-card button:hover {
+            background-color: #45a049;
+        }
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.modal-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 20% auto;
+    padding: 20px;
+    width: 50%;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0px 0px 8px #ddd;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 16px;
+}
+
+    .modal-header h2 {
+        margin: 0;
+    }
+
+    .modal-header button {
+        background-color: #f44336;
+    }
+
+        .modal-header button:hover {
+            background-color: #e53935;
+        }
+
+.modal-body {
+    width: 100%;
+    margin-bottom: 16px;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+}
+
+    .modal-footer button {
+        margin-left: 16px;
+        background-color: #4CAF50;
+    }
+
+        .modal-footer button:hover {
+            background-color: #45a049;
+        }
