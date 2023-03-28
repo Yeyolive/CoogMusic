@@ -4,17 +4,17 @@
 
 }
 
-<br />
+<br>
 <h2>List of Artist</h2>
-<a class='btn btn-primary btn-sm' href=" = '/Upload/Create'>New Song</a>
+<a class="btn btn-primary btn-sm" href="/Upload/Create">New Song</a>
 <table class="table">
-    <thread>
+    <thead>
         <tr>
             <th>Name</th>
             <th>Record Label</th>
             <th>Create Date</th>
         </tr>
-    </thread>
+    </thead>
     <tbody>
         @foreach (var item in Model.listSongs)
          {
@@ -23,14 +23,13 @@
                 <td>@item.RecordLabel</td>
                 <td>@item.CreateDate</td>
                 <td>
-                    <a class="btn btn-primary btn-sm" href="/Upload/Edit?id=">Edit</a>
-                    <a class="btn btn-danger btn-sm" href="/Upload/Delete?id=">Delete</a>
+                    <a class="btn btn-primary btn-sm" href="/Upload/Edit?id=@item.ArtistId">Edit</a>
+                    <a class="btn btn-danger btn-sm" href="/Upload/Delete?id=@item.ArtistId">Delete</a>
                 </td>
             </tr>
          }
     </tbody>
 </table>
-<br />
 @*<div class="form-container">
     <h1 class="text-center">Upload a Song or an Album</h1>
 
