@@ -1,0 +1,32 @@
+﻿@page
+@model CoogMusic.Pages.Upload.IndexModel
+@{
+
+}
+
+<br>
+<h2>List of Artist</h2>
+<a class="btn btn-primary btn-sm" href="/Songs/Upload">Upload Song</a>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Record Label</th>
+            <th>Create Date</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.listSongs)
+         {
+            <tr>
+                <td>@item.Name</td>
+                <td>@item.RecordLabel</td>
+                <td>@item.CreateDate</td>
+                <td>
+                    <a class="btn btn-primary btn-sm" href="/Songs/Edit?id=@item.SongId">Edit</a>
+                    <a class="btn btn-danger btn-sm" href="/Songs/Delete?id=@item.SongId">Delete</a>
+                </td>
+            </tr>
+         }
+    </tbody>
+</table>

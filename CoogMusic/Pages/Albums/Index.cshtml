@@ -1,0 +1,35 @@
+﻿@page
+@model CoogMusic.Pages.Albums.IndexModel
+@{
+}
+<div class="form-container">
+    <h1 class="text-center">Upload an Album</h1>
+    <form method="POST" enctype="multipart/form-data">
+        <div id="album-details">
+            <div>
+                <label for="albumTitle">Title:</label>
+                <input type="text" id="albumTitle" name="albumTitle" required class="form-input">
+            </div>
+
+            <div>
+                <label for="albumArtist">Artist:</label>
+                <input type="text" id="albumArtist" name="albumArtist" required class="form-input">
+            </div>
+
+            <div>
+                <label for="albumGenre">Genre:</label>
+                <input type="text" id="albumGenre" name="albumGenre" class="form-input">
+            </div>
+
+            <div>
+                <label for="albumArt">Album Art:</label>
+                <input type="file" id="albumArt" name="albumArt" accept="image/*" class="form-file">
+            </div>
+            <div>
+                <label for="albumYear">Year:</label>
+                <input type="number" id="albumYear" name="albumYear" required class="form-input" value="2023" />
+            </div>
+        </div>
+        <button type="submit" name="submitBtn" class="form-submit">Submit</button>
+    </form>
+</div>

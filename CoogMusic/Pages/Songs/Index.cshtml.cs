@@ -17,11 +17,32 @@ namespace CoogMusic.Pages.Upload
         public void OnGet() {
             try
             {
+                //String connectionStr = "Server=coogmusic.mysql.database.azure.com;User ID=qalksktvpv;Password=coogmusic1!;Database=coogmusicdb";
+                //using (MySqlConnection connection = new MySqlConnection(connectionStr))
+                //{
+                //    connection.Open();
+                //    String sql = "SELECT * FROM artist";
+                //    using (MySqlCommand command = new MySqlCommand(sql, connection))
+                //    {
+                //        using (MySqlDataReader reader = command.ExecuteReader())
+                //        {
+                //            while (reader.Read())
+                //            {
+                //                SongInfo songInfo = new SongInfo();
+                //                songInfo.Name = reader.GetString(2);
+                //                songInfo.RecordLabel = reader.GetString(4);
+                //                songInfo.CreateDate = reader.GetDateTime(5).ToString();
+
+                //                listSongs.Add(songInfo);
+                //            }
+                //        }
+                //    }
+                //}
                 String connectionStr = "Server=coogmusic.mysql.database.azure.com;User ID=qalksktvpv;Password=coogmusic1!;Database=coogmusicdb";
                 using (MySqlConnection connection = new MySqlConnection(connectionStr))
                 {
                     connection.Open();
-                    String sql = "SELECT * FROM artist";
+                    String sql = "SELECT * FROM song AS S, artist AS A WHERE A.artist_id=S.artist_id";
                     using (MySqlCommand command = new MySqlCommand(sql, connection))
                     {
                         using (MySqlDataReader reader = command.ExecuteReader())
@@ -76,14 +97,14 @@ namespace CoogMusic.Pages.Upload
             public String Description;
             public String RecordLabel;
             public String CreateDate;
-            //public int Id { get; set; }
-            //public int ArtistId { get; set; }
-            //public string Title { get; set; }
-            //public string Genre { get; set; }
-            //public DateTime UploadDate { get; set; }
-            //public TimeSpan Duration { get; set; }
-            //public int Likes { get; set; }
-            //public byte[] Track { get; set; }
+            public int SongId;
+            //public int ArtistId;
+            //public string Title;
+            //public string Genre;
+            //public DateTime UploadDate;
+            //public TimeSpan Duration;
+            //public int Likes;
+            //public byte[] Track;
         }
     }
 }
