@@ -18,25 +18,45 @@ namespace CoogMusic.Pages.Upload
         {
             _config = config;
         }
-        [BindProperty]
-        public string UploadType { get; set; }
-
-        [BindProperty]
-        public string Title { get; set; }
-
-        [BindProperty]
-        public string Artist { get; set; }
-
-        [BindProperty]
-        public string Genre { get; set; }
-        [BindProperty]
-        public string Path { get; set; }
         public void OnGet()
         {
         }
+        public IActionResult submitBtn_Click(object sender, EventArgs e, IFormatProvider file)
+        {
+
+            byte[] fileData;
+
+            try
+            {
+                string connectionString = "Server=coogmusic.mysql.database.azure.com;User=qalksktvpv;Password=coogmusic1!;Database=coogmusicdb";
+
+                /*using (var connection = new MySqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (var command = new MySqlCommand())
+                    {
+                        command.Connection = connection;
+                        command.CommandText = "INSERT INTO Songs (title, artist, genre, file_path) VALUES (@Title, @Artist, @Genre, @FilePath)";
+                        command.Parameters.AddWithValue("@Title", Title);
+                        command.Parameters.AddWithValue("@Genre", Genre);
+                        command.Parameters.AddWithValue("@FilePath", FilePath);
+
+                        command.ExecuteNonQuery();
+                    }
+                }*/
+
+                return RedirectToPage("./Index");
+            }
+            catch (Exception ex)
+            {
+                /*MessageBox.Show(ex.Message);*/
+                return Page();
+            }
+        }
         public void OnPost()
         {
-            try
+            /*try
             {
                 string connectionString = "server=coogmusic.mysql.database.azure.com;port=3306;user=qalksktvpv@coogmusic.mysql.database.azure.com;password=coogmusic1!;database=coogmusicDB;sslmode=Preferred;";
                 using (MySqlConnection connection = new MySqlConnection(connectionString))
@@ -56,7 +76,7 @@ namespace CoogMusic.Pages.Upload
             {
                 // Log the exception here or display an error message to the user
                 System.Diagnostics.Debug.WriteLine(ex.Message);
-            }
+            }*/
         }
     }
 }
