@@ -7,14 +7,14 @@
     <h1 class="text-center">Upload a Song or an Album</h1>
 
     <form method="POST" enctype="multipart/form-data">
-        <div>
+        <div class="form-group">
             <label for="uploadType">Upload Type:</label>
-            <select name="uploadType" id="uploadType" class="form-input">
+            <select name="UploadType" id="uploadType" class="form-input">
                 <option value="song">Song</option>
                 <option value="album">Album</option>
             </select>
         </div>
-        <div id="song-details" style="display: block">
+        <div id="song-details" style="display: block" class="form-group">
             <div>
                 <label for="title">Title:</label>
                 <input type="text" id="title" name="title" required class="form-input">
@@ -58,8 +58,8 @@
             <div>
                 <label for="albumYear">Year:</label>
                 <input type="number" id="albumYear" name="albumYear" required class="form-input" value="2023"/>
-            </div>
-        </div> -->
+            </div>-->
+        </div>
         <button type="submit" class="form-submit">Submit</button>
     </form>
 </div>
