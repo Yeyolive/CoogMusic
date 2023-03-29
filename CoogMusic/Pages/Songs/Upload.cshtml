@@ -1,5 +1,5 @@
 ﻿@page
-@model CoogMusic.Pages.Upload.UploadModel
+@model CoogMusic.Pages.Songs.UploadModel
 @{
 }
 
@@ -21,7 +21,7 @@
             </div>
 
             <div>
-                <label for="artist">Artist:</label>
+                <label for="artist">Artist: ID</label>
                 <input type="text" id="artist" name="Artist" required class="form-input">
             </div>
 
@@ -32,10 +32,10 @@
 
             <div>
                 <label for="file">Select file:</label>
-                <input type="file" id="file" name="File" accept="audio/*" required class="form-file">
+                <input type="file" id="file" name="songFile" accept="audio/*" required class="form-file">
             </div>
-            </div>
-        <button type="submit" name ="submitBtn"class="form-submit">Submit</button>
+        </div>
+        <button type="submit" name ="submitBtn" class="btn btn-default">Submit</button>
         <a class="btn btn-outline-primary" href="/Songs/Index" role="button">Cancel</a>
     </form>
 </div>

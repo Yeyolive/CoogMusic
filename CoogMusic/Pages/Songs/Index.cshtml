@@ -1,5 +1,5 @@
 ﻿@page
-@model CoogMusic.Pages.Upload.IndexModel
+@model CoogMusic.Pages.Songs.IndexModel
 @{
     ViewData["Title"] = "My Songs";
 }
@@ -23,8 +23,8 @@
                 <td>@item.RecordLabel</td>
                 <td>@item.CreateDate</td>
                 <td>
-                    <a class="btn btn-primary btn-sm" href="/Songs/Edit?id=@item.SongId">Edit</a>
-                    <a class="btn btn-danger btn-sm" href="/Songs/Delete?id=@item.SongId">Delete</a>
+                    <a class="btn btn-primary btn-sm" href="/Songs/Edit?id=@item.songId">Edit</a>
+                    <a class="btn btn-danger btn-sm" href="/Songs/Delete?id=@item.songId">Delete</a>
                 </td>
             </tr>
          }

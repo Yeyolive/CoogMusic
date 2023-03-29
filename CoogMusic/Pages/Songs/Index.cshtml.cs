@@ -9,7 +9,7 @@ using MySql.Data.MySqlClient;
 using static Org.BouncyCastle.Math.EC.ECCurve;
 using System.Data.SqlClient;
 
-namespace CoogMusic.Pages.Upload
+namespace CoogMusic.Pages.Songs
 {
     public class IndexModel : PageModel
     {
@@ -38,7 +38,6 @@ namespace CoogMusic.Pages.Upload
                 //        }
                 //    }
                 //}
-                // Armando CHanged
                 String connectionStr = "Server=coogmusic.mysql.database.azure.com;User ID=qalksktvpv;Password=coogmusic1!;Database=coogmusicdb";
                 using (MySqlConnection connection = new MySqlConnection(connectionStr))
                 {
@@ -90,6 +89,7 @@ namespace CoogMusic.Pages.Upload
                 System.Diagnostics.Debug.WriteLine(ex.Message);
             }*/
         }
+    }
         public class SongInfo
         {
             //public int ArtistId;
@@ -99,14 +99,12 @@ namespace CoogMusic.Pages.Upload
             public String CreateDate;
             public int songId;
             public int userId;
-            public int artistId;
+            public int? artistId;
             public String artist;
-            public String song_genre;
+            public String genre;
             public String title;
+            public IFormFile songFile;
             //public DateTime uploadDate;
             //public TimeSpan duration;
-            public int likes;
-            public MySqlBulkLoader track;
         }
-    }
 }
