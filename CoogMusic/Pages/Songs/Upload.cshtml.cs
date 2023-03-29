@@ -21,7 +21,7 @@ namespace CoogMusic.Pages.Songs
             songInfo.title = Request.Form["Title"];
             songInfo.artistId = int.Parse(Request.Form["Artist"]);
             songInfo.genre = Request.Form["Genre"];
-            songInfo.songFile = Request.Form.Files["songFile"];
+            songInfo.songFile = Request.Form.Files["songfile"];
             byte[] songData;
             using (var memoryStream = new MemoryStream())
             {
@@ -34,40 +34,39 @@ namespace CoogMusic.Pages.Songs
                 String connectionStr = "Server=coogmusic.mysql.database.azure.com;User ID=qalksktvpv;Password=coogmusic1!;Database=coogmusicdb";
                 using (MySqlConnection connection = new MySqlConnection(connectionStr))
                 {
+                    await connection.OpenAsync();
                     MySqlTransaction mySqlTransaction = connection.BeginTransaction();
-                    connection.Open();
                     String sql = "INSERT INTO song (artist_id, title, genre, upload_date, track) VALUES (@ArtistId, @Title, @Genre, @UploadDate, @Track);";
                     using (MySqlCommand command = new MySqlCommand(sql, connection))
                     {
                         command.Transaction = mySqlTransaction;
-
+                        Console.WriteLine($"songInfo.artistId = {songInfo.artistId}");
+                        Console.WriteLine($"songInfo.artistId type = {songInfo.artistId.GetType()}");
                         command.Parameters.AddWithValue("@ArtistId", songInfo.artistId);
                         command.Parameters.AddWithValue("@Title", songInfo.title);
                         command.Parameters.AddWithValue("@Genre", songInfo.genre);
-                        command.Parameters.AddWithValue("@UploadDate", DateTime.UtcNow); // Assuming you want to use the current date as the upload date
-                        command.Parameters.AddWithValue("@Track", songData);
+                        command.Parameters.AddWithValue("@UploadDate", DateTime.UtcNow); 
+                        command.Parameters.Add("@Track", MySqlDbType.Blob).Value = songData;
 
                         int affectedRows = await command.ExecuteNonQueryAsync();
                         if (affectedRows > 0)
                         {
                             // Display a success message or redirect to another page
-                            Response.Redirect("/Songs/Index");
+                            Response.Redirect("/Songs/");
                             successMessage = "New Song Added Correctly";
                         }
                         else
                         {
-                            // Handle the case when no rows were affected (e.g., show an error message)
                             errorMessage = "We experienced an error while adding to the database";
                         }
-
-                        command.ExecuteNonQuery();
+                        mySqlTransaction.Commit();
                     }
-                    mySqlTransaction.Commit();
                 }
             }
             catch (Exception ex)
             {
-                
+                Console.WriteLine("Error inserting MP3 file into database: " + ex.Message);
+                errorMessage = "We experienced an error while adding to the database";
             }
             songInfo.title = ""; songInfo.genre = ""; songInfo.artistId = null; songInfo.songFile = null;
         }
