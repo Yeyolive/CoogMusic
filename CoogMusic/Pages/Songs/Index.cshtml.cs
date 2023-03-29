@@ -42,7 +42,7 @@ namespace CoogMusic.Pages.Songs
                 using (MySqlConnection connection = new MySqlConnection(connectionStr))
                 {
                     connection.Open();
-                    String sql = "SELECT * FROM song AS S, artist AS A WHERE A.artist_id=S.artist_id";
+                    String sql = "SELECT * FROM song AS S";
                     using (MySqlCommand command = new MySqlCommand(sql, connection))
                     {
                         using (MySqlDataReader reader = command.ExecuteReader())
@@ -50,9 +50,9 @@ namespace CoogMusic.Pages.Songs
                             while (reader.Read())
                             {
                                 SongInfo songInfo = new SongInfo();
-                                songInfo.Name = reader.GetString(2);
-                                songInfo.RecordLabel = reader.GetString(4);
-                                songInfo.CreateDate = reader.GetDateTime(5).ToString();
+                                songInfo.title = reader.GetString(2);
+                                songInfo.genre = reader.GetString(3);
+                                songInfo.CreateDate = reader.GetDateTime(6).ToString();
 
                                 listSongs.Add(songInfo);
                             }
@@ -65,39 +65,13 @@ namespace CoogMusic.Pages.Songs
                 Console.WriteLine("Exception" + ex.ToString());
             }
         }
-        public void OnPost()
-        {
-            /*try
-            {
-                string connectionString = "server=coogmusic.mysql.database.azure.com;port=3306;user=qalksktvpv@coogmusic.mysql.database.azure.com;password=coogmusic1!;database=coogmusicDB;sslmode=Preferred;";
-                using (MySqlConnection connection = new MySqlConnection(connectionString))
-                {
-                    connection.Open();
-                    //string query = "INSERT INTO Songs (Title, Artist, Genre, Filename) VALUES (@title, @artist, @genre, @filename)";
-                    string query = "Create table nothing (id INT NOT NULL PRIMARY KEY, name varchar(30));";
-                    MySqlCommand command = new MySqlCommand(query, connection);
-                    //command.Parameters.AddWithValue("@title", Request.Form["title"]);
-                    //command.Parameters.AddWithValue("@artist", Request.Form["artist"]);
-                    //command.Parameters.AddWithValue("@genre", Request.Form["genre"]);
-                    //command.Parameters.AddWithValue("@filename", Request.Form["file"]);
-                    command.ExecuteNonQuery();
-                }
-            }
-            catch (Exception ex)
-            {
-                // Log the exception here or display an error message to the user
-                System.Diagnostics.Debug.WriteLine(ex.Message);
-            }*/
-        }
     }
         public class SongInfo
         {
-            //public int ArtistId;
-            public String Name;
-            //public String Description;
             public String RecordLabel;
             public String CreateDate;
-            public int songId;
+            public String Name;
+        public int songId;
             public int userId;
             public int? artistId;
             public String artist;

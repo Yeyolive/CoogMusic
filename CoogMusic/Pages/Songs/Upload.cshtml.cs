@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using MySql.Data.MySqlClient;
+using Humanizer.Localisation;
 
 namespace CoogMusic.Pages.Songs
 {
@@ -14,16 +15,19 @@ namespace CoogMusic.Pages.Songs
         public String errorMessage = "";
         public String successMessage = "";
         public SongInfo songInfo = new SongInfo();
-        public void OnGet()
-        {
-        }
-        public void OnPost()
+
+        public async Task OnPostAsync()
         {
             songInfo.title = Request.Form["Title"];
-            songInfo.artistId = int.TryParse(Request.Form["Artist"], out int artistId) ? artistId : (int?)null;
+            songInfo.artistId = int.Parse(Request.Form["Artist"]);
             songInfo.genre = Request.Form["Genre"];
             songInfo.songFile = Request.Form.Files["songFile"];
-
+            byte[] songData;
+            using (var memoryStream = new MemoryStream())
+            {
+                await songInfo.songFile.CopyToAsync(memoryStream);
+                songData = memoryStream.ToArray();
+            }
             // Input data into database
             try
             {
@@ -32,33 +36,38 @@ namespace CoogMusic.Pages.Songs
                 {
                     MySqlTransaction mySqlTransaction = connection.BeginTransaction();
                     connection.Open();
-                    String sql = "INSERT INTO songs " +
-                                 "\"(artist_id, title, genre, upload_date, duration, likes, track) VALUES " +
-                                 "(@artist_id, @title, @genre, @upload_date, @duration, @likes, @track);";
+                    String sql = "INSERT INTO song (artist_id, title, genre, upload_date, track) VALUES (@ArtistId, @Title, @Genre, @UploadDate, @Track);";
                     using (MySqlCommand command = new MySqlCommand(sql, connection))
                     {
                         command.Transaction = mySqlTransaction;
 
-                        command.Parameters.AddWithValue("@artist_id", songInfo.artistId);
-                        command.Parameters.AddWithValue("@title", songInfo.title);
-                        command.Parameters.AddWithValue("@genre", songInfo.genre);
-                        command.Parameters.AddWithValue("@track", songInfo.songFile);
-                        command.Parameters.AddWithValue("@upload_date", DateTime.Now.Date);
-                        command.Parameters.AddWithValue("@duration", TimeSpan.Zero);
-                        command.Parameters.AddWithValue("@likes", 0);
-                        command.Parameters.AddWithValue("@lyrics", DBNull.Value);
-                        command.ExecuteScalar();
+                        command.Parameters.AddWithValue("@ArtistId", songInfo.artistId);
+                        command.Parameters.AddWithValue("@Title", songInfo.title);
+                        command.Parameters.AddWithValue("@Genre", songInfo.genre);
+                        command.Parameters.AddWithValue("@UploadDate", DateTime.UtcNow); // Assuming you want to use the current date as the upload date
+                        command.Parameters.AddWithValue("@Track", songData);
+
+                        int affectedRows = await command.ExecuteNonQueryAsync();
+                        if (affectedRows > 0)
+                        {
+                            // Display a success message or redirect to another page
+                            Response.Redirect("/Songs/Index");
+                            successMessage = "New Song Added Correctly";
+                        }
+                        else
+                        {
+                            // Handle the case when no rows were affected (e.g., show an error message)
+                            errorMessage = "We experienced an error while adding to the database";
+                        }
 
                         command.ExecuteNonQuery();
                     }
                     mySqlTransaction.Commit();
                 }
-                successMessage = "New Song Added Correctly";
-                Response.Redirect("/Songs/Index");
             }
             catch (Exception ex)
             {
-                errorMessage = "We experienced an error while adding to the database";
+                
             }
             songInfo.title = ""; songInfo.genre = ""; songInfo.artistId = null; songInfo.songFile = null;
         }
