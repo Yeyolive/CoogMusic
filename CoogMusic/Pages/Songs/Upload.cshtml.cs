@@ -33,8 +33,8 @@ namespace CoogMusic.Pages.Songs
                     MySqlTransaction mySqlTransaction = connection.BeginTransaction();
                     connection.Open();
                     String sql = "INSERT INTO songs " +
-                                 "\"(artist_id, title, genre, upload_date, duration, likes, track, lyrics, album_art) VALUES " +
-                                 "(@artist_id, @title, @genre, @upload_date, @duration, @likes, @track, @lyrics, @album_art);";
+                                 "\"(artist_id, title, genre, upload_date, duration, likes, track) VALUES " +
+                                 "(@artist_id, @title, @genre, @upload_date, @duration, @likes, @track);";
                     using (MySqlCommand command = new MySqlCommand(sql, connection))
                     {
                         command.Transaction = mySqlTransaction;
@@ -42,12 +42,11 @@ namespace CoogMusic.Pages.Songs
                         command.Parameters.AddWithValue("@artist_id", songInfo.artistId);
                         command.Parameters.AddWithValue("@title", songInfo.title);
                         command.Parameters.AddWithValue("@genre", songInfo.genre);
-                        command.Parameters.AddWithValue("@track", songInfo.songFile.OpenReadStream());
+                        command.Parameters.AddWithValue("@track", songInfo.songFile);
                         command.Parameters.AddWithValue("@upload_date", DateTime.Now.Date);
                         command.Parameters.AddWithValue("@duration", TimeSpan.Zero);
                         command.Parameters.AddWithValue("@likes", 0);
                         command.Parameters.AddWithValue("@lyrics", DBNull.Value);
-                        command.Parameters.AddWithValue("@album_art", DBNull.Value);
                         command.ExecuteScalar();
 
                         command.ExecuteNonQuery();
