@@ -92,20 +92,21 @@ namespace CoogMusic.Pages.Upload
         }
         public class SongInfo
         {
-            public int ArtistId;
-            public int UserId;
+            //public int ArtistId;
             public String Name;
-            public String Description;
+            //public String Description;
             public String RecordLabel;
             public String CreateDate;
-            public int SongId;
-            //public int ArtistId;
-            //public string Title;
-            //public string Genre;
-            //public DateTime UploadDate;
-            //public TimeSpan Duration;
-            //public int Likes;
-            //public byte[] Track;
+            public int songId;
+            public int userId;
+            public int artistId;
+            public String artist;
+            public String song_genre;
+            public String title;
+            //public DateTime uploadDate;
+            //public TimeSpan duration;
+            public int likes;
+            public MySqlBulkLoader track;
         }
     }
 }
