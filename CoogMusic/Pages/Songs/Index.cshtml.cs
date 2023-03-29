@@ -38,6 +38,7 @@ namespace CoogMusic.Pages.Upload
                 //        }
                 //    }
                 //}
+                // Armando CHanged
                 String connectionStr = "Server=coogmusic.mysql.database.azure.com;User ID=qalksktvpv;Password=coogmusic1!;Database=coogmusicdb";
                 using (MySqlConnection connection = new MySqlConnection(connectionStr))
                 {
