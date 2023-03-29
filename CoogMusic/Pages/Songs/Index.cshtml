@@ -6,13 +6,14 @@
 
 <br>
 <h2>List of Songs</h2>
-<a class="btn btn-primary btn-sm" href="/Songs/Upload">Upload Song</a>
+<a class="btn btn-primary btn-upload" href="/Songs/Upload">Upload Song</a>
 <table class="table">
     <thead>
         <tr>
-            <th>Title</th>
-            <th>Genre</th>
-            <th>Create Date</th>
+            <th class="table-header">Title</th>
+            <th class="table-header">Genre</th>
+            <th class="table-header">Create Date</th>
+            <th class="table-header">Action</th>
         </tr>
     </thead>
     <tbody>
@@ -25,8 +26,8 @@
                 <td>@item.genre</td>
                 <td>@item.CreateDate</td>
                 <td>
-                    <a class="btn btn-primary btn-sm" href="/Songs/Edit?id=@item.songId">Edit</a>
-                    <a class="btn btn-danger btn-sm" href="/Songs/Delete?id=@item.songId">Delete</a>
+                    <a class="btn btn-primary btn-action" href="/Songs/Edit?id=@item.songId">Edit</a>
+                    <a class="btn btn-danger btn-action" href="/Songs/Delete?id=@item.songId">Delete</a>
                 </td>
             </tr>
          }
