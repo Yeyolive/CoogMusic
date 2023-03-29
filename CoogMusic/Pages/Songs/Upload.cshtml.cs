@@ -40,8 +40,7 @@ namespace CoogMusic.Pages.Songs
                     using (MySqlCommand command = new MySqlCommand(sql, connection))
                     {
                         command.Transaction = mySqlTransaction;
-                        Console.WriteLine($"songInfo.artistId = {songInfo.artistId}");
-                        Console.WriteLine($"songInfo.artistId type = {songInfo.artistId.GetType()}");
+
                         command.Parameters.AddWithValue("@ArtistId", songInfo.artistId);
                         command.Parameters.AddWithValue("@Title", songInfo.title);
                         command.Parameters.AddWithValue("@Genre", songInfo.genre);
@@ -52,8 +51,8 @@ namespace CoogMusic.Pages.Songs
                         if (affectedRows > 0)
                         {
                             // Display a success message or redirect to another page
-                            Response.Redirect("/Songs/");
                             successMessage = "New Song Added Correctly";
+                            Response.Redirect("/Songs/");
                         }
                         else
                         {

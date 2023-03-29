@@ -17,27 +17,6 @@ namespace CoogMusic.Pages.Songs
         public void OnGet() {
             try
             {
-                //String connectionStr = "Server=coogmusic.mysql.database.azure.com;User ID=qalksktvpv;Password=coogmusic1!;Database=coogmusicdb";
-                //using (MySqlConnection connection = new MySqlConnection(connectionStr))
-                //{
-                //    connection.Open();
-                //    String sql = "SELECT * FROM artist";
-                //    using (MySqlCommand command = new MySqlCommand(sql, connection))
-                //    {
-                //        using (MySqlDataReader reader = command.ExecuteReader())
-                //        {
-                //            while (reader.Read())
-                //            {
-                //                SongInfo songInfo = new SongInfo();
-                //                songInfo.Name = reader.GetString(2);
-                //                songInfo.RecordLabel = reader.GetString(4);
-                //                songInfo.CreateDate = reader.GetDateTime(5).ToString();
-
-                //                listSongs.Add(songInfo);
-                //            }
-                //        }
-                //    }
-                //}
                 String connectionStr = "Server=coogmusic.mysql.database.azure.com;User ID=qalksktvpv;Password=coogmusic1!;Database=coogmusicdb";
                 using (MySqlConnection connection = new MySqlConnection(connectionStr))
                 {
@@ -78,7 +57,5 @@ namespace CoogMusic.Pages.Songs
             public String genre;
             public String title;
             public IFormFile songFile;
-            //public DateTime uploadDate;
-            //public TimeSpan duration;
         }
 }
