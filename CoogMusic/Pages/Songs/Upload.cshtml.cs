@@ -12,6 +12,7 @@ namespace CoogMusic.Pages.Songs
 	public class UploadModel : PageModel
     {
         public String errorMessage = "";
+        public String successMessage = "";
         public SongInfo songInfo = new SongInfo();
         public void OnGet()
         {
@@ -29,12 +30,11 @@ namespace CoogMusic.Pages.Songs
                 String connectionStr = "Server=coogmusic.mysql.database.azure.com;User ID=qalksktvpv;Password=coogmusic1!;Database=coogmusicdb";
                 using (MySqlConnection connection = new MySqlConnection(connectionStr))
                 {
-                    MySqlTransaction mySqlTransaction;
-                    mySqlTransaction = connection.BeginTransaction();
+                    MySqlTransaction mySqlTransaction = connection.BeginTransaction();
                     connection.Open();
                     String sql = "INSERT INTO songs " +
-                                 "(artist_id, title, genre, track) VALUES " +
-                                 "(@artist_id, @title, @genre, @track);";
+                                 "\"(artist_id, title, genre, upload_date, duration, likes, track, lyrics, album_art) VALUES " +
+                                 "(@artist_id, @title, @genre, @upload_date, @duration, @likes, @track, @lyrics, @album_art);";
                     using (MySqlCommand command = new MySqlCommand(sql, connection))
                     {
                         command.Transaction = mySqlTransaction;
@@ -42,19 +42,26 @@ namespace CoogMusic.Pages.Songs
                         command.Parameters.AddWithValue("@artist_id", songInfo.artistId);
                         command.Parameters.AddWithValue("@title", songInfo.title);
                         command.Parameters.AddWithValue("@genre", songInfo.genre);
-                        command.Parameters.AddWithValue("@track", songInfo.songFile);
-
+                        command.Parameters.AddWithValue("@track", songInfo.songFile.OpenReadStream());
+                        command.Parameters.AddWithValue("@upload_date", DateTime.Now.Date);
+                        command.Parameters.AddWithValue("@duration", TimeSpan.Zero);
+                        command.Parameters.AddWithValue("@likes", 0);
+                        command.Parameters.AddWithValue("@lyrics", DBNull.Value);
+                        command.Parameters.AddWithValue("@album_art", DBNull.Value);
                         command.ExecuteScalar();
+
                         command.ExecuteNonQuery();
                     }
+                    mySqlTransaction.Commit();
                 }
+                successMessage = "New Song Added Correctly";
+                Response.Redirect("/Songs/Index");
             }
             catch (Exception ex)
             {
-                errorMessage = ex.Message;
-                return;
+                errorMessage = "We experienced an error while adding to the database";
             }
-            Response.Redirect("/Songs/Index");
+            songInfo.title = ""; songInfo.genre = ""; songInfo.artistId = null; songInfo.songFile = null;
         }
     }
 }
