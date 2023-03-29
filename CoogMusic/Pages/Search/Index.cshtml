@@ -4,11 +4,19 @@
     ViewData["Title"] = "Search";
 }
 <div class="text-center">
-    <h1>Small Music Test!</h1>
-    <p>Time of play @DateTime.Now</p>
+    <h1>Search</h1>
+    @foreach (var songView in Model.listSongs)
+    {
+        <div>
+            <h2>@songView.title</h2>
+            <h3>@songView.genre</h3>
+            @*<audio controls src="@ViewBag.Urls[Model.IndexOf(songView)]"></audio>*@
+        </div>
+    }
+    @*<p>Time of play @DateTime.Now</p>*@
     @* <audio id="audio-player" controls>
-    <source src="Eslabon_Armado_Ella_Baila_Sola.mp3" type="audio/mp3">
-    </audio> *@
+        <source src="Eslabon_Armado_Ella_Baila_Sola.mp3" type="audio/mp3">
+        </audio> *@
     <h2 id="song-name"></h2>
     <div class="music-player">
         <audio id="audio-player" src="Ella_Baila_Sola-Eslabon_Armado.mp3"></audio>
