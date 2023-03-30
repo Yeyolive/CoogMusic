@@ -73,8 +73,8 @@ namespace CoogMusic.Pages.Search
     public class SongView
     {
         public int songId;
-        public String title;
-        public String genre;
-        public byte[] data;
+        public String? title;
+        public String? genre;
+        public byte[]? data;
     }
 }
