@@ -39,6 +39,7 @@ namespace CoogMusic.Pages.Search
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex.ToString());
             }
         }
         public IActionResult PlaySong(int id)
