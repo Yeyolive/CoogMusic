@@ -21,7 +21,8 @@ namespace CoogMusic.Pages.Songs
                 using (MySqlConnection connection = new MySqlConnection(connectionStr))
                 {
                     connection.Open();
-                    String sql = "SELECT * FROM song AS S";
+                    // Change this query for sorting
+                    String sql = "SELECT * FROM song AS s JOIN artist AS a ON s.artist_id=a.artist_id ORDER BY a.name";
                     // Change this query to show only songs from the Artist that is logged in
                     using (MySqlCommand command = new MySqlCommand(sql, connection))
                     {
