@@ -37,7 +37,7 @@
                         <td>@item.CreateDate</td>
                         <td>
                             @*<a class="btn btn-primary btn-action" href="@Url.Action("PlaySong", "Search", new { id = item.songId })">play</a>*@
-                            <a class="btn btn-primary btn-action" onclick="playSong('@item.songId')">Play</a>
+                            <a class="btn btn-primary btn-action" onclick="playSong(&quot;@item.songId&quot;)">Play</a>
                         </td>
                     </tr>
                 }
@@ -72,18 +72,10 @@
     </div>
 </div>
 <script>
-    //function playSong(base64Track) {
-    //    var bytes = atob(base64Track);
-    //    var blob = new Blob([new Uint8Array(bytes)], { type: 'audio/mp3' });
-    //    var url = URL.createObjectURL(blob);
-    //    var audio = document.getElementById('audio-player');
-    //    audio.src = url;
-    //    audio.play();
-    //}
     function playSong(songId) {
         // Make an AJAX request to get the song data
         var xhr = new XMLHttpRequest();
-        xhr.open('GET', '/Search/PlaySong/' + songId, true);
+        xhr.open('GET', '/Search/Index?handler=PlaySong&id=' + songId, true);
         xhr.responseType = 'blob';
         xhr.onload = function (e) {
             if (this.status == 200) {

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CoogMusic.Pages.Songs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using MySql.Data.MySqlClient;
@@ -50,8 +51,7 @@ namespace CoogMusic.Pages.Search
             }
         }
 
-        [HttpGet]
-        public IActionResult PlaySong(int id)
+        public IActionResult OnGetPlaySong(int id)
         {
             // Retrieve the BLOB data for the song with the specified ID
             byte[] songData;
