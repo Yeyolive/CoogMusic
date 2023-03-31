@@ -55,7 +55,7 @@
             <button id="prev-button">
                 <i class="fas fa-backward"></i>
             </button>
-            <button id="play-pause-button">
+            <button id="play-pause-button" onclick="togglePlay()">
                 <i class="fas fa-play"></i>
             </button>
             <button id="skip-button">
@@ -71,24 +71,3 @@
         </div>
     </div>
 </div>
-<script>
-    function playSong(songId) {
-        // Make an AJAX request to get the song data
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', '/Search/Index?handler=PlaySong&id=' + songId, true);
-        xhr.responseType = 'blob';
-        xhr.onload = function (e) {
-            if (this.status == 200) {
-                // Create a blob URL for the audio data
-                var blob = new Blob([this.response], { type: 'audio/mpeg' });
-                var url = URL.createObjectURL(blob);
-
-                // Update the audio player to play the new audio file
-                var audio = document.getElementById('audio-player');
-                audio.src = url;
-                audio.play();
-            }
-        };
-        xhr.send();
-    }
-</script>
