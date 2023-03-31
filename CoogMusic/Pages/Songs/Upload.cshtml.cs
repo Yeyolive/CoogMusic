@@ -65,7 +65,6 @@ namespace CoogMusic.Pages.Songs
             catch (Exception ex)
             {
                 Console.WriteLine("Error inserting MP3 file into database: " + ex.Message);
-                errorMessage = "We experienced an error while adding to the database";
             }
             songInfo.title = ""; songInfo.genre = ""; songInfo.artistId = null; songInfo.songFile = null;
         }
