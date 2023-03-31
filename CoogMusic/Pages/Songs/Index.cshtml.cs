@@ -30,6 +30,7 @@ namespace CoogMusic.Pages.Songs
                             while (reader.Read())
                             {
                                 SongInfo songInfo = new SongInfo();
+                                songInfo.songId = reader.GetInt32(0);
                                 songInfo.title = reader.GetString(2);
                                 songInfo.genre = reader.GetString(3);
                                 songInfo.CreateDate = reader.GetDateTime(6).ToString();
