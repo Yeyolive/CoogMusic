@@ -1,4 +1,4 @@
-﻿@page
+﻿@page 
 @model CoogMusic.Pages.Search.IndexModel
 @{
     ViewData["Title"] = "Search";
@@ -36,7 +36,8 @@
                         <td>@item.genre</td>
                         <td>@item.CreateDate</td>
                         <td>
-                            <a class="btn btn-primary btn-action" href="/Songs/Edit?id=@item.songId">play</a>
+                            @*<a class="btn btn-primary btn-action" href="@Url.Action("PlaySong", "Search", new { id = item.songId })">play</a>*@
+                            <a class="btn btn-primary btn-action" onclick="playSong('@item.songId')">Play</a>
                         </td>
                     </tr>
                 }
@@ -70,3 +71,32 @@
         </div>
     </div>
 </div>
+<script>
+    //function playSong(base64Track) {
+    //    var bytes = atob(base64Track);
+    //    var blob = new Blob([new Uint8Array(bytes)], { type: 'audio/mp3' });
+    //    var url = URL.createObjectURL(blob);
+    //    var audio = document.getElementById('audio-player');
+    //    audio.src = url;
+    //    audio.play();
+    //}
+    function playSong(songId) {
+        // Make an AJAX request to get the song data
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', '/Search/PlaySong/' + songId, true);
+        xhr.responseType = 'blob';
+        xhr.onload = function (e) {
+            if (this.status == 200) {
+                // Create a blob URL for the audio data
+                var blob = new Blob([this.response], { type: 'audio/mpeg' });
+                var url = URL.createObjectURL(blob);
+
+                // Update the audio player to play the new audio file
+                var audio = document.getElementById('audio-player');
+                audio.src = url;
+                audio.play();
+            }
+        };
+        xhr.send();
+    }
+</script>

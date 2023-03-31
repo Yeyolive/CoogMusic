@@ -50,6 +50,7 @@ namespace CoogMusic.Pages.Search
             }
         }
 
+        [HttpGet]
         public IActionResult PlaySong(int id)
         {
             // Retrieve the BLOB data for the song with the specified ID
