@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MySql.Data.MySqlClient;
 
+
     var builder = WebApplication.CreateBuilder(args);
 
     // Add services to the container.
@@ -14,7 +15,11 @@ using MySql.Data.MySqlClient;
         .AddEntityFrameworkStores<ApplicationDbContext>();
     builder.Services.AddRazorPages();
 
-    var app = builder.Build();
+
+// Ensure your app listens on port 8080
+builder.WebHost.UseUrls("http://*:8080");
+
+var app = builder.Build();
 
     // Configure the HTTP request pipeline.
     if (app.Environment.IsDevelopment())
