@@ -6,5 +6,74 @@
 
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>CoogMusic - University of Houston</title>
+        <style>
+            /* Add the provided styles here */
+        </style>
+    </head>
+    <body>
+        <header>
+            <h1>Welcome to CoogMusic</h1>
+            <p>Discover music from talented students at the University of Houston.</p>
+        </header>
+
+        <main>
+            <section class="form-container">
+                <h2 class="title">Upload Your Music</h2>
+                <form action="/upload" method="post" enctype="multipart/form-data">
+                    <label for="title">Song Title:</label>
+                    <input type="text" id="title" name="title" required>
+
+                    <label for="artist">Artist:</label>
+                    <input type="text" id="artist" name="artist" required>
+
+                    <label for="genre">Genre:</label>
+                    <select id="genre" name="genre">
+                        <option value="rock">Rock</option>
+                        <option value="pop">Pop</option>
+                        <option value="hip-hop">Hip-hop</option>
+                        <option value="electronic">Electronic</option>
+                        <option value="jazz">Jazz</option>
+                        <option value="classical">Classical</option>
+                        <option value="other">Other</option>
+                    </select>
+                </form>
+                <span class="form-error"></span>
+            </section>
+
+            <section>
+                @*<h2 class="title">Latest Songs</h2>
+                <table class="table">
+                    <tr>
+                        <th class="table-header">Title</th>
+                        <th class="table-header">Artist</th>
+                        <th class="table-header">Genre</th>
+                        <th class="table-header">Actions</th>
+                    </tr>
+                    @foreach (var song in Model.Songs)
+                    {
+                        <tr>
+                            <td>@song.Title</td>
+                            <td>@song.Artist</td>
+                            <td>@song.Genre</td>
+                            <td>
+                                <a href="/song/@song.Id" class="btn btn-primary btn-action">View</a>
+                                <a href="/song/@song.Id/delete" class="btn btn-danger btn-action">Delete</a>
+                            </td>
+                        </tr>
+                    }
+                </table>*@
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2023 CoogMusic - University of Houston. All rights reserved.</p>
+        </footer>
+    </body>
+</html>
 </div>

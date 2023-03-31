@@ -28,7 +28,16 @@
 
             <div>
                 <label for="genre">Genre:</label>
-                <input type="text" id="genre" name="Genre" required class="form-input" value="@Model.songInfo.genre">
+                @*<input type="text" id="genre" name="Genre" required class="form-input" value="@Model.songInfo.genre">*@
+                <select id="genre" name="genre" required class="form-input" value="@Model.songInfo.genre">
+                    <option value="rock">Rock</option>
+                    <option value="pop">Pop</option>
+                    <option value="hip-hop">Hip-hop</option>
+                    <option value="electronic">Electronic</option>
+                    <option value="jazz">Jazz</option>
+                    <option value="classical">Classical</option>
+                    <option value="other">Other</option>
+                </select>
             </div>
 
             <div>
