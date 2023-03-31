@@ -1,17 +1,18 @@
-// Function to toggle play once the song is loaded
-function togglePlay() {
-    const audio = document.getElementById('audio-player');
-    const playPauseButton = document.getElementById('play-pause-button');
-    const playPauseIcon = playPauseButton.getElementsByTagName('i')[0];
 
-    if (audio.paused) {
-        audio.play();
-        playPauseIcon.className = 'fas fa-pause';
-    } else {
-        audio.pause();
-        playPauseIcon.className = 'fas fa-play';
-    }
-}
+// Function to toggle play once the song is loaded
+//function togglePlay() {
+//    const audio = document.getElementById('audio-player');
+//    const playPauseButton = document.getElementById('play-pause-button');
+//    const playPauseIcon = playPauseButton.getElementsByTagName('i')[0];
+
+//    if (audio.paused) {
+//        audio.play();
+//        playPauseIcon.className = 'fas fa-pause';
+//    } else {
+//        audio.pause();
+//        playPauseIcon.className = 'fas fa-play';
+//    }
+//}
 
 function playSong(songId) {
     // Make an AJAX request to get the song data
@@ -83,3 +84,10 @@ document.addEventListener("DOMContentLoaded", function () {
         return minutes.toString().padStart(2, "0") + ":" + remainingSeconds.toString().padStart(2, "0");
     }
 });
+
+//const audio = document.getElementById('audio-player');
+//audio.addEventListener('ended', () => {
+//    const playPauseButton = document.getElementById('play-pause-button');
+//    const playPauseIcon = playPauseButton.getElementsByTagName('i')[0];
+//    playPauseIcon.className = 'fas fa-play';
+//});
