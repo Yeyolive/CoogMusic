@@ -8,22 +8,41 @@
 </div>
 <div>
     <div class="searching">
-        <form action="/search" method="get" class="search-bar">
+        <form method="POST" class="search-bar">
             <label for="search-input">Search:</label>
-            <input type="text" id="search-input" name="query" placeholder="Enter search term">
+            <input type="text" id="search-input" name="Title" placeholder="Enter search term">
             <button type="submit">
                 <i class="fa fa-search"></i>
             </button>
         </form>
     </div>
-    @foreach (var songView in Model.listSongs)
-    {
-        <div>
-            <h2>@songView.title</h2>
-            <h3>@songView.genre</h3>
-            @*<audio controls src="@ViewBag.Urls[Model.IndexOf(songView)]"></audio>*@
-        </div>
-    }
+    <div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th class="table-header">Title</th>
+                    <th class="table-header">Artist Name</th>
+                    <th class="table-header">Genre</th>
+                    <th class="table-header">Upload Date</th>
+                    <th class="table-header">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.listSongs)
+                {
+                    <tr>
+                        <td>@item.title</td>
+                        <td>@item.artistName</td>
+                        <td>@item.genre</td>
+                        <td>@item.CreateDate</td>
+                        <td>
+                            <a class="btn btn-primary btn-action" href="/Songs/Edit?id=@item.songId">play</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
     @*<p>Time of play @DateTime.Now</p>*@
     @* <audio id="audio-player" controls>
         <source src="Eslabon_Armado_Ella_Baila_Sola.mp3" type="audio/mp3">

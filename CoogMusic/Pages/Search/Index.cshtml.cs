@@ -1,7 +1,9 @@
-using System.Security.Policy;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Data.SqlClient;
 using MySql.Data.MySqlClient;
 
 namespace CoogMusic.Pages.Search
@@ -9,28 +11,33 @@ namespace CoogMusic.Pages.Search
     public class IndexModel : PageModel
     {
         public List<SongView> listSongs = new List<SongView>();
-        List<String> urls = new List<String>();
+
         public void OnPost()
         {
+            String? searched = Request.Form["Title"];
             try
             {
                 String connectionStr = "Server=coogmusic.mysql.database.azure.com;User ID=qalksktvpv;Password=coogmusic1!;Database=coogmusicdb";
                 using (MySqlConnection connection = new MySqlConnection(connectionStr))
                 {
-                    connection.Open();
-                    String sql = "SELECT * FROM song AS S WHERE name LIKE @song_searched";
+                    connection.Open(); 
+                    String sql = "SELECT s.*, a.name FROM song AS s JOIN artist AS a ON s.artist_id=a.artist_id WHERE s.title LIKE @SearchTerm OR a.name LIKE @SearchTerm;";
                     using (MySqlCommand command = new MySqlCommand(sql, connection))
                     {
-                        command.Parameters.AddWithValue("@SearchTerm", "%" + "NEED VALUE FROM SEARCH INPUT" + "%");
+                        command.Parameters.AddWithValue("@SearchTerm", "%" + searched + "%");
+
                         using (MySqlDataReader reader = command.ExecuteReader())
                         {
                             while (reader.Read())
                             {
                                 SongView songInfo = new SongView();
+                                songInfo.songId = reader.GetInt32(0);
+                                songInfo.artistId = reader.GetInt32(1);
                                 songInfo.title = reader.GetString(2);
                                 songInfo.genre = reader.GetString(3);
-                                songInfo.data = (byte[])reader["track"];
-
+                                songInfo.trackBytes = (byte[])reader["track"];
+                                songInfo.CreateDate = reader.GetDateTime(6).ToString();
+                                songInfo.artistName = reader.GetString(7);
                                 listSongs.Add(songInfo);
                             }
                         }
@@ -42,6 +49,7 @@ namespace CoogMusic.Pages.Search
                 Console.WriteLine(ex.ToString());
             }
         }
+
         public IActionResult PlaySong(int id)
         {
             // Retrieve the BLOB data for the song with the specified ID
@@ -73,9 +81,15 @@ namespace CoogMusic.Pages.Search
     }
     public class SongView
     {
-        public int songId;
-        public String? title;
+        public String? RecordLabel;
+        public String? CreateDate;
+        public String? artistName;
+        public int? songId;
+        public int? userId;
+        public int? artistId;
+        public String? artist;
         public String? genre;
-        public byte[]? data;
+        public String? title;
+        public byte[]? trackBytes;
     }
 }
