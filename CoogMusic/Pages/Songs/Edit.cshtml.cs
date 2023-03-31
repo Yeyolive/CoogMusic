@@ -10,7 +10,7 @@ namespace CoogMusic.Pages.Songs
 {
     public class EditModel : PageModel
     {
-        public SongInfo songInfo = new SongInfo();
+        public SongInfo editSong = new SongInfo();
         public String errorMessage = "";
         public String successMessage = "";
 
@@ -35,11 +35,11 @@ namespace CoogMusic.Pages.Songs
                                 {
                                     if (reader.Read())
                                     {
-                                        songInfo.songId = reader.GetInt32(0);
-                                        songInfo.artistId = reader.GetInt32(1);
-                                        songInfo.title = reader.GetString(2);
-                                        songInfo.genre = reader.GetString(3);
-                                        songInfo.CreateDate = reader.GetDateTime(6).ToString();
+                                        editSong.songId = reader.GetInt32(0); ;
+                                        editSong.artistId = reader.GetInt32(1);
+                                        editSong.title = reader.GetString(2);
+                                        editSong.genre = reader.GetString(3);
+                                        editSong.CreateDate = reader.GetDateTime(6).ToString();
                                         //Add how to get the BLOB to mp3 file here
                                     }
                                 }
@@ -64,17 +64,18 @@ namespace CoogMusic.Pages.Songs
 
         public async Task OnPostAsync()
         {
-            songInfo.title = Request.Form["Title"];
             //songInfo.artistId = int.Parse(Request.Form["Artist"]);
-            songInfo.genre = Request.Form["Genre"];
             //songInfo.songFile = Request.Form.Files["songfile"];
-            byte[] songData;
-            using (var memoryStream = new MemoryStream())
-            {
-                await songInfo.songFile.CopyToAsync(memoryStream);
-                songData = memoryStream.ToArray();
-            }
-            // Input data into database
+            //byte[] songData;
+            //using (var memoryStream = new MemoryStream())
+            //{
+            //    await songInfo.songFile.CopyToAsync(memoryStream);
+            //    songData = memoryStream.ToArray();
+            //}
+            editSong.artistId = int.Parse(Request.Form["Artist"]);
+            editSong.songId = int.Parse(Request.Form["Song"]);
+            editSong.title = Request.Form["Title"];
+            editSong.genre = Request.Form["Genre"];
             try
             {
                 String connectionStr = "Server=coogmusic.mysql.database.azure.com;User ID=qalksktvpv;Password=coogmusic1!;Database=coogmusicdb";
@@ -82,23 +83,19 @@ namespace CoogMusic.Pages.Songs
                 {
                     await connection.OpenAsync();
                     MySqlTransaction mySqlTransaction = connection.BeginTransaction();
-                    String sql = "UPDATE song SET  title= @Title, genre=@Genre WHERE id=@songId;";
+                    String sql = "UPDATE song SET title=@Title, genre=@Genre WHERE id=@songId AND artist_id=@ArtistId;";
                     // Add a way to know if the user owns the song (artistId=@ArtistId)
                     using (MySqlCommand command = new MySqlCommand(sql, connection))
                     {
                         command.Transaction = mySqlTransaction;
 
-                        command.Parameters.AddWithValue("@songId", songInfo.songId);
-                        //command.Parameters.AddWithValue("@ArtistId", songInfo.artistId);
-                        //command.Parameters.AddWithValue("@Title", songInfo.title);
-                        command.Parameters.AddWithValue("@Genre", songInfo.genre);
-                        //command.Parameters.AddWithValue("@UploadDate", DateTime.UtcNow);
-
+                        command.Parameters.AddWithValue("@songId", 1);
+                        command.Parameters.AddWithValue("@ArtistId", editSong.artistId);
+                        command.Parameters.AddWithValue("@Title", editSong.title);
+                        command.Parameters.AddWithValue("@Genre", editSong.genre);
                         int affectedRows = await command.ExecuteNonQueryAsync();
                         if (affectedRows > 0)
                         {
-                            // Display a success message or redirect to another page
-                            successMessage = "New Song Added Correctly";
                             Response.Redirect("/Songs/");
                         }
                         else
@@ -111,7 +108,7 @@ namespace CoogMusic.Pages.Songs
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Error inserting MP3 file into database: " + ex.Message);
+                Console.WriteLine("Error updating song in database: " + ex.Message);
             }
         }
     }

@@ -13,30 +13,25 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     }
-    <form method="POST" enctype="multipart/form-data">
-        <input type="hidden" name="editId" value="@Model.songInfo.songId"/>
+    <form method="POST">
+        <input type="hidden" name="editId" value="@Model.editSong.songId"/>
         <div class="form-group">
         </div>
         <div id="song-details" style="display: block" class="form-group">
             <div>
                 <label for="title">Title:</label>
-                <input type="text" id="title" name="Title" required class="form-input" value="@Model.songInfo.title">
+                <input type="text" id="title" name="Title" required class="form-input" value="@Model.editSong.title">
             </div>
-
-            @*<div>
-                <label for="artist">Artist: ID</label>
-                <input type="text" id="artist" name="Artist" required class="form-input" value="@Model.songInfo.artistId">
-            </div>*@
-
             <div>
                 <label for="genre">Genre:</label>
-                <input type="text" id="genre" name="Genre" required class="form-input" value="@Model.songInfo.genre">
+                <input type="text" id="genre" name="Genre" required class="form-input" value="@Model.editSong.genre">
             </div>
-
-            @*<div>
-                <label for="file">Select file:</label>
-                <input type="file" id="file" name="songFile" accept="audio/*" required class="form-file" value="">
-            </div>*@
+            <div>
+                <input type="hidden" id="artist" name="Artist" required class="form-input" value="@Model.editSong.artistId">
+            </div>
+            <div>
+                <input type="hidden" id="artist" name="Song" required class="form-input" value="@Model.editSong.songId">
+            </div>
         </div>
         @if (Model.successMessage.Length > 0)
         {

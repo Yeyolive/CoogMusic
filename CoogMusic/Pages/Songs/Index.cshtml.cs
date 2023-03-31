@@ -22,7 +22,7 @@ namespace CoogMusic.Pages.Songs
                 {
                     connection.Open();
                     String sql = "SELECT * FROM song AS S";
-                    //Change this query to show only songs from the Artist that is logged in
+                    // Change this query to show only songs from the Artist that is logged in
                     using (MySqlCommand command = new MySqlCommand(sql, connection))
                     {
                         using (MySqlDataReader reader = command.ExecuteReader())
