@@ -23,11 +23,9 @@
   <ItemGroup>
     <Folder Include="Model\" />
     <Folder Include="Pages\Albums\" />
-    <Folder Include="Controller\" />
   </ItemGroup>
 
   <ItemGroup>
     <None Remove="Pages\Albums\" />
-    <None Remove="Controller\" />
   </ItemGroup>
 </Project>
