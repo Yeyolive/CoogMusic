@@ -35,6 +35,7 @@ namespace CoogMusic.Pages.Songs
                                 songInfo.title = reader.GetString(2);
                                 songInfo.genre = reader.GetString(3);
                                 songInfo.CreateDate = reader.GetDateTime(6).ToString();
+                                songInfo.deleted = reader.GetBoolean(7);
 
                                 listSongs.Add(songInfo);
                             }
@@ -59,6 +60,7 @@ namespace CoogMusic.Pages.Songs
         public String? artist;
         public String? genre;
         public String? title;
+        public Boolean? deleted;
         public IFormFile? songFile;
     }
 }

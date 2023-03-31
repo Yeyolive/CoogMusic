@@ -19,17 +19,20 @@
     <tbody>
         @foreach (var item in Model.listSongs)
          {
-            <tr>
-                @*<td>@item.Name</td>
-                <td>@item.RecordLabel</td>*@
-                <td>@item.title</td>
-                <td>@item.genre</td>
-                <td>@item.CreateDate</td>
-                <td>
-                    <a class="btn btn-primary btn-action" href="/Songs/Edit?id=@item.songId">Edit</a>
-                    <a class="btn btn-danger btn-action" href="/Songs/Delete?id=@item.songId">Delete</a>
-                </td>
-            </tr>
-         }
+            @if (@item.deleted != true)
+                {
+                <tr>
+                    @*<td>@item.Name</td>
+                    <td>@item.RecordLabel</td>*@
+                    <td>@item.title</td>
+                    <td>@item.genre</td>
+                    <td>@item.CreateDate</td>
+                    <td>
+                        <a class="btn btn-primary btn-action" href="/Songs/Edit?id=@item.songId">Edit</a>
+                        <a class="btn btn-danger btn-action" href="/Songs/Delete?id=@item.songId">Delete</a>
+                    </td>
+                </tr>
+                    }
+                }
     </tbody>
 </table>
