@@ -38,7 +38,8 @@ namespace CoogMusic.Pages.Search
                                 songInfo.genre = reader.GetString(3);
                                 songInfo.trackBytes = (byte[])reader["track"];
                                 songInfo.CreateDate = reader.GetDateTime(6).ToString();
-                                songInfo.artistName = reader.GetString(7);
+                                songInfo.deleted = reader.GetBoolean(7);
+                                songInfo.artistName = reader.GetString(8);
                                 listSongs.Add(songInfo);
                             }
                         }
@@ -91,6 +92,7 @@ namespace CoogMusic.Pages.Search
         public String? artist;
         public String? genre;
         public String? title;
+        public Boolean? deleted;
         public byte[]? trackBytes;
     }
 }

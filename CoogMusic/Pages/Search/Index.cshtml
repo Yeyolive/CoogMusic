@@ -29,19 +29,21 @@
             </thead>
             <tbody>
                 @foreach (var item in Model.listSongs)
-                {
-                    <tr>
-                        <td>@item.title</td>
-                        <td>@item.artistName</td>
-                        <td>@item.genre</td>
-                        <td>@item.CreateDate</td>
-                        <td>
-                            @*<a class="btn btn-primary btn-action" href="@Url.Action("PlaySong", "Search", new { id = item.songId })">play</a>*@
-                            <a class="btn btn-primary btn-action" onclick="playSong(&quot;@item.songId&quot;)">Play</a>
-                        </td>
-                    </tr>
-                }
-            </tbody>
+                 {
+                    @if (@item.deleted != true)
+                     {
+                        <tr>
+                            <td>@item.title</td>
+                            <td>@item.artistName</td>
+                            <td>@item.genre</td>
+                            <td>@item.CreateDate</td>
+                            <td>
+                                <a class="btn btn-primary btn-action" onclick="playSong(&quot;@item.songId&quot;)">Play</a>
+                            </td>
+                        </tr>
+                     }
+                 }
+                </tbody>
         </table>
     </div>
     @*<p>Time of play @DateTime.Now</p>*@
