@@ -75,7 +75,7 @@ namespace CoogMusic.Pages
                     await conn.OpenAsync();
 
                     MySqlTransaction mySqlTransaction = conn.BeginTransaction();
-                    String sql = "SELECT id FROM user WHERE email=@Email";
+                    String sql = "SELECT id FROM users WHERE email=@Email";
                     using (MySqlCommand cmd = new MySqlCommand(sql, conn))
                     {
                         cmd.Parameters.AddWithValue("@Email", user.Email);
