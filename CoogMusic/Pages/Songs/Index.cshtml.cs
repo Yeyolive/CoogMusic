@@ -50,18 +50,4 @@ namespace CoogMusic.Pages.Songs
             }
         }
     }
-    public class SongInfo
-    {
-        public String? RecordLabel;
-        public String? CreateDate;
-        public String? Name;
-        public int? songId;
-        public int? userId;
-        public int? artistId;
-        public String? artist;
-        public String? genre;
-        public String? title;
-        public Boolean? deleted;
-        public IFormFile? songFile;
-    }
 }

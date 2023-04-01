@@ -81,18 +81,4 @@ namespace CoogMusic.Pages.Search
             return File(songData, "audio/mpeg");
         }
     }
-    public class SongView
-    {
-        public String? RecordLabel;
-        public String? CreateDate;
-        public String? artistName;
-        public int? songId;
-        public int? userId;
-        public int? artistId;
-        public String? artist;
-        public String? genre;
-        public String? title;
-        public Boolean? deleted;
-        public byte[]? trackBytes;
-    }
 }
