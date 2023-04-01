@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Identity;
 
 namespace CoogMusic.Pages.Account
 {
@@ -43,11 +44,10 @@ namespace CoogMusic.Pages.Account
                 };
 
                 // Create the ClaimsIdentity and ClaimsPrincipal objects
-                var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                var identity = new ClaimsIdentity(claims, IdentityConstants.ApplicationScheme);
                 var principal = new ClaimsPrincipal(identity);
+                await HttpContext.SignInAsync(IdentityConstants.ApplicationScheme, principal);
 
-                // Sign in the user
-                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
                 return RedirectToPage("/Index");
             }
             else
