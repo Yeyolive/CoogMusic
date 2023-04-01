@@ -3,6 +3,7 @@ using MySql.Data.MySqlClient;
 using System.Data;
 using Azure;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace CoogMusic.Pages
 {
@@ -74,6 +75,38 @@ namespace CoogMusic.Pages
                 }
             }
             return null;
+        }
+
+        public async Task<bool> IsUserArtist(int userId)
+        {
+            String connectionString = "Server=coogmusic.mysql.database.azure.com;User ID=qalksktvpv;Password=coogmusic1!;Database=coogmusicdb";
+            int count = 0;
+            using (MySqlConnection conn = new MySqlConnection(connectionString))
+            {
+                await conn.OpenAsync();
+                String sql = $"SELECT COUNT(*) FROM artist WHERE user_id={userId};";
+                using (MySqlCommand cmd = new MySqlCommand(sql, conn))
+                {
+                    count = int.Parse(cmd.ExecuteScalar().ToString());
+                }
+            }
+            return count > 0;
+        }
+
+        public async Task<bool> IsUserListener(int userId)
+        {
+            String connectionString = "Server=coogmusic.mysql.database.azure.com;User ID=qalksktvpv;Password=coogmusic1!;Database=coogmusicdb";
+            int count = 0;
+            using (MySqlConnection conn = new MySqlConnection(connectionString))
+            {
+                await conn.OpenAsync();
+                String sql = $"SELECT COUNT(*) FROM listener WHERE id={userId};";
+                using (MySqlCommand cmd = new MySqlCommand(sql, conn))
+                {
+                    count = int.Parse(cmd.ExecuteScalar().ToString());
+                }
+            }
+            return count > 0;
         }
     }
 }
