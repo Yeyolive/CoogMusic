@@ -6,14 +6,21 @@
 
 <h1>@ViewData["Title"]</h1>
 
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div class="alert alert-danger">
+        @Model.ErrorMessage
+    </div>
+}
+
 <form method="post">
     <div class="form-group">
         <label for="Email">Email</label>
-        <input type="email" class="form-control" id="Email" name="Input.Email" required>
+        <input type="email" class="form-control" id="Email" name="Input-Email" required>
     </div>
     <div class="form-group">
         <label for="Password">Password</label>
-        <input type="password" class="form-control" id="Password" name="Input.Password" required>
+        <input type="password" class="form-control" id="Password" name="Input-Password" required>
     </div>
     <button type="submit" class="btn btn-primary">Submit</button>
 </form>
