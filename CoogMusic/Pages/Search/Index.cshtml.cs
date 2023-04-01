@@ -37,7 +37,7 @@ namespace CoogMusic.Pages.Search
                                 songInfo.title = reader.GetString(2);
                                 songInfo.genre = reader.GetString(3);
                                 songInfo.trackBytes = (byte[])reader["track"];
-                                songInfo.CreateDate = reader.GetDateTime(6).ToString();
+                                songInfo.CreateDate = reader.GetDateTime(6).ToString("MM/dd/yyyy");
                                 songInfo.deleted = reader.GetBoolean(7);
                                 songInfo.artistName = reader.GetString(8);
                                 listSongs.Add(songInfo);
