@@ -15,7 +15,7 @@ namespace CoogMusic.Pages
             {
                 await conn.OpenAsync();
                 MySqlTransaction mySqlTransaction = conn.BeginTransaction();
-                String sql = "INSERT INTO login (Email, Password) VALUES (@Email, @Password)";
+                String sql = "INSERT INTO login (email, passwrd) VALUES (@Email, @Password)";
                 using (MySqlCommand cmd = new MySqlCommand(sql, conn))
                 {
                     cmd.Parameters.AddWithValue("@Email", user.Email);
@@ -25,7 +25,7 @@ namespace CoogMusic.Pages
                     await cmd.ExecuteNonQueryAsync();
                 }
 
-                sql = "INSERT INTO user (name, email, mobile, create_date, sex, age) VALUES (@Name, @Email, @Mobile, @CreateDate, @Sex, @Age)";
+                sql = "INSERT INTO users (name, email, mobile, create_date, sex, age) VALUES (@Name, @Email, @Mobile, @CreateDate, @Sex, @Age)";
                 using (MySqlCommand cmd = new MySqlCommand(sql, conn))
                 {
                     cmd.Parameters.AddWithValue("@Name", user.Name);
@@ -49,7 +49,7 @@ namespace CoogMusic.Pages
             using (MySqlConnection conn = new MySqlConnection(connectionString))
             {
                 await conn.OpenAsync();
-                String sql = "SELECT * FROM user WHERE Email = @Email AND Password = @Password";
+                String sql = "SELECT * FROM login AS l, users AS u WHERE l.email=u.email AND l.email=@Email AND l.passwrd=@Password";
                 using (MySqlCommand cmd = new MySqlCommand(sql, conn))
                 {
                     cmd.Parameters.AddWithValue("@Email", email);
@@ -65,7 +65,7 @@ namespace CoogMusic.Pages
                                 Name = reader.GetString("name"),
                                 Email = reader.GetString("email"),
                                 Mobile = reader.IsDBNull("mobile") ? null : reader.GetString("mobile"),
-                                CreateDate = reader.GetDateTime("create_date"),
+                                CreateDate = reader.GetDateTime("created_at"),
                                 Sex = reader.GetChar("sex"),
                                 Age = reader.GetInt32("age")
                             };
