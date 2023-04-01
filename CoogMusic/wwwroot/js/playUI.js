@@ -14,9 +14,9 @@
 //    }
 //}
 
-function playSong(songId, songTitle) {
+function playSong(songId, songTitle, artistName) {
     // Make an AJAX request to get the song data
-    document.getElementById("song-title").innerHTML = capitalizeFirstLetter(songTitle.toLowerCase());
+    document.getElementById("song-title").innerHTML = capitalizeFirstLetter(songTitle.toLowerCase()) + " by " + capitalizeFirstLetter(artistName.toLowerCase());
     var xhr = new XMLHttpRequest();
     xhr.open('GET', '/Search/Index?handler=PlaySong&id=' + songId, true);
     xhr.responseType = 'blob';

@@ -38,7 +38,11 @@
                             <td>@item.genre</td>
                             <td>@item.CreateDate</td>
                             <td>
-                                <a class="btn btn-primary btn-action" onclick="playSong(&quot;@item.songId&quot;, &quot;@item.title&quot;)">Play</a>
+                                <a
+                                   class="btn btn-primary btn-action"
+                                   onclick="playSong(&quot;@item.songId&quot;, &quot;@item.title&quot;, &quot;@item.artistName&quot;)">
+                                Play
+                                </a>
                             </td>
                         </tr>
                      }
