@@ -1,5 +1,6 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using CoogMusic.Pages;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace CoogMusic.Data
 {
@@ -9,5 +10,8 @@ namespace CoogMusic.Data
             : base(options)
         {
         }
+        public DbSet<Login> Logins { get; set; }
+        public DbSet<Listener> Listeners { get; set; }
+        public DbSet<Artist> Artists { get; set; }
     }
 }
