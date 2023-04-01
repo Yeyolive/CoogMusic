@@ -35,11 +35,15 @@ namespace CoogMusic.Pages.Account
 
             if (user != null)
             {
+                bool isArtist = await _databaseHelper.IsUserArtist(user.Id);
+                bool isListener = await _databaseHelper.IsUserListener(user.Id);
+                string userType = isArtist ? "Artist" : isListener ? "Listener" : "Unknown";
                 var claims = new List<Claim>
                 {
                     new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                     new Claim(ClaimTypes.Name, user.Name),
                     new Claim(ClaimTypes.Email, user.Email),
+                    new Claim("UserType", userType)
                     // Add more claims if needed, e.g., roles or other user-specific data
                 };
 
