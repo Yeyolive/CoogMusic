@@ -14,8 +14,9 @@
 //    }
 //}
 
-function playSong(songId) {
+function playSong(songId, songTitle) {
     // Make an AJAX request to get the song data
+    document.getElementById("song-title").innerHTML = capitalizeFirstLetter(songTitle.toLowerCase());
     var xhr = new XMLHttpRequest();
     xhr.open('GET', '/Search/Index?handler=PlaySong&id=' + songId, true);
     xhr.responseType = 'blob';
@@ -38,6 +39,13 @@ function playSong(songId) {
     };
     xhr.send();
 }
+
+function capitalizeFirstLetter(string) {
+    return string.split(' ').map(function (word) {
+        return word.charAt(0).toUpperCase() + word.slice(1);
+    }).join(' ');
+}
+
 
 document.addEventListener("DOMContentLoaded", function () {
     // Get UI elements
