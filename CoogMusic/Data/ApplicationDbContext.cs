@@ -12,6 +12,20 @@ namespace CoogMusic.Data
         }
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Listener>()
+                .HasOne(l => l.User)
+                .WithOne(u => u.Listener)
+                .HasForeignKey<Listener>(l => l.UserId);
+
+            modelBuilder.Entity<Artist>()
+                .HasOne(a => a.User)
+                .WithOne(u => u.Artist)
+                .HasForeignKey<Artist>(a => a.UserId);
+        }
     }
 
 }

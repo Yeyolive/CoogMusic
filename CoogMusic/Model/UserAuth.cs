@@ -30,7 +30,8 @@ namespace CoogMusic.Pages
 
     public class Listener
     {
-        public int Id { get; set; } // Foreign Key
+        public int Id { get; set; }
+        public int UserId { get; set; } // Foreign Key
         public string? Name { get; set; }
 
         public ApplicationUser? User { get; set; }
