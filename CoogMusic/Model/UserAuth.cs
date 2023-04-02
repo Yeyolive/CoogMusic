@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace CoogMusic.Pages
 {
-    public class ApplicationUser
+    public class ApplicationUser : IdentityUser
     {
         public int Id { get; set; }
         public string? Name { get; set; }
