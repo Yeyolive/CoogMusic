@@ -33,14 +33,13 @@ namespace CoogMusic
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.UseHttpsRedirection();
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseHttpsRedirection();
             }
 
             app.UseStaticFiles();
