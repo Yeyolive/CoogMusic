@@ -83,7 +83,7 @@ namespace CoogMusic.Pages
                         {
                             if (reader.Read())
                             {
-                                user.Id = reader.GetInt32("id");
+                                user.UserId = reader.GetInt32("id");
                             }
                         }
                     }
@@ -135,7 +135,7 @@ namespace CoogMusic.Pages
                         {
                             return new ApplicationUser
                             {
-                                Id = reader.GetInt32("id"),
+                                UserId = reader.GetInt32("id"),
                                 Name = reader.GetString("name"),
                                 Email = reader.GetString("email"),
                                 Mobile = reader.IsDBNull("mobile") ? null : reader.GetString("mobile"),
