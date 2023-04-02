@@ -19,6 +19,8 @@ using MySql.Data.MySqlClient;
 // Ensure your app listens on port 8080
 builder.WebHost.UseUrls("http://*:8080");
 
+builder.Logging.AddConsole();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
