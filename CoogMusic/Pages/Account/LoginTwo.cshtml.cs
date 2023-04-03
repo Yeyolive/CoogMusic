@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Http;
+
 
 namespace CoogMusic.Pages.Account
 {
@@ -19,24 +21,31 @@ namespace CoogMusic.Pages.Account
         {
             _databaseHelper = new DbHelper();
         }
+
         public string ErrorMessage { get; set; }
+
         public async Task<IActionResult> OnPostAsync()
         {
-            ApplicationUser login = new ApplicationUser();
-            login.Email = Request.Form["Input-Email"];
-            login.Password = Request.Form["Input-Password"];
+            string email = Request.Form["Input-Email"];
+            string password = Request.Form["Input-Password"];
+
+            if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
+            {
+                ErrorMessage = "Please provide both email and password.";
+                return Page();
+            }
 
             if (!ModelState.IsValid)
             {
                 return Page();
             }
 
-            ApplicationUser user = await _databaseHelper.GetUserByEmailAndPassword(login.Email, login.Password);
+            ApplicationUser user = await _databaseHelper.GetUserByEmailAndPassword(email, password);
 
             if (user != null)
             {
-                bool isArtist = await _databaseHelper.IsUserArtist(user.UserId);
-                bool isListener = await _databaseHelper.IsUserListener(user.UserId);
+                bool isArtist = await _databaseHelper.IsUserArtist(int.Parse(user.DbUserId));
+                bool isListener = await _databaseHelper.IsUserListener(int.Parse(user.DbUserId));
                 string userType = isArtist ? "Artist" : isListener ? "Listener" : "Unknown";
                 var claims = new List<Claim>
                 {
@@ -48,9 +57,10 @@ namespace CoogMusic.Pages.Account
                 };
 
                 // Create the ClaimsIdentity and ClaimsPrincipal objects
-                var identity = new ClaimsIdentity(claims, IdentityConstants.ApplicationScheme);
+                var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                 var principal = new ClaimsPrincipal(identity);
-                await HttpContext.SignInAsync(IdentityConstants.ApplicationScheme, principal);
+
+                await HttpContext.SignInAsync(principal, new AuthenticationProperties { IsPersistent = true });
 
                 return RedirectToPage("/Index");
             }
