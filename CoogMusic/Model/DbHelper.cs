@@ -78,36 +78,39 @@ namespace CoogMusic.Pages
                     String sql = "SELECT id FROM users WHERE email=@Email";
                     using (MySqlCommand cmd = new MySqlCommand(sql, conn))
                     {
+                        Console.WriteLine("CHECKKKK");
+
                         cmd.Parameters.AddWithValue("@Email", user.Email);
                         using (MySqlDataReader reader = cmd.ExecuteReader())
                         {
                             if (reader.Read())
                             {
-                                user.DbUserId = reader.GetString("id");
+                                user.DbUserId = reader.GetInt32("id").ToString();
+                                Console.WriteLine("USER ID: " + user.DbUserId);
                             }
                         }
                     }
-                        if (userType == "Artist")
+                    if (userType == "Artist")
+                    {
+                        sql = "INSERT INTO artist (user_id, name, record_label) VALUES (@UserId, @Name, @RecordLabel)";
+                        using (MySqlCommand cmd = new MySqlCommand(sql, conn))
                         {
-                            sql = "INSERT INTO artist (user_id, name, record_label) VALUES (@UserId, @Name, @RecordLabel)";
-                            using (MySqlCommand cmd = new MySqlCommand(sql, conn))
-                            {
-                                cmd.Parameters.AddWithValue("@Name", user.Name);
-                                cmd.Parameters.AddWithValue("@RecordLabel", user.recordLabel);
-                                cmd.Parameters.AddWithValue("@UserId", user.Id);
-                                int affectedRows = await cmd.ExecuteNonQueryAsync();
-                            }
+                            cmd.Parameters.AddWithValue("@UserId", int.Parse(user.DbUserId));
+                            cmd.Parameters.AddWithValue("@Name", user.Name);
+                            cmd.Parameters.AddWithValue("@RecordLabel", user.recordLabel);
+                            int affectedRows = await cmd.ExecuteNonQueryAsync();
                         }
-                        else
+                    }
+                    else
+                    {
+                        sql = "INSERT INTO listener (name, id) VALUES (@Name, @UserId)";
+                        using (MySqlCommand cmd = new MySqlCommand(sql, conn))
                         {
-                            sql = "INSERT INTO listener (name, id) VALUES (@Name, @UserId)";
-                            using (MySqlCommand cmd = new MySqlCommand(sql, conn))
-                            {
-                                cmd.Parameters.AddWithValue("@Name", user.Name);
-                                cmd.Parameters.AddWithValue("@UserId", user.Email);
-                                int affectedRows = await cmd.ExecuteNonQueryAsync();
-                            }
+                            cmd.Parameters.AddWithValue("@Name", user.Name);
+                            cmd.Parameters.AddWithValue("@UserId", int.Parse(user.DbUserId));
+                            int affectedRows = await cmd.ExecuteNonQueryAsync();
                         }
+                    }
 
                     mySqlTransaction.Commit();
                 }
@@ -135,7 +138,7 @@ namespace CoogMusic.Pages
                         {
                             return new ApplicationUser
                             {
-                                DbUserId = reader.GetString("id"),
+                                DbUserId = reader.GetInt32("id").ToString(),
                                 Name = reader.GetString("name"),
                                 Email = reader.GetString("email"),
                                 Mobile = reader.IsDBNull("mobile") ? null : reader.GetString("mobile"),
@@ -148,6 +151,29 @@ namespace CoogMusic.Pages
                 }
             }
             return null;
+        }
+
+        public async Task<int> GetArtistIdByUserId(int userId)
+        {
+            int artistId = 0;
+            using (MySqlConnection conn = new MySqlConnection(connectionString))
+            {
+                await conn.OpenAsync();
+                String sql = "SELECT artist_id FROM artist AS a, users AS u WHERE u.id=@UserId AND a.user_id=u.id;";
+                using (MySqlCommand cmd = new MySqlCommand(sql, conn))
+                {
+                    cmd.Parameters.AddWithValue("@UserId", userId);
+
+                    using (MySqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        if (await reader.ReadAsync())
+                        {
+                            artistId = reader.GetInt32("artist_id");
+                        }
+                    }
+                }
+            }
+            return artistId;
         }
 
         public async Task<bool> IsUserArtist(int userId)
