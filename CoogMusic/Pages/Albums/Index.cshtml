@@ -3,33 +3,48 @@
 @{
     ViewData["Title"] = "My Albums";
 }
-<br>
-<h2>My Albums</h2>
-@*<a class="btn btn-primary btn-upload" href="/Songs/Upload">Publish Album</a>*@
-<!--<table class="table">
-    <thead>
-        <tr>
-            <th class="table-header">Title</th>
-            <th class="table-header">Genre</th>
-            <th class="table-header">Create Date</th>
-            <th class="table-header">Action</th>
-        </tr>
-    </thead>
-    <tbody>
-        @*@foreach (var item in Model.listSongs)
+
+@if (User.Identity.IsAuthenticated)
+    {
+        @if (User.IsInRole("Artist"))
         {
-            @if (@item.deleted != true)
-            {
-                <tr>
-                    <td>@item.title</td>
-                    <td>@item.genre</td>
-                    <td>@item.CreateDate</td>
-                    <td>
-                        <a class="btn btn-primary btn-action" href="/Songs/Edit?id=@item.songId">Edit</a>
-                        <a class="btn btn-danger btn-action" href="/Songs/Delete?id=@item.songId">Delete</a>
-                    </td>
-                </tr>
-            }
-        }*@
-    </tbody>
-</table>-->
+            <br>
+            <h2> My Albums </h2>
+            <a class="btn btn-primary btn-upload" href="/Songs/Upload">Publish Album</a>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th class="table-header">Title</th>
+                        <th class="table-header">Genre</th>
+                        <th class="table-header">Create Date</th>
+                        <th class="table-header">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.albumInfo)
+                    {
+                        @if (@item.deleted != true)
+                        {
+                            <tr>
+                                <td>@item.Title</td>
+                                <td>@item.SongCount</td>
+                                <td>@item.Duration</td>
+                                <td>@item.ReleaseDate</td>
+                                <td>
+                                    <a class="btn btn-primary btn-action" href="/Albums/Edit?id=@item.AlbumId">Edit</a>
+                                    <a class="btn btn-danger btn-action" href="/Albums/Delete?id=@item.AlbumId">Delete</a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        }
+    else{
+            <p>You are not authorized to Upload Albums.</p>
+        }
+ }
+ else
+ {
+        <p>You must log in to access this page.</p>
+ }
