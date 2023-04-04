@@ -28,21 +28,18 @@
                             </div>
                             <div>
                                 <label for="genre">Genre:</label>
-                                @*<input type="text" id="genre" name="Genre" required class="form-input" value="@Model.editSong.genre">*@
-                                <select id="genre" name="genre" required class="form-input" value="@Model.editSong.genre">
-                                    <option value="Rock">Rock</option>
-                                    <option value="Pop">Pop</option>
-                                    <option value="Hip-Hop">Hip-Hop</option>
-                                    <option value="Jazz">Jazz</option>
-                                    <option value="Classical">Classical</option>
-                                    <option value="Corrido">Corrido</option>
-                                    <option value="Electronic">Electronic</option>
-                                    <option value="DubStep">DubStep</option>
-                                    @*<option value="Classical">Classical</option>
-                                    <option value="Classical">Classical</option>
-                                    <option value="Classical">Classical</option>*@
-                                    <option value="Other">Other</option>
-                                </select>
+                            <select id="genre" name="genre" required class="form-input" value="@Model.editSong.genre">
+                                <option value="">Choose an option</option>
+                                <option value="Rock">Rock</option>
+                                <option value="Pop">Pop</option>
+                                <option value="Hip-Hop">Hip-Hop</option>
+                                <option value="Jazz">Jazz</option>
+                                <option value="Classical">Classical</option>
+                                <option value="Corrido">Corrido</option>
+                                <option value="Electronic">Electronic</option>
+                                <option value="DubStep">DubStep</option>
+                                <option value="Other">Other</option>
+                            </select>
                             </div>
                             <div>
                                 <input type="hidden" id="artist" name="Artist" required class="form-input" value="@Model.editSong.artistId">
