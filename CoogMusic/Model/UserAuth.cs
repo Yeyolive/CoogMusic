@@ -1,14 +1,16 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNetCore.Identity;
+
 
 namespace CoogMusic.Pages
 {
-    public class ApplicationUser : IdentityUser
+    public class ApplicationUser
     {
-        public int UserId { get; set; }
+        [Key]
+        public string? Id { get; set; }
+        public string? DbUserId { get; set; }
         public string? Name { get; set; }
-        //public string? Email { get; set; }
+        public string? Email { get; set; }
         public string? Password { get; set; }
         public string? Mobile { get; set; }
         public string? recordLabel { get; set; }
@@ -23,15 +25,13 @@ namespace CoogMusic.Pages
     public class Login
     {
         [Key]
-        public int Id { get; set; }
         public string? Email { get; set; }
         public string? Password { get; set; }
     }
 
     public class Listener
     {
-        public int Id { get; set; }
-        public int UserId { get; set; } // Foreign Key
+        public string? DbUserId { get; set; } // Foreign Key
         public string? Name { get; set; }
 
         public ApplicationUser? User { get; set; }
@@ -40,7 +40,7 @@ namespace CoogMusic.Pages
     public class Artist
     {
         public int ArtistId { get; set; }
-        public int UserId { get; set; } // Foreign Key
+        public string? DbUserId { get; set; } // Foreign Key
         public string? Name { get; set; }
         public DateTime CreateDate { get; set; }
         public string? Description { get; set; }
