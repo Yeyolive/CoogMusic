@@ -7,8 +7,11 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace CoogMusic.Pages.Albums
 {
+
 	public class IndexModel : PageModel
     {
+        public List<AlbumInfo> albumInfo = new List<AlbumInfo>();
+
         public void OnGet()
         {
         }
