@@ -7,7 +7,7 @@ public class SongInfo
 {
     public int? songId;
     public int? userId;
-    public int? artistId;
+    public int artistId;
     public String? RecordLabel;
     public String? CreateDate;
     public String? Name;
