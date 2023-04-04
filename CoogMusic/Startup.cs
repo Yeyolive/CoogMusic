@@ -29,6 +29,11 @@ namespace CoogMusic
                 options.LogoutPath = "/Account/Logout";
             });
 
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("UserType", policy =>
+                    policy.RequireRole("Artist"));
+            });
 
             services.AddRazorPages();
         }
