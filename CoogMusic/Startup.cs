@@ -9,6 +9,9 @@ using Microsoft.AspNetCore.Http;
 using MySql.Data.MySqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace CoogMusic
 {
@@ -20,11 +23,11 @@ namespace CoogMusic
             services.AddScoped<DbHelper>();
 
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                .AddCookie(options =>
-                {
-                    options.LoginPath = "/Account/LoginTwo";
-                    options.LogoutPath = "/Account/Logout";
-                });
+            .AddCookie(options =>
+            {
+                options.LoginPath = "/Account/LoginTwo";
+                options.LogoutPath = "/Account/Logout";
+            });
 
 
             services.AddRazorPages();
