@@ -56,7 +56,7 @@ namespace CoogMusic.Pages.Account
                     new Claim(ClaimTypes.NameIdentifier, user.DbUserId.ToString()),
                     new Claim(ClaimTypes.Name, user.Name),
                     new Claim(ClaimTypes.Email, user.Email),
-                    new Claim("UserType", userType)
+                    new Claim(ClaimTypes.Role, userType)
                 };
 
                 // Create the ClaimsIdentity and ClaimsPrincipal objects
