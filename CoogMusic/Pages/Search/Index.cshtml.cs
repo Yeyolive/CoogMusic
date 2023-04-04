@@ -12,7 +12,7 @@ namespace CoogMusic.Pages.Search
     public class IndexModel : PageModel
     {
         public List<SongView> listSongs = new List<SongView>();
-
+        public bool SearchPerformed { get; set; } = false;
         public void OnPost()
         {
             String? searched = Request.Form["Title"];
@@ -45,6 +45,7 @@ namespace CoogMusic.Pages.Search
                         }
                     }
                 }
+                SearchPerformed = true;
             }
             catch (Exception ex)
             {
