@@ -8,12 +8,15 @@ using Microsoft.Extensions.Configuration;
 using MySql.Data.MySqlClient;
 using static Org.BouncyCastle.Math.EC.ECCurve;
 using System.Data.SqlClient;
+using Microsoft.AspNetCore.Authorization;
+using System.Data;
 
 namespace CoogMusic.Pages.Songs
 {
     public class IndexModel : PageModel
     {
         public List<SongInfo> listSongs = new List<SongInfo>();
+
         public void OnGet() {
             try
             {
