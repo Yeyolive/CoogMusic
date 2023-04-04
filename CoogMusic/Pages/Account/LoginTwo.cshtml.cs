@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Security.Claims;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Http;
 
 
@@ -44,23 +43,32 @@ namespace CoogMusic.Pages.Account
 
             if (user != null)
             {
+                // Add debug lines to print user properties
+                Console.WriteLine($"User Id: {user.DbUserId}");
+                Console.WriteLine($"User Name: {user.Name}");
+                Console.WriteLine($"User Email: {user.Email}");
                 bool isArtist = await _databaseHelper.IsUserArtist(int.Parse(user.DbUserId));
                 bool isListener = await _databaseHelper.IsUserListener(int.Parse(user.DbUserId));
                 string userType = isArtist ? "Artist" : isListener ? "Listener" : "Unknown";
+                Console.WriteLine("Creating claims list...");
                 var claims = new List<Claim>
                 {
-                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                    new Claim(ClaimTypes.NameIdentifier, user.DbUserId.ToString()),
                     new Claim(ClaimTypes.Name, user.Name),
                     new Claim(ClaimTypes.Email, user.Email),
                     new Claim("UserType", userType)
-                    // Add more claims if needed, e.g., roles or other user-specific data
                 };
 
                 // Create the ClaimsIdentity and ClaimsPrincipal objects
                 var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                 var principal = new ClaimsPrincipal(identity);
-
-                await HttpContext.SignInAsync(principal, new AuthenticationProperties { IsPersistent = true });
+                var authProperites = new AuthenticationProperties
+                {
+                    AllowRefresh = true,
+                    IsPersistent = true,
+                };
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, authProperites);
+                //await HttpContext.SignInAsync(principal, authProperites);
 
                 return RedirectToPage("/Index");
             }
