@@ -22,6 +22,13 @@ namespace CoogMusic
 
             services.AddScoped<DbHelper>();
 
+            services.Configure<CookiePolicyOptions>(options =>
+            {
+                // This lambda determines whether user consent for non-essential cookies is needed for a given request.
+                options.CheckConsentNeeded = context => true;
+                options.MinimumSameSitePolicy = SameSiteMode.None;
+            });
+
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
             .AddCookie(options =>
             {
@@ -51,6 +58,8 @@ namespace CoogMusic
 
             app.UseStaticFiles();
             app.UseRouting();
+
+            app.UseCookiePolicy();
             app.UseAuthentication();
             app.UseAuthorization();
 
