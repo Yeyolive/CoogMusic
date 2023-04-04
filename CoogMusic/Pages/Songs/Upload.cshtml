@@ -1,6 +1,7 @@
 ﻿@page
 @model CoogMusic.Pages.Songs.UploadModel
 @{
+    ViewData["title"] = "Upload";
 }
 
 <div class="form-container">
@@ -18,7 +19,7 @@
         <div id="song-details" style="display: block" class="form-group">
             <div>
                 <label for="title">Title:</label>
-                <input type="hidden" id="title" name="Title" required class="form-input" value="@Model.songInfo.title">
+                <input type="text" id="title" name="Title" required class="form-input" value="@Model.songInfo.title">
             </div>
 
             <div>
@@ -27,7 +28,7 @@
                     if (userIdClaim != null)
                     {
                         int userId = int.Parse(userIdClaim.Value);
-                        <input type="text" id="artist" name="Artist" required class="form-input" value="@userId">
+                        <input type="hidden" id="artist" name="Artist" required class="form-input" value="@userId">
                     }
                 }
             </div>
