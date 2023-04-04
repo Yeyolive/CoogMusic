@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using MySql.Data.MySqlClient;
 using Humanizer.Localisation;
+using System.Security.Claims;
 
 namespace CoogMusic.Pages.Songs
 {
@@ -16,10 +17,17 @@ namespace CoogMusic.Pages.Songs
         public String successMessage = "";
         public SongInfo songInfo = new SongInfo();
 
+        private readonly DbHelper _databaseHelper;
+
+        public UploadModel(IConfiguration configuration)
+        {
+            _databaseHelper = new DbHelper();
+        }
+
         public async Task OnPostAsync()
         {
             songInfo.title = Request.Form["Title"];
-            songInfo.artistId = int.Parse(Request.Form["Artist"]);
+            songInfo.artistId = await _databaseHelper.GetArtistIdByUserId(int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)));
             songInfo.genre = Request.Form["Genre"];
             songInfo.songFile = Request.Form.Files["songfile"];
             byte[] songData;
@@ -28,6 +36,7 @@ namespace CoogMusic.Pages.Songs
                 await songInfo.songFile.CopyToAsync(memoryStream);
                 songData = memoryStream.ToArray();
             }
+
             // Input data into database
             try
             {
@@ -66,7 +75,6 @@ namespace CoogMusic.Pages.Songs
             {
                 Console.WriteLine("Error inserting MP3 file into database: " + ex.Message);
             }
-            songInfo.title = ""; songInfo.genre = ""; songInfo.artistId = null; songInfo.songFile = null;
         }
     }
 }

@@ -10,6 +10,7 @@ using static Org.BouncyCastle.Math.EC.ECCurve;
 using System.Data.SqlClient;
 using Microsoft.AspNetCore.Authorization;
 using System.Data;
+using System.Security.Claims;
 
 namespace CoogMusic.Pages.Songs
 {
@@ -25,10 +26,11 @@ namespace CoogMusic.Pages.Songs
                 {
                     connection.Open();
                     // Change this query for sorting
-                    String sql = "SELECT * FROM song AS s JOIN artist AS a ON s.artist_id=a.artist_id ORDER BY s.title";
+                    String sql = "SELECT * FROM song AS s JOIN artist AS a ON s.artist_id=a.artist_id WHERE a.user_id=@UserId ORDER BY s.title";
                     // Change this query to show only songs from the Artist that is logged in
                     using (MySqlCommand command = new MySqlCommand(sql, connection))
                     {
+                        command.Parameters.AddWithValue("@UserId", int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)));
                         using (MySqlDataReader reader = command.ExecuteReader())
                         {
                             while (reader.Read())
