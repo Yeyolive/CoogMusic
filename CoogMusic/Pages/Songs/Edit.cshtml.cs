@@ -37,7 +37,7 @@ namespace CoogMusic.Pages.Songs
                                 {
                                     if (reader.Read())
                                     {
-                                        editSong.songId = reader.GetInt32(0); ;
+                                        editSong.songId = reader.GetInt32(0); 
                                         editSong.artistId = reader.GetInt32(1);
                                         editSong.title = reader.GetString(2);
                                         editSong.genre = reader.GetString(3);
@@ -91,7 +91,7 @@ namespace CoogMusic.Pages.Songs
                     {
                         command.Transaction = mySqlTransaction;
 
-                        command.Parameters.AddWithValue("@songId", 1);
+                        command.Parameters.AddWithValue("@songId", editSong.songId);
                         command.Parameters.AddWithValue("@ArtistId", editSong.artistId);
                         command.Parameters.AddWithValue("@Title", editSong.title);
                         command.Parameters.AddWithValue("@Genre", editSong.genre);
