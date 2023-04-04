@@ -50,7 +50,7 @@ namespace CoogMusic.Pages.Account
                 bool isArtist = await _databaseHelper.IsUserArtist(int.Parse(user.DbUserId));
                 bool isListener = await _databaseHelper.IsUserListener(int.Parse(user.DbUserId));
                 string userType = isArtist ? "Artist" : isListener ? "Listener" : "Unknown";
-                Console.WriteLine("Creating claims list...");
+
                 var claims = new List<Claim>
                 {
                     new Claim(ClaimTypes.NameIdentifier, user.DbUserId.ToString()),
