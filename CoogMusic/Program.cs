@@ -1,4 +1,5 @@
 using CoogMusic.Data;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using MySql.Data.MySqlClient;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
@@ -16,6 +17,8 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddRazorPages();
 
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie();
 
 // Ensure your app listens on port 8080
 builder.WebHost.UseUrls("http://*:8080");
@@ -35,7 +38,6 @@ var app = builder.Build();
     app.UseRouting();
 
     app.UseAuthentication();
-
     app.UseAuthorization();
 
     app.MapRazorPages();
