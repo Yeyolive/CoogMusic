@@ -198,3 +198,22 @@
     border-width: 0 3px 3px 0;
     transform: rotate(45deg);
 }
+
+.explicit-label {
+    display: inline-block;
+    background-color: #555;
+    color: white;
+    font-size: 14px;
+    padding: 2px 4px;
+    border-radius: 2px;
+    margin-left: -10px;
+}
+
+.empty-header {
+    border: none;
+}
+
+.explicit-cell {
+    border: none;
+    padding: 0;
+}

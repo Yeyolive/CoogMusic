@@ -16,10 +16,11 @@
                     <table class="table">
                         <thead>
                             <tr>
+                                <th class="empty-header"></th>
                                 <th class="table-header">Title</th>
                                 <th class="table-header">Genre</th>
                                 <th class="table-header">Duration</th>
-                                <th class="table-header">Explicit</th>
+                                @*<th class="table-header">Explicit</th>*@
                                 <th class="table-header">Create Date</th>
                                 <th class="table-header">Action</th>
                             </tr>
@@ -30,17 +31,16 @@
                                 @if (@item.deleted != true)
                                     {
                                     <tr>
+                                        <td class="explicit-cell">
+                                            @if (item.Explicit == true)
+                                            {
+                                                <span class="explicit-label">EXPLICIT</span>
+                                                @:&nbsp;
+                                            }
+                                        </td>
                                         <td>@item.title</td>
                                         <td>@item.genre</td>
                                         <td>@(item.Duration?.ToString(@"mm\:ss") ?? "")</td>
-                                        @if (item.Explicit == true)
-                                            {
-                                                <td>Yes</td>
-                                            }
-                                            else
-                                            {
-                                                <td>No</td>
-                                            }
                                         <td>@item.CreateDate</td>
                                         <td>
                                             <a class="btn btn-primary btn-action" href="/Songs/Edit?id=@item.songId">Edit</a>
