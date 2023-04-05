@@ -207,6 +207,8 @@
     padding: 2px 4px;
     border-radius: 2px;
     margin-left: -10px;
+    width: 23px;
+    text-align: center;
 }
 
 .empty-header {
