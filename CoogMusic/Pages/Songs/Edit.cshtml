@@ -44,10 +44,17 @@
                                 </select>
                             </div>
                             <div>
-                                <input type="hidden" id="artist" name="Artist" required class="form-input" value="@Model.editSong.artistId">
+                                <label for="explicit" style="display: inline-block;">Explicit:</label>
+                                <label class="custom-checkbox" style="display: inline-block;">
+                                    <input type="checkbox" id="explicit" name="Explicit" value="true" @(Model.editSong.Explicit==true ? "checked" : "")/>
+                                    <span class="checkmark"></span>
+                                </label>
                             </div>
                             <div>
-                                <input type="hidden" id="artist" name="Song" required class="form-input" value="@Model.editSong.songId">
+                                <input type="hidden" id="artist" name="ArtistId" required class="form-input" value="@Model.editSong.artistId">
+                            </div>
+                            <div>
+                                <input type="hidden" id="song" name="SongId" required class="form-input" value="@Model.editSong.songId">
                             </div>
                         </div>
                         @if (Model.successMessage.Length > 0)

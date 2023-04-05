@@ -41,6 +41,7 @@ namespace CoogMusic.Pages.Songs
                                         editSong.artistId = reader.GetInt32("artist_id");
                                         editSong.title = reader.GetString("title");
                                         editSong.genre = reader.GetString("genre");
+                                        editSong.Explicit = reader.GetBoolean("explicit");
                                         editSong.CreateDate = reader.GetDateTime("upload_date").ToString();
                                         //Add how to get the BLOB to mp3 file here
                                     }
@@ -74,8 +75,9 @@ namespace CoogMusic.Pages.Songs
             //    await songInfo.songFile.CopyToAsync(memoryStream);
             //    songData = memoryStream.ToArray();
             //}
-            editSong.artistId = int.Parse(Request.Form["Artist"]);
-            editSong.songId = int.Parse(Request.Form["Song"]);
+            editSong.artistId = int.Parse(Request.Form["ArtistId"]);
+            editSong.songId = int.Parse(Request.Form["SongId"]);
+            editSong.Explicit = Request.Form["Explicit"] == "true";
             editSong.title = Request.Form["Title"];
             editSong.genre = Request.Form["Genre"];
             try
@@ -85,7 +87,7 @@ namespace CoogMusic.Pages.Songs
                 {
                     await connection.OpenAsync();
                     MySqlTransaction mySqlTransaction = connection.BeginTransaction();
-                    String sql = "UPDATE song SET title=@Title, genre=@Genre WHERE id=@songId AND artist_id=@ArtistId;";
+                    String sql = "UPDATE song SET title=@Title, genre=@Genre, explicit=@Explicit WHERE id=@songId AND artist_id=@ArtistId;";
                     // Add a way to know if the user owns the song (artistId=@ArtistId)
                     using (MySqlCommand command = new MySqlCommand(sql, connection))
                     {
@@ -95,6 +97,7 @@ namespace CoogMusic.Pages.Songs
                         command.Parameters.AddWithValue("@ArtistId", editSong.artistId);
                         command.Parameters.AddWithValue("@Title", editSong.title);
                         command.Parameters.AddWithValue("@Genre", editSong.genre);
+                        command.Parameters.AddWithValue("@Explicit", editSong.Explicit);
                         int affectedRows = await command.ExecuteNonQueryAsync();
                         if (affectedRows > 0)
                         {
@@ -110,6 +113,7 @@ namespace CoogMusic.Pages.Songs
             }
             catch (Exception ex)
             {
+                errorMessage = "We experienced an error while adding to the database";
                 Console.WriteLine("Error updating song in database: " + ex.Message);
             }
         }
