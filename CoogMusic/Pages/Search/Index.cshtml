@@ -39,7 +39,7 @@
                         <tr>
                             <td>@item.title</td>
                             <td>@item.genre</td>
-                            <td>@item.Duration</td>
+                            <td>@(item.Duration?.ToString(@"mm\:ss") ?? "")</td>
                             @if (item.Explicit == true)
                             {
                                 <td>Yes</td>
