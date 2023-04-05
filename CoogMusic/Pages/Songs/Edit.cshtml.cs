@@ -37,11 +37,11 @@ namespace CoogMusic.Pages.Songs
                                 {
                                     if (reader.Read())
                                     {
-                                        editSong.songId = reader.GetInt32(0); 
-                                        editSong.artistId = reader.GetInt32(1);
-                                        editSong.title = reader.GetString(2);
-                                        editSong.genre = reader.GetString(3);
-                                        editSong.CreateDate = reader.GetDateTime(6).ToString();
+                                        editSong.songId = reader.GetInt32("id"); 
+                                        editSong.artistId = reader.GetInt32("artist_id");
+                                        editSong.title = reader.GetString("title");
+                                        editSong.genre = reader.GetString("genre");
+                                        editSong.CreateDate = reader.GetDateTime("upload_date").ToString();
                                         //Add how to get the BLOB to mp3 file here
                                     }
                                 }
