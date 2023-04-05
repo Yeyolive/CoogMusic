@@ -31,6 +31,8 @@ public class SongView
     public String? artist;
     public String? genre;
     public String? title;
+    public Boolean? Explicit;
+    public TimeSpan? Duration;
     public Boolean? deleted;
     public byte[]? trackBytes;
 }
