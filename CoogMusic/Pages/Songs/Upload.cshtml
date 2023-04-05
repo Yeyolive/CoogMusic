@@ -25,7 +25,7 @@
                         <label for="title">Title:</label>
                         <input type="text" id="title" name="Title" required class="form-input" value="@Model.songInfo.title">
                     </div>
-
+                    <input type="hidden" id="duration" name="Duration">
                     <div>
                         @{
                             var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
@@ -40,23 +40,31 @@
                     <div>
                         <label for="genre">Genre:</label>
                         @*<input type="text" id="genre" name="Genre" required class="form-input" value="@Model.songInfo.genre">*@
-                    <select id="genre" name="genre" required class="form-input" value="@Model.songInfo.genre">
-                        <option value="">Choose an option</option>
-                        <option value="Rock">Rock</option>
-                        <option value="Pop">Pop</option>
-                        <option value="Hip-Hop">Hip-Hop</option>
-                        <option value="Jazz">Jazz</option>
-                        <option value="Classical">Classical</option>
-                        <option value="Corrido">Corrido</option>
-                        <option value="Electronic">Electronic</option>
-                        <option value="DubStep">DubStep</option>
-                        <option value="Other">Other</option>
-                    </select>
+                        <select id="genre" name="genre" required class="form-input" value="@Model.songInfo.genre">
+                            <option value="">Choose an option</option>
+                            <option value="Rock">Rock</option>
+                            <option value="Pop">Pop</option>
+                            <option value="Hip-Hop">Hip-Hop</option>
+                            <option value="Jazz">Jazz</option>
+                            <option value="Classical">Classical</option>
+                            <option value="Corrido">Corrido</option>
+                            <option value="Electronic">Electronic</option>
+                            <option value="DubStep">DubStep</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="explicit" style="display: inline-block;">Explicit:</label>
+                        <label class="custom-checkbox" style="display: inline-block;">
+                            <input type="checkbox" id="explicit" name="Explicit" />
+                            <span class="checkmark"></span>
+                        </label>
                     </div>
 
                     <div>
                         <label for="file">Select file:</label>
-                        <input type="file" id="file" name="songFile" accept="audio/*" required class="form-file" value="@Model.songInfo.songFile">
+                        <input type="file" id="file" name="songFile" accept="audio/*" required class="form-file" value="@Model.songInfo.songFile" onchange="getDuration(this)">
+                        <audio id="audioElement" style="display:none"></audio>
                     </div>
                 </div>
                 @if (Model.successMessage.Length > 0)
@@ -80,3 +88,16 @@ else
 {
     <p>You must log in to access this page.</p>
 }
+
+<script>
+    function getDuration(input) {
+    const audioElement = document.getElementById('audioElement');
+    const file = input.files[0];
+    audioElement.src = URL.createObjectURL(file);
+
+    audioElement.onloadedmetadata = function() {
+      const duration = audioElement.duration;
+      document.getElementById('duration').value = duration;
+    };
+    }
+</script>
