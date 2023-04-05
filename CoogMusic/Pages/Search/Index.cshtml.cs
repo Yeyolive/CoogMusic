@@ -32,14 +32,17 @@ namespace CoogMusic.Pages.Search
                             while (reader.Read())
                             {
                                 SongView songInfo = new SongView();
-                                songInfo.songId = reader.GetInt32(0);
-                                songInfo.artistId = reader.GetInt32(1);
-                                songInfo.title = reader.GetString(2);
-                                songInfo.genre = reader.GetString(3);
+                                songInfo.songId = reader.GetInt32("id");
+                                songInfo.artistId = reader.GetInt32("artist_id");
+                                songInfo.title = reader.GetString("title");
+                                songInfo.genre = reader.GetString("genre");
                                 songInfo.trackBytes = (byte[])reader["track"];
-                                songInfo.CreateDate = reader.GetDateTime(6).ToString("MM/dd/yyyy");
-                                songInfo.deleted = reader.GetBoolean(7);
-                                songInfo.artistName = reader.GetString(8);
+                                songInfo.CreateDate = reader.GetDateTime("upload_date").ToString("MM/dd/yyyy");
+                                songInfo.deleted = reader.GetBoolean("deleted");
+                                songInfo.artistName = reader.GetString("name");
+                                songInfo.Explicit = reader.GetBoolean("explicit");
+                                songInfo.Duration = TimeSpan.Parse(reader.GetString("duration"));
+
                                 listSongs.Add(songInfo);
                             }
                         }
