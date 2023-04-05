@@ -25,9 +25,9 @@
                 <tr>
                     <th class="empty-header"></th>
                     <th class="table-header">Title</th>
+                    <th class="table-header">Artist</th>
                     <th class="table-header">Genre</th>
                     <th class="table-header">Duration</th>
-                    @*<th class="table-header">Explicit</th>*@
                     <th class="table-header">Create Date</th>
                     <th class="table-header">Action</th>
                 </tr>
@@ -46,6 +46,7 @@
                                 }
                             </td>
                             <td>@item.title</td>
+                            <td>@item.artistName</td>
                             <td>@item.genre</td>
                             <td>@(item.Duration?.ToString(@"mm\:ss") ?? "")</td>
                             <td>@item.CreateDate</td>
