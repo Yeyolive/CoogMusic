@@ -16,12 +16,19 @@ namespace CoogMusic.Pages.Songs
 {
     public class IndexModel : PageModel
     {
+        private readonly IConfiguration _configuration;
+
+        public IndexModel(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+
         public List<SongInfo> listSongs = new List<SongInfo>();
 
         public void OnGet() {
             try
             {
-                String connectionStr = "Server=coogmusic.mysql.database.azure.com;User ID=qalksktvpv;Password=coogmusic1!;Database=coogmusicdb";
+                String connectionStr = _configuration.GetConnectionString("DefaultConnection");
                 using (MySqlConnection connection = new MySqlConnection(connectionStr))
                 {
                     connection.Open();

@@ -1,5 +1,7 @@
 ﻿@page
 @using MySql.Data.MySqlClient;
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
 @{
     try
     {
@@ -7,7 +9,7 @@
         {
             if (int.TryParse(Request.Query["id"], out int songId))
             {
-                String connectionStr = "Server=coogmusic.mysql.database.azure.com;User ID=qalksktvpv;Password=coogmusic1!;Database=coogmusicdb";
+                String connectionStr = Configuration.GetConnectionString("DefaultConnection");
                 using (MySqlConnection connection = new MySqlConnection(connectionStr))
                 {
                     await connection.OpenAsync();
@@ -20,16 +22,16 @@
                         command.Parameters.AddWithValue("@SongId", songId);
 
                         int affectedRows = await command.ExecuteNonQueryAsync();
-                        
+
                         mySqlTransaction.Commit();
                     }
                 }
             }
         }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine("Error updating boolean on song in database: " + ex.Message);
-        }
-        Response.Redirect("/Songs/Index");
     }
+    catch (Exception ex)
+    {
+        Console.WriteLine("Error updating boolean on song in database: " + ex.Message);
+    }
+    Response.Redirect("/Songs/Index");
+}

@@ -12,6 +12,13 @@ namespace CoogMusic.Pages.Songs
 {
     public class EditModel : PageModel
     {
+        private readonly IConfiguration _configuration;
+
+        public EditModel(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+
         public SongInfo editSong = new SongInfo();
         public String errorMessage = "";
         public String successMessage = "";
@@ -24,7 +31,7 @@ namespace CoogMusic.Pages.Songs
                 {
                     try
                     {
-                        String connectionStr = "Server=coogmusic.mysql.database.azure.com;User ID=qalksktvpv;Password=coogmusic1!;Database=coogmusicdb";
+                        String connectionStr = _configuration.GetConnectionString("DefaultConnection");
                         using (MySqlConnection connection = new MySqlConnection(connectionStr))
                         {
                             connection.Open();
@@ -82,7 +89,7 @@ namespace CoogMusic.Pages.Songs
             editSong.genre = Request.Form["Genre"];
             try
             {
-                String connectionStr = "Server=coogmusic.mysql.database.azure.com;User ID=qalksktvpv;Password=coogmusic1!;Database=coogmusicdb";
+                String connectionStr = _configuration.GetConnectionString("DefaultConnection");
                 using (MySqlConnection connection = new MySqlConnection(connectionStr))
                 {
                     await connection.OpenAsync();

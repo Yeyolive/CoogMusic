@@ -11,14 +11,22 @@ namespace CoogMusic.Pages.Search
 {
     public class IndexModel : PageModel
     {
+        private readonly IConfiguration _configuration;
+
+        public IndexModel(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+
         public List<SongView> listSongs = new List<SongView>();
         public bool SearchPerformed { get; set; } = false;
+
         public void OnPost()
         {
             String? searched = Request.Form["Title"];
             try
             {
-                String connectionStr = "Server=coogmusic.mysql.database.azure.com;User ID=qalksktvpv;Password=coogmusic1!;Database=coogmusicdb";
+                String connectionStr = _configuration.GetConnectionString("DefaultConnection");
                 using (MySqlConnection connection = new MySqlConnection(connectionStr))
                 {
                     connection.Open(); 
@@ -60,7 +68,7 @@ namespace CoogMusic.Pages.Search
         {
             // Retrieve the BLOB data for the song with the specified ID
             byte[] songData;
-            String connectionStr = "Server=coogmusic.mysql.database.azure.com;User ID=qalksktvpv;Password=coogmusic1!;Database=coogmusicdb";
+            String connectionStr = _configuration.GetConnectionString("DefaultConnection");
             using (MySqlConnection connection = new MySqlConnection(connectionStr))
             {
                 connection.Open();
