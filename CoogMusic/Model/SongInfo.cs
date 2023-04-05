@@ -15,6 +15,8 @@ public class SongInfo
     public String? genre;
     public String? title;
     public Boolean? deleted;
+    public Boolean? Explicit;
+    public TimeSpan? Duration;
     public IFormFile? songFile;
 }
 
