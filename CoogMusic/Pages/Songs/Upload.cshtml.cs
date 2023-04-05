@@ -32,7 +32,7 @@ namespace CoogMusic.Pages.Songs
             songInfo.title = Request.Form["Title"];
             songInfo.artistId = await _databaseHelper.GetArtistIdByUserId(int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)));
             songInfo.genre = Request.Form["Genre"];
-            songInfo.Explicit = bool.TryParse(Request.Form["Explicit"], out bool isExplicit) && isExplicit;
+            songInfo.Explicit = Request.Form["Explicit"] == "true";
             songInfo.songFile = Request.Form.Files["songfile"];
             songInfo.Duration = TimeSpan.FromSeconds(Convert.ToDouble(Request.Form["Duration"]));
             byte[] songData;
@@ -49,7 +49,7 @@ namespace CoogMusic.Pages.Songs
                 {
                     await connection.OpenAsync();
                     MySqlTransaction mySqlTransaction = connection.BeginTransaction();
-                    String sql = "INSERT INTO song (artist_id, title, genre, upload_date, explicit, duration, track) VALUES (@ArtistId, @Title, @Genre, @UploadDate,@Explicit, @Duration, @Track);";
+                    String sql = "INSERT INTO song (artist_id, title, genre, upload_date, explicit, duration, track) VALUES (@ArtistId, @Title, @Genre, @UploadDate, @Explicit, @Duration, @Track);";
                     using (MySqlCommand command = new MySqlCommand(sql, connection))
                     {
                         command.Transaction = mySqlTransaction;
