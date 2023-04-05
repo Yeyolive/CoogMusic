@@ -42,7 +42,7 @@ namespace CoogMusic.Pages.Songs
                                 songInfo.genre = reader.GetString("genre");
                                 songInfo.CreateDate = reader.GetDateTime("upload_date").ToString("MM/dd/yyyy");
                                 songInfo.deleted = reader.GetBoolean("deleted");
-                                songInfo.Duration = TimeSpan.Parse(reader.GetString("duration")); ;
+                                songInfo.Duration = TimeSpan.Parse(reader.GetString("duration")); 
                                 songInfo.Explicit = reader.GetBoolean("explicit");
 
                                 listSongs.Add(songInfo);
