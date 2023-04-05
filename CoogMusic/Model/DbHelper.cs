@@ -126,7 +126,7 @@ namespace CoogMusic.Pages
             using (MySqlConnection conn = new MySqlConnection(connectionString))
             {
                 await conn.OpenAsync();
-                String sql = "SELECT * FROM login AS l, users AS u WHERE l.email=u.email AND l.email=@Email AND l.passwrd=@Password";
+                String sql = "SELECT * FROM login AS l, users AS u WHERE l.email=u.email AND l.email=@Email AND BINARY l.passwrd=@Password";
                 using (MySqlCommand cmd = new MySqlCommand(sql, conn))
                 {
                     cmd.Parameters.AddWithValue("@Email", email);
