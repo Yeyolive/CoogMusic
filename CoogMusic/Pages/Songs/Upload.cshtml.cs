@@ -47,7 +47,6 @@ namespace CoogMusic.Pages.Songs
             // Input data into database
             try
             {
-                String connectionStr = "Server=coogmusic.mysql.database.azure.com;User ID=qalksktvpv;Password=coogmusic1!;Database=coogmusicdb";
                 using (MySqlConnection connection = new MySqlConnection(connectionStr))
                 {
                     await connection.OpenAsync();
