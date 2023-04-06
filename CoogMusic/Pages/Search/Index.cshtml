@@ -27,7 +27,7 @@
                     <th class="table-header">Artist</th>
                     <th class="table-header">Genre</th>
                     <th class="table-header">Duration</th>
-                    <th class="table-header">Upload Date</th>
+                    @*<th class="table-header">Upload Date</th>*@
                     <th class="table-header">Action</th>
                 </tr>
             </thead>
@@ -48,7 +48,7 @@
                             <td>@item.artistName</td>
                             <td>@item.genre</td>
                             <td>@(item.Duration?.ToString(@"mm\:ss") ?? "")</td>
-                            <td>@item.CreateDate</td>
+                            @*<td>@item.CreateDate</td>*@
                             <td>
                                 @if (User.Identity.IsAuthenticated)
                                 {
