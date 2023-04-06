@@ -10,12 +10,18 @@ namespace CoogMusic.Pages
 {
 	public class DbHelper
     {
-        String connectionString = "Server=coogmusic.mysql.database.azure.com;User ID=qalksktvpv;Password=coogmusic1!;Database=coogmusicdb";
+        private readonly string _connectionString;
+
+        public DbHelper(string connectionString)
+        {
+            _connectionString = connectionString;
+        }
+
         public async Task CreateLogin(ApplicationUser user, String password, String userType)
         {
             try
             {
-                using (MySqlConnection conn = new MySqlConnection(connectionString))
+                using (MySqlConnection conn = new MySqlConnection(_connectionString))
                 {
                     await conn.OpenAsync();
 
@@ -41,7 +47,7 @@ namespace CoogMusic.Pages
         {
             try
             {
-                using (MySqlConnection conn = new MySqlConnection(connectionString))
+                using (MySqlConnection conn = new MySqlConnection(_connectionString))
                 {
                     await conn.OpenAsync();
 
@@ -70,7 +76,7 @@ namespace CoogMusic.Pages
         {
             try
             {
-                using (MySqlConnection conn = new MySqlConnection(connectionString))
+                using (MySqlConnection conn = new MySqlConnection(_connectionString))
                 {
                     await conn.OpenAsync();
 
@@ -123,7 +129,7 @@ namespace CoogMusic.Pages
 
         public async Task<ApplicationUser> GetUserByEmailAndPassword(String email, String pwd)
         {
-            using (MySqlConnection conn = new MySqlConnection(connectionString))
+            using (MySqlConnection conn = new MySqlConnection(_connectionString))
             {
                 await conn.OpenAsync();
                 String sql = "SELECT * FROM login AS l, users AS u WHERE l.email=u.email AND l.email=@Email AND BINARY l.passwrd=@Password";
@@ -156,7 +162,7 @@ namespace CoogMusic.Pages
         public async Task<int> GetArtistIdByUserId(int userId)
         {
             int artistId = 0;
-            using (MySqlConnection conn = new MySqlConnection(connectionString))
+            using (MySqlConnection conn = new MySqlConnection(_connectionString))
             {
                 await conn.OpenAsync();
                 String sql = "SELECT artist_id FROM artist AS a, users AS u WHERE u.id=@UserId AND a.user_id=u.id;";
@@ -179,7 +185,7 @@ namespace CoogMusic.Pages
         public async Task<bool> IsUserArtist(int userId)
         {
             int count = 0;
-            using (MySqlConnection conn = new MySqlConnection(connectionString))
+            using (MySqlConnection conn = new MySqlConnection(_connectionString))
             {
                 await conn.OpenAsync();
                 String sql = "SELECT COUNT(*) FROM artist WHERE user_id=@UserId;";
@@ -196,7 +202,7 @@ namespace CoogMusic.Pages
         public async Task<bool> IsUserListener(int userId)
         {
             int count = 0;
-            using (MySqlConnection conn = new MySqlConnection(connectionString))
+            using (MySqlConnection conn = new MySqlConnection(_connectionString))
             {
                 await conn.OpenAsync();
                 String sql = "SELECT COUNT(*) FROM listener WHERE id=@UserId;";
@@ -213,7 +219,7 @@ namespace CoogMusic.Pages
         public async Task<bool> EmailExists(string email)
         {
             int count = 0;
-            using (var conn = new MySqlConnection(connectionString))
+            using (var conn = new MySqlConnection(_connectionString))
             {
                 await conn.OpenAsync();
                 String sql = "SELECT COUNT(*) FROM login WHERE email=@Email;";

@@ -24,7 +24,8 @@ namespace CoogMusic.Pages.Songs
 
         public UploadModel(IConfiguration configuration)
         {
-            _databaseHelper = new DbHelper();
+            string connectionString = configuration.GetConnectionString("DefaultConnection");
+            _databaseHelper = new DbHelper(connectionString);
         }
 
         public async Task OnPostAsync()

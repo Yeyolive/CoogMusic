@@ -14,8 +14,10 @@ namespace CoogMusic.Pages.Account
 
         public RegisterTwoModel(IConfiguration configuration)
         {
-            _databaseHelper = new DbHelper();
+            string connectionString = configuration.GetConnectionString("DefaultConnection");
+            _databaseHelper = new DbHelper(connectionString);
         }
+
         public async Task<IActionResult> OnPostAsync(String Name, String Email, String Mobile, String Password, Char Sex, int Age, String UserType)
         {
             // Check if the email is already registered
