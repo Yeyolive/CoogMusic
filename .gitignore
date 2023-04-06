@@ -5,7 +5,7 @@
 
 # Local-Host
 appsettings.json
-Properties/launchSettings.json
+launchSettings.json
 
 # User-specific files
 *.rsuser
