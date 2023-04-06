@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace CoogMusic.Pages.Account
+namespace CoogMusic.Pages.Accounts
 {
 	public class RegisterTwoModel : PageModel
     {
@@ -40,7 +40,7 @@ namespace CoogMusic.Pages.Account
                 await _databaseHelper.CreateUser(User, UserType);
                 await _databaseHelper.CreateArtistOrListener(User, UserType, ArtistName, RecordLabel);
 
-                return RedirectToPage("/Account/LoginTwo");
+                return RedirectToPage("/Accounts/LoginTwo");
             }
         }
     }

@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace CoogMusic.Pages.Account
+namespace CoogMusic.Pages.Accounts
 {
 	public class LogOutTwoModel : PageModel
     {

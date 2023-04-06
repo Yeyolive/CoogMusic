@@ -10,7 +10,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 
 
-namespace CoogMusic.Pages.Account
+namespace CoogMusic.Pages.Accounts
 {
 	public class LoginTwoModel : PageModel
     {
