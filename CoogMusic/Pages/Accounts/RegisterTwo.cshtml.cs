@@ -18,7 +18,7 @@ namespace CoogMusic.Pages.Account
             _databaseHelper = new DbHelper(connectionString);
         }
 
-        public async Task<IActionResult> OnPostAsync(String Name, String Email, String Mobile, String Password, Char Sex, int Age, String UserType)
+        public async Task<IActionResult> OnPostAsync(String Name, String Email, String Mobile, String Password, Char Sex, int Age, String UserType, String ArtistName, String RecordLabel)
         {
             // Check if the email is already registered
             bool emailExists = await _databaseHelper.EmailExists(Email);
@@ -38,7 +38,7 @@ namespace CoogMusic.Pages.Account
 
                 await _databaseHelper.CreateLogin(User, Password, UserType);
                 await _databaseHelper.CreateUser(User, UserType);
-                await _databaseHelper.CreateArtistOrListener(User, UserType);
+                await _databaseHelper.CreateArtistOrListener(User, UserType, ArtistName, RecordLabel);
 
                 return RedirectToPage("/Account/LoginTwo");
             }
