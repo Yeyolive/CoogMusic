@@ -25,11 +25,9 @@
 
   <ItemGroup>
     <Folder Include="Pages\Albums\" />
-    <Folder Include="Pages\Account\" />
   </ItemGroup>
 
   <ItemGroup>
     <None Remove="Pages\Albums\" />
-    <None Remove="Pages\Account\" />
   </ItemGroup>
 </Project>
