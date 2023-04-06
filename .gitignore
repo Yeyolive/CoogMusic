@@ -4,7 +4,8 @@
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
 # Local-Host
-
+appsettings.json
+Properties/launchSettings.json
 
 # User-specific files
 *.rsuser
