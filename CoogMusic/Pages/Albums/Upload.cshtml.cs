@@ -14,6 +14,7 @@ namespace CoogMusic.Pages.Albums
     {
         public String errorMessage = "";
         public String successMessage = "";
+        public AlbumInfo albumInfo = new AlbumInfo();
 
         private readonly IConfiguration _configuration;
 
@@ -23,7 +24,7 @@ namespace CoogMusic.Pages.Albums
         }
 
         // Insert Album into database
-        public async Task OnPostAsync(int artistId, string albumTitle, string songTitle, string genre, IFormFile albumArt)
+        public async Task OnPostAsync(int artistId, string albumTitle, string albumDesc, string genre, IFormFile albumArt)
         {
             String connStr = _configuration.GetConnectionString("DefaultConnection");
 
@@ -44,12 +45,14 @@ namespace CoogMusic.Pages.Albums
 
                     insertAlbumCommand.Parameters.AddWithValue("@ArtistId", artistId);
                     insertAlbumCommand.Parameters.AddWithValue("@Title", albumTitle);
+                    insertAlbumCommand.Parameters.AddWithValue("@Description", albumDesc);
+                    insertAlbumCommand.Parameters.Add("@Art", MySqlDbType.Blob).Value = albumArt;
 
                     int affectedRows = await insertAlbumCommand.ExecuteNonQueryAsync();
                     if (affectedRows > 0)
                     {
-                        successMessage = "New Song Added Correctly";
-                        Response.Redirect("/Songs/");
+                        successMessage = "New Album Added Correctly";
+                        Response.Redirect("/Albums/");
                     }
                     else
                     {

@@ -14,6 +14,7 @@
             <table class="table">
                 <thead>
                     <tr>
+                        <th class="table-header">Cover</th>
                         <th class="table-header">Title</th>
                         <th class="table-header">Genre</th>
                         <th class="table-header">Create Date</th>
@@ -26,6 +27,7 @@
                         @if (@item.deleted != true)
                         {
                             <tr>
+                                <td>@item.art</td>
                                 <td>@item.Title</td>
                                 <td>@item.SongCount</td>
                                 <td>@item.Duration</td>

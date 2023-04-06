@@ -10,10 +10,25 @@ namespace CoogMusic.Pages.Albums
 
 	public class IndexModel : PageModel
     {
+        private readonly IConfiguration _configuration;
+
+        public IndexModel(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+
         public List<AlbumInfo> albumInfo = new List<AlbumInfo>();
 
         public void OnGet()
         {
+            try
+            {
+                
+            }
+            catch (Exception ex)
+            {
+
+            }
         }
     }
 }
