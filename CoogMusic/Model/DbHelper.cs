@@ -72,7 +72,7 @@ namespace CoogMusic.Pages
             }
         }
 
-        public async Task CreateArtistOrListener(ApplicationUser user, String userType)
+        public async Task CreateArtistOrListener(ApplicationUser user, String userType, String ArtistName, String RecordLabel)
         {
             try
             {
@@ -102,8 +102,8 @@ namespace CoogMusic.Pages
                         using (MySqlCommand cmd = new MySqlCommand(sql, conn))
                         {
                             cmd.Parameters.AddWithValue("@UserId", int.Parse(user.DbUserId));
-                            cmd.Parameters.AddWithValue("@Name", user.Name);
-                            cmd.Parameters.AddWithValue("@RecordLabel", user.recordLabel);
+                            cmd.Parameters.AddWithValue("@Name", ArtistName);
+                            cmd.Parameters.AddWithValue("@RecordLabel", RecordLabel);
                             int affectedRows = await cmd.ExecuteNonQueryAsync();
                         }
                     }

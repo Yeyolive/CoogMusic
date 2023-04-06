@@ -21,10 +21,12 @@ namespace CoogMusic.Pages.Songs
         public SongInfo songInfo = new SongInfo();
 
         private readonly DbHelper _databaseHelper;
+        private readonly string connectionStr;
 
         public UploadModel(IConfiguration configuration)
         {
             string connectionString = configuration.GetConnectionString("DefaultConnection");
+            connectionStr = connectionString;
             _databaseHelper = new DbHelper(connectionString);
         }
 

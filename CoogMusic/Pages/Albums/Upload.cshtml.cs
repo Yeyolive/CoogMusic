@@ -14,10 +14,19 @@ namespace CoogMusic.Pages.Albums
     {
         public String errorMessage = "";
         public String successMessage = "";
+
+        private readonly IConfiguration _configuration;
+
+        public UploadModel(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+
         // Insert Album into database
         public async Task OnPostAsync(int artistId, string albumTitle, string songTitle, string genre, IFormFile albumArt)
         {
-            String connStr = "Server=coogmusic.mysql.database.azure.com;User ID=qalksktvpv;Password=coogmusic1!;Database=coogmusicdb";
+            String connStr = _configuration.GetConnectionString("DefaultConnection");
+
             using (MySqlConnection conn = new MySqlConnection(connStr))
             {
                 await conn.OpenAsync();
