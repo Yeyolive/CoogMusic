@@ -34,8 +34,6 @@
             <tbody>
                 @foreach (var item in Model.listSongs)
                     {
-                    @if (@item.deleted != true)
-                        {
                         <tr>
                             <td class="explicit-cell">
                                 @if (item.Explicit == true)
@@ -63,7 +61,6 @@
                                 }
                             </td>
                         </tr>
-                        }
                     }
             </tbody>
         </table>

@@ -51,7 +51,10 @@ namespace CoogMusic.Pages.Search
                                 songInfo.Explicit = reader.GetBoolean("explicit");
                                 songInfo.Duration = TimeSpan.Parse(reader.GetString("duration"));
 
-                                listSongs.Add(songInfo);
+                                if (songInfo.deleted != true)
+                                {
+                                    listSongs.Add(songInfo);
+                                }
                             }
                         }
                     }
