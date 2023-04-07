@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Configuration;
 using MySql.Data.MySqlClient;
 using static Org.BouncyCastle.Math.EC.ECCurve;
-using System.Data.SqlClient;
 using Microsoft.AspNetCore.Authorization;
 using System.Data;
 using System.Security.Claims;
@@ -25,7 +24,8 @@ namespace CoogMusic.Pages.Songs
 
         public List<SongInfo> listSongs = new List<SongInfo>();
 
-        public void OnGet() {
+        public void OnGet()
+        {
             try
             {
                 String connectionStr = _configuration.GetConnectionString("DefaultConnection");
