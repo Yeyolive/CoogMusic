@@ -56,11 +56,20 @@
                     <div>
                         <label for="explicit" style="display: inline-block;">Explicit:</label>
                         <label class="custom-checkbox" style="display: inline-block;">
-                            <input type="checkbox" id="explicit" name="Explicit" value="true"/>
+                            <input type="checkbox" id="explicit" name="Explicit" value="true" />
                             <span class="checkmark"></span>
                         </label>
                     </div>
-
+                    <div>
+                        <label for="album-name">Album:</label>
+                        <select id="album" name="AlbumId" required class="form-input" value="">
+                            <option value="" selected>Choose an Album</option>
+                            @foreach (var item in Model.listAlbums)
+                            {
+                                <option value="@item.Id">@item.Title</option>
+                            }
+                        </select>
+                    </div>
                     <div>
                         <label for="file">Select file:</label>
                         <input type="file" id="file" name="songFile" accept="audio/*" required class="form-file" value="@Model.songInfo.songFile" onchange="getDuration(this)">

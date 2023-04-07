@@ -30,6 +30,14 @@ namespace CoogMusic.Pages.Songs
             _databaseHelper = new DbHelper(connectionString);
         }
 
+        public List<AlbumInfo> listAlbums = new List<AlbumInfo>();
+
+        public async void OnGetAsync()
+        {
+            songInfo.artistId = await _databaseHelper.GetArtistIdByUserId(int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)));
+
+        }
+
         public async Task OnPostAsync()
         {
             songInfo.title = Request.Form["Title"];
