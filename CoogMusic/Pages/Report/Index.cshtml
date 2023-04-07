@@ -8,44 +8,34 @@
 Contains a way for the User (Listner and Artist) to create reports (profile) 
 Artist Report: View ratings of Artist (themselves) || List of each of song w/ ratings
 Listener Report: Hours of music streamed || Top 3 songs and Top 3 artists
- 
-<div>
-    <h1 class="text-center">Rating Reports</h1>
-    <p id="title">Song name</p>
-    <input type="text"></input>
-    <button>Add another song </button>
-    <p>OR</p>
-    <p id="title">Artist name</p>
-    <input type="text"></input>
-    <input type="checkbox"> check to include all artist's song rating.
-    <button>Add another artist </button>
-    <br> <br>
-    <button>Submit</button>
-
-    <h1 class="text-center">Streaming Reports</h1>
-    <br> <br>
-    <button>Generate my streaming report</button>
-
-
-
-</div>*@
+*@
 <div>
     <h1 class="text-center">Artist Reports</h1>
 
     <form class="form-container">
+        <div>
         <label for="song-name">Song name:</label>
-        <input type="text" id="song-name" name="song-name">
-      
+        @*<input type="text" id="song-name" name="song-name">*@
+        <select id="song" name="SongId" required class="form-input" value="">
+            <option value="">Choose a Song</option>
+            @foreach (var item in Model.listSongs)
+                {
+                    if (item.deleted != true)
+                    {
+                        <option value="@item.songId" selected>@item.title</option>
+                    }
+                }
+        </select>
+        </div>
+            <hr>
 
-        <hr>
+            <label for="album-name">Album name:</label>
+            <input type="text" id="album-name" name="album-name">
 
-        <label for="album-name">Album name:</label>
-        <input type="text" id="album-name" name="album-name">
-   
 
-        <hr>
+            <hr>
 
-        <button type="submit" id="submit-btn">Submit</button>
+            <button type="submit" id="submit-btn">Submit</button>
     </form>
 
     <h1 class="text-center">Total Reports</h1>
