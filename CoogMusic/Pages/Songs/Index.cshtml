@@ -26,8 +26,6 @@
                         <tbody>
                             @foreach (var item in Model.listSongs)
                                 {
-                                @if (@item.deleted != true)
-                                    {
                                     <tr>
                                         <td class="explicit-cell">
                                             @if (item.Explicit == true)
@@ -45,7 +43,6 @@
                                             <a class="btn btn-danger btn-action" href="/Songs/Delete?id=@item.songId">Delete</a>
                                         </td>
                                     </tr>
-                                    }
                                 }
                         </tbody>
                     </table>
