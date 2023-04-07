@@ -69,6 +69,11 @@
                                 <option value="@item.Id">@item.Title</option>
                             }
                         </select>
+                        @if (!Model.listAlbums.Any())
+                        {
+                        <small class="form-text text-muted">You do not have any Albums. Please Publish one then come back!</small>
+
+                        }
                     </div>
                     <div>
                         <label for="file">Select file:</label>
