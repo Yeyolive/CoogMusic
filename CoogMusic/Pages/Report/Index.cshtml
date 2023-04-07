@@ -17,12 +17,12 @@ Listener Report: Hours of music streamed || Top 3 songs and Top 3 artists
         <label for="song-name">Song name:</label>
         @*<input type="text" id="song-name" name="song-name">*@
         <select id="song" name="SongId" required class="form-input" value="">
-            <option value="">Choose a Song</option>
+            <option value="" selected>Choose a Song</option>
             @foreach (var item in Model.listSongs)
                 {
                     if (item.deleted != true)
                     {
-                        <option value="@item.songId" selected>@item.title</option>
+                        <option value="@item.songId">@item.title</option>
                     }
                 }
         </select>
