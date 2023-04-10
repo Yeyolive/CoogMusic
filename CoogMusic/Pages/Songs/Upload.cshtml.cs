@@ -13,7 +13,6 @@ using Google.Protobuf.WellKnownTypes;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Authorization;
 using System.Data;
-using CoogMusic.Model;
 
 namespace CoogMusic.Pages.Songs
 {

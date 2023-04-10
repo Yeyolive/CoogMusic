@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-using CoogMusic.Model;
+using CoogMusic.Pages;
 
 public class SongInfo
 {

@@ -1,8 +1,7 @@
 ﻿using System;
-namespace CoogMusic.Model
+using CoogMusic.Pages;
+
+public class PlaylistInfo
 {
-	public class PlaylistInfo
-	{
-	}
 }
 
