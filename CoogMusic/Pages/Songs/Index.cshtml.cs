@@ -34,7 +34,7 @@ namespace CoogMusic.Pages.Songs
                 {
                     connection.Open();
                     // Change this query for sorting
-                    String sql = "SELECT * FROM song AS s JOIN artist AS a ON s.artist_id=a.artist_id WHERE a.user_id=@UserId ORDER BY s.title";
+                    String sql = "SELECT s.id, a.artist_id, s.title, s.genre, s.upload_date, s.deleted, s.duration, s.explicit FROM song AS s JOIN artist AS a ON s.artist_id=a.artist_id WHERE a.user_id=@UserId ORDER BY s.title";
                     // Change this query to show only songs from the Artist that is logged in
                     using (MySqlCommand command = new MySqlCommand(sql, connection))
                     {
