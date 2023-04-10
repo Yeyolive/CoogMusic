@@ -4,3 +4,14 @@
     ViewData["Title"] = "My Playlists";
 }
 
+@if (User.Identity.IsAuthenticated)
+{
+    <br>
+    <h1>Playlists</h1>
+    <a class="btn btn-primary btn-upload" href="/Playlists/Create">New Playlist</a>
+
+}
+else
+{
+    <p>Please log in to access this page.</p>
+}
