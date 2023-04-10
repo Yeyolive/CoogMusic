@@ -4,3 +4,33 @@
     ViewData["Title"] = "Create Playlist";
 }
 
+@if (User.Identity.IsAuthenticated)
+{
+    <div class="form-container">
+        <h1 class="text-center">New Playlist</h1>
+        <form method="POST">
+            <div class="form-group">
+                <label for="title">Title:</label>
+                <input type="text" id="title" name="Title" required class="form-input">
+            </div>
+            <div class="form-group">
+                <label for="description">Description:</label>
+                <input type="text" id="description" name="Description" class="form-input">
+            </div>
+            @{
+                var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+                if (userIdClaim != null)
+                {
+                    int userId = int.Parse(userIdClaim.Value);
+                    <input type="hidden" id="listener_id" name="ListenerId" required class="form-input" value="@userId">
+                }
+            }
+            <button type="submit" class="btn btn-default">Create Playlist</button>
+            <a class="btn btn-outline-primary" href="/Playlists/" role="button">Cancel</a>
+        </form>
+    </div>
+}
+else
+{
+    <p>You must log in to access this page.</p>
+}
