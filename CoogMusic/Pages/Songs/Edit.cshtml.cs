@@ -36,7 +36,7 @@ namespace CoogMusic.Pages.Songs
                         {
                             connection.Open();
                             MySqlTransaction mySqlTransaction = connection.BeginTransaction();
-                            String sql = "SELECT * FROM song AS S WHERE S.id=@id";
+                            String sql = "SELECT s.id, s.artist_id, s.title, s.genre, s.explicit, s.upload_date FROM song AS S WHERE S.id=@id";
                             using (MySqlCommand command = new MySqlCommand(sql, connection))
                             {
                                 command.Parameters.AddWithValue("@id", songId);
