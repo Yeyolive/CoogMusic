@@ -11,3 +11,9 @@ public class PlaylistInfo
     public Boolean? Deleted;
     public TimeSpan? Duration;
 }
+
+public class PlaylistSongInfo
+{
+    public int PlaylistId { get; set; }
+    public int SongId { get; set; }
+}
