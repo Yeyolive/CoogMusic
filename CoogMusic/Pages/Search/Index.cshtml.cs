@@ -99,54 +99,5 @@ namespace CoogMusic.Pages.Search
             // Return the BLOB data as a file with the correct MIME type
             return File(songData, "audio/mpeg");
         }
-
-        public async Task<IActionResult> OnGetUserPlaylists()
-        {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var connectionString = _configuration.GetConnectionString("DefaultConnection");
-            var playlists = new List<PlaylistView>();
-
-            using (var connection = new MySqlConnection(connectionString))
-            {
-                await connection.OpenAsync();
-                using (var command = new MySqlCommand("SELECT p.id, p.user_id, p.title, p.description FROM playlist AS p WHERE user_id = @UserId", connection))
-                {
-                    command.Parameters.AddWithValue("@UserId", userId);
-                    using (var reader = await command.ExecuteReaderAsync())
-                    {
-                        while (await reader.ReadAsync())
-                        {
-                            var title = reader.GetString("title");
-                            Console.WriteLine($"Title: {title}");
-                            playlists.Add(new PlaylistView
-                            {
-                                Id = reader.GetInt32("id"),
-                                UserId = reader.GetInt32("user_id"),
-                                Title = reader.GetString("title"),
-                                Description = !reader.IsDBNull(reader.GetOrdinal("description")) ? reader.GetString("description") : null,
-                                // Add other fields if needed
-                            });
-                        }
-                    }
-                }
-            }
-            //return new JsonResult(playlists);
-            return Content(JsonConvert.SerializeObject(playlists), "application/json");
-
-        }
-        public class PlaylistView
-        {
-            [JsonProperty("id")]
-            public int Id { get; set; }
-
-            [JsonProperty("userId")]
-            public int UserId { get; set; }
-
-            [JsonProperty("title")]
-            public string Title { get; set; }
-
-            [JsonProperty("description")]
-            public string Description { get; set; }
-        }
     }
 }
