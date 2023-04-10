@@ -47,19 +47,23 @@
                             <td>@item.genre</td>
                             <td>@(item.Duration?.ToString(@"mm\:ss") ?? "")</td>
                             @*<td>@item.CreateDate</td>*@
-                            <td>
-                                @if (User.Identity.IsAuthenticated)
-                                {
-                                    <a class="btn btn-primary btn-action"
-                                       onclick="playSong(&quot;@item.songId&quot;, &quot;@item.title&quot;, &quot;@item.artistName&quot;)">
-                                        Play
-                                    </a>
-                                }
-                                else
-                                {
-                                    <span>Please log in to play music.</span>
-                                }
-                            </td>
+                        <td>
+                            @if (User.Identity.IsAuthenticated)
+                            {
+                                <a class="btn btn-primary btn-action"
+                                   onclick="playSong(&quot;@item.songId&quot;, &quot;@item.title&quot;, &quot;@item.artistName&quot;)">
+                                    <i class="fa-solid fa-play"></i>
+                                </a>
+                                <a class="btn btn-secondary btn-action"
+                                   onclick="addToPlaylist(&quot;@item.songId&quot;)">
+                                    <i class="fa-solid fa-plus"></i>
+                                </a>
+                            }
+                            else
+                            {
+                                <span>Please log in to play music.</span>
+                            }
+                        </td>
                         </tr>
                     }
                 </tbody>
