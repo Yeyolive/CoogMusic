@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using MySql.Data.MySqlClient;
-
+using CoogMusic.Model;
 namespace CoogMusic.Pages.Songs
 {
     public class EditModel : PageModel

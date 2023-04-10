@@ -11,6 +11,9 @@ using Humanizer.Localisation;
 using System.Security.Claims;
 using Google.Protobuf.WellKnownTypes;
 using System.Diagnostics;
+using Microsoft.AspNetCore.Authorization;
+using System.Data;
+using CoogMusic.Model;
 
 namespace CoogMusic.Pages.Songs
 {
@@ -38,6 +41,7 @@ namespace CoogMusic.Pages.Songs
 
         }
 
+        [Authorize(Roles = "Artist")]
         public async Task OnPostAsync()
         {
             songInfo.title = Request.Form["Title"];
