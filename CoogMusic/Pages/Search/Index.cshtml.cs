@@ -30,7 +30,7 @@ namespace CoogMusic.Pages.Search
                 using (MySqlConnection connection = new MySqlConnection(connectionStr))
                 {
                     connection.Open(); 
-                    String sql = "SELECT s.*, a.name FROM song AS s JOIN artist AS a ON s.artist_id=a.artist_id WHERE s.title LIKE @SearchTerm OR a.name LIKE @SearchTerm;";
+                    String sql = "SELECT s.id, s.artist_id, s.title, s.genre, s.track, s.upload_date, s.deleted, s.explicit, s.duration, a.name FROM song AS s JOIN artist AS a ON s.artist_id=a.artist_id WHERE s.title LIKE @SearchTerm OR a.name LIKE @SearchTerm;";
                     using (MySqlCommand command = new MySqlCommand(sql, connection))
                     {
                         command.Parameters.AddWithValue("@SearchTerm", "%" + searched + "%");
