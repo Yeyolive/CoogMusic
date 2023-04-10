@@ -7,19 +7,19 @@
     {
         if (Request.Query.ContainsKey("id"))
         {
-            if (int.TryParse(Request.Query["id"], out int songId))
+            if (int.TryParse(Request.Query["id"], out int playlistId))
             {
                 String connectionStr = Configuration.GetConnectionString("DefaultConnection");
                 using (MySqlConnection connection = new MySqlConnection(connectionStr))
                 {
                     await connection.OpenAsync();
                     MySqlTransaction mySqlTransaction = connection.BeginTransaction();
-                    String sql = "UPDATE song AS s SET deleted=True WHERE s.id=@SongId";
+                    String sql = "UPDATE playlist AS p SET deleted=True WHERE p.id=@PlaylistId";
                     using (MySqlCommand command = new MySqlCommand(sql, connection))
                     {
                         command.Transaction = mySqlTransaction;
 
-                        command.Parameters.AddWithValue("@SongId", songId);
+                        command.Parameters.AddWithValue("@PlaylistId", playlistId);
 
                         int affectedRows = await command.ExecuteNonQueryAsync();
 
@@ -33,5 +33,5 @@
     {
         Console.WriteLine("Error updating boolean on song in database: " + ex.Message);
     }
-    Response.Redirect("/Songs/Index");
+    Response.Redirect("/PLaylists/Index");
 }
