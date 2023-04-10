@@ -26,23 +26,29 @@ namespace CoogMusic.Pages.Search
 
         public bool Success { get; set; }
 
-        public async Task<IActionResult> OnPostAsync()
-        {
-            try
-            {
-                // ...
-                // The rest of the method implementation
-                // ...
+        //public async Task<IActionResult> OnPostAddSongToPlaylist(PlaylistInfo viewModel)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return BadRequest();
+        //    }
 
-                Success = true;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                Success = false;
-            }
+        //    var connectionString = _configuration.GetConnectionString("DefaultConnection");
 
-            return Page();
-        }
+        //    using (var connection = new MySqlConnection(connectionString))
+        //    {
+        //        var query = "INSERT INTO playlist_songs (playlist_id, song_id, song_title, artist_name) VALUES (@PlaylistId, @SongId, @SongTitle, @ArtistName)";
+        //        var affectedRows = await connection.ExecuteAsync(query, viewModel);
+
+        //        if (affectedRows > 0)
+        //        {
+        //            return Ok();
+        //        }
+        //        else
+        //        {
+        //            return StatusCode(500);
+        //        }
+        //    }
+        //}
     }
 }
