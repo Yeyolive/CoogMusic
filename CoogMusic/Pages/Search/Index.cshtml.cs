@@ -79,6 +79,7 @@ namespace CoogMusic.Pages.Search
             using (MySqlConnection connection = new MySqlConnection(connectionStr))
             {
                 connection.Open();
+
                 String sql = "SELECT track FROM song WHERE id = @Id";
                 using (MySqlCommand command = new MySqlCommand(sql, connection))
                 {
@@ -98,6 +99,103 @@ namespace CoogMusic.Pages.Search
             }
             // Return the BLOB data as a file with the correct MIME type
             return File(songData, "audio/mpeg");
+        }
+
+        [BindProperty(SupportsGet = true)]
+        public int SongId { get; set; }
+
+        [BindProperty(SupportsGet = true)]
+        public int PlaylistId { get; set; }
+
+        public bool Success { get; set; }
+
+        [BindProperty]
+        public PlaylistSongInfo PlaylistSongData { get; set; }
+        public async Task<IActionResult> OnGetUserPlaylists()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var connectionString = _configuration.GetConnectionString("DefaultConnection");
+            var playlists = new List<PlaylistView>();
+
+            using (var connection = new MySqlConnection(connectionString))
+            {
+                await connection.OpenAsync();
+                using (var command = new MySqlCommand("SELECT p.id, p.user_id, p.title, p.description FROM playlist AS p WHERE user_id = @UserId", connection))
+                {
+                    command.Parameters.AddWithValue("@UserId", userId);
+                    using (var reader = await command.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            var title = reader.GetString("title");
+                            Console.WriteLine($"Title: {title}");
+                            playlists.Add(new PlaylistView
+                            {
+                                Id = reader.GetInt32("id"),
+                                UserId = reader.GetInt32("user_id"),
+                                Title = reader.GetString("title"),
+                                Description = !reader.IsDBNull(reader.GetOrdinal("description")) ? reader.GetString("description") : null,
+                                // Add other fields if needed
+                            });
+                        }
+                    }
+                }
+            }
+            //return new JsonResult(playlists);
+            return Content(JsonConvert.SerializeObject(playlists), "application/json");
+        }
+
+        public async Task<IActionResult> OnPostAddToPlaylistAsync()
+        {
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
+                string errorMessage = string.Join(", ", errors);
+                return new JsonResult(new { success = false, message = "Invalid model state: " + errorMessage });
+            }
+
+            String connectionString = _configuration.GetConnectionString("DefaultConnection");
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                await connection.OpenAsync();
+                MySqlTransaction mySqlTransaction = connection.BeginTransaction();
+
+                String sql = "INSERT INTO playlist_song (playlist_id, song_id) VALUES (@PlaylistId, @SongId);";
+                using (MySqlCommand command = new MySqlCommand(sql, connection))
+                {
+                    command.Transaction = mySqlTransaction;
+
+                    command.Parameters.AddWithValue("@PlaylistId", PlaylistSongData.PlaylistId);
+                    command.Parameters.AddWithValue("@SongId", PlaylistSongData.SongId);
+                    int affectedRows = await command.ExecuteNonQueryAsync();
+
+                    if (affectedRows > 0)
+                    {
+                        mySqlTransaction.Commit();
+                        return new JsonResult(new { success = true });
+                    }
+                    else
+                    {
+                        return new JsonResult(new { success = false });
+                    }
+                }
+            }
+        }
+
+        public class PlaylistView
+        {
+            [JsonProperty("id")]
+            public int Id { get; set; }
+
+            [JsonProperty("userId")]
+            public int UserId { get; set; }
+
+            [JsonProperty("title")]
+            public string Title { get; set; }
+
+            [JsonProperty("description")]
+            public string Description { get; set; }
         }
     }
 }
