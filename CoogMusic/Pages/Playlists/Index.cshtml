@@ -9,7 +9,37 @@
     <br>
     <h1>Playlists</h1>
     <a class="btn btn-primary btn-upload" href="/Playlists/Create">New Playlist</a>
-
+    @if (Model.UserPlaylists.Any())
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th class="table-header">Title</th>
+                    <th class="table-header">Description</th>
+                    @*<th class="table-header">Duration</th>*@
+                    <th class="table-header">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.UserPlaylists)
+                {
+                    <tr>
+                        <td>@item.Title</td>
+                        <td>@item.Description</td>
+                        @*<td>@(item.Duration?.ToString(@"mm\:ss") ?? "")</td>*@
+                        <td>
+                            <a class="btn btn-primary btn-action" href="/Playlists/Edit?id=@item.Id">Edit</a>
+                            <a class="btn btn-danger btn-action" href="/Playlists/Delete?id=@item.Id">Delete</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>You do not have any playlists. Please create one!</p>
+    }
 }
 else
 {
