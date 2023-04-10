@@ -6,6 +6,7 @@ using CoogMusic.Pages.Songs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using MySql.Data.MySqlClient;
+using CoogMusic.Model;
 
 namespace CoogMusic.Pages.Search
 {
