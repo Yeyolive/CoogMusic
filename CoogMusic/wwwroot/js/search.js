@@ -1,4 +1,4 @@
-﻿function addToPlaylist(songId, songTitle, artistName) {
+﻿function addToPlaylist(songId) {
     // Show the modal
     var modal = document.getElementById("playlist-modal");
     modal.style.display = "block";
@@ -9,6 +9,7 @@
             container.innerHTML = '';
             data.forEach(playlist => {
                 console.log('Playlist:', playlist);
+                console.log(songId);
 
                 //var button = document.createElement('button');
                 //button.classList.add('btn', 'btn-primary', 'btn-action');
@@ -23,18 +24,20 @@
                     fetch('/Search?handler=AddToPlaylist', {
                         method: 'POST',
                         headers: {
-                            'Content-Type': 'application/json',
+                            'Content-Type': 'application/x-www-form-urlencoded',
                             'RequestVerificationToken': document.getElementsByName('__RequestVerificationToken')[0].value
                         },
-                        body: JSON.stringify({ playlistId: playlist.id, songId: songId, songTitle: songTitle, artistName: artistName })
+                        body: `PlaylistSongData.PlaylistId=${playlist.id}&PlaylistSongData.SongId=${songId}`
                     })
-                        .then(response => {
-                            if (response.ok) {
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
                                 alert('Song added to the playlist!');
                             } else {
-                                alert('Failed to add the song to the playlist.');
+                                alert('Failed to add the song to the playlist: ' + data.message);
                             }
                         });
+
 
                     // Close the modal
                     modal.style.display = "none";
