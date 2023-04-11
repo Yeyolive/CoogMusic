@@ -24,13 +24,23 @@
                 @foreach (var item in Model.UserPlaylists)
                 {
                     <tr>
-                        <td><a class="playlist-link btn btn-light btn-block" href="/Playlists/PlaylistSongs?id=@item.Id">@item.Title</a></td>
+                        <td>@item.Title</td>
                         <td>@item.Description</td>
                         @*<td>@(item.Duration?.ToString(@"mm\:ss") ?? "")</td>*@
-                        <td>
-                            <a class="btn btn-primary btn-action" href="/Playlists/Edit?id=@item.Id">Edit</a>
-                            <a class="btn btn-danger btn-action" href="/Playlists/Delete?id=@item.Id">Delete</a>
-                        </td>
+                    <td>
+                        <a class="btn btn-secondary btn-action" asp-page="/Playlists/PlaylistSongs" asp-route-playlistId="@item.Id">
+                            <span class="fa-layers fa-fw">
+                                <i class="fas fa-square-full" data-fa-transform="shrink-8 right-4 down-2.7" data-fa-mask="fas fa-bars"></i>
+                                <i class="fas fa-play" data-fa-transform="shrink-8 right-5 down-4"></i>
+                            </span>
+                        </a>
+                        <a class="btn btn-primary btn-action" href="/Playlists/Edit?id=@item.Id">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </a>
+                        <a class="btn btn-danger btn-action" href="/Playlists/Delete?id=@item.Id">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </a>
+                    </td>
                     </tr>
                 }
             </tbody>
