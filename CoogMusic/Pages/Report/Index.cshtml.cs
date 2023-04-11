@@ -15,6 +15,7 @@ namespace CoogMusic.Pages.Report
         }
 
         public List<SongInfo> listSongs = new List<SongInfo>();
+        public List<AlbumInfo> listAlbums = new List<AlbumInfo>();
 
         public void OnGet()
         {
@@ -25,7 +26,7 @@ namespace CoogMusic.Pages.Report
                 {
                     connection.Open();
                     // Change this query for sorting
-                    String sql = "SELECT s.id, s.artist_id, s.title, s.deleted FROM song AS s JOIN artist AS a ON s.artist_id=a.artist_id WHERE a.user_id=@UserId ORDER BY s.title";
+                    String sql = "SELECT s.id, s.artist_id, s.album_id s.title, s.deleted FROM song AS s JOIN artist AS a ON s.artist_id=a.artist_id WHERE a.user_id=@UserId ORDER BY s.title";
                     // Change this query to show only songs from the Artist that is logged in
                     using (MySqlCommand command = new MySqlCommand(sql, connection))
                     {
@@ -40,7 +41,10 @@ namespace CoogMusic.Pages.Report
                                 songInfo.title = reader.GetString("title");
                                 songInfo.deleted = reader.GetBoolean("deleted");
 
+                                AlbumInfo albumInfo = new AlbumInfo();
+                                albumInfo.AlbumId = reader.GetInt32("album_id");
                                 listSongs.Add(songInfo);
+                                listAlbums.Add(albumInfo);
                             }
                         }
                     }

@@ -17,7 +17,7 @@ Listener Report: Hours of music streamed || Top 3 songs and Top 3 artists
         <label for="song-name">Song name:</label>
         @*<input type="text" id="song-name" name="song-name">*@
         <select id="song" name="SongId" required class="form-input" value="">
-            <option value="" selected>Choose a Song</option>
+            <option value="" selected>Choose a Song:</option>
             @foreach (var item in Model.listSongs)
                 {
                     if (item.deleted != true)
@@ -29,21 +29,31 @@ Listener Report: Hours of music streamed || Top 3 songs and Top 3 artists
         </div>
             <hr>
 
+        <div>
+          
+
             <label for="album-name">Album name:</label>
-            <input type="text" id="album-name" name="album-name">
+            @*<input type="text" id="album-name" name="album-name">*@
+            <select id="song" name="AlbumId" required class="form-input" value="">
+                <option value="" selected>Choose a Album:</option>
+                @foreach (var item in Model.listSongs)
+                {
+                    if (item.deleted != true)
+                    {
+                        <option value="@item.songId">@item.title</option>
+                    }
+                }
+            </select>
+
+            </div>
+
+            <div class="text-center">
+                <a class="btn btn-primary btn-action" href="/Report/Listener-Report">Listeners</a>
+                <a class="btn btn-primary btn-action" href="/Report/Mostplayed-Report">Most PLayed</a>
+                <a class="btn btn-primary btn-action" href="/Report/Ratings-Report">Ratings</a>
+            </div>
 
 
-            <hr>
-
-            <button type="submit" id="submit-btn">Submit</button>
     </form>
-
-    <h1 class="text-center">Total Reports</h1>
-
-    <div class="text-center">
-        <a class="btn btn-primary btn-action" href="/Report/Listener-Report">Listeners</a>
-        <a class="btn btn-primary btn-action" href="/Report/Mostplayed-Report">Most PLayed</a>
-        <a class="btn btn-primary btn-action" href="/Report/Ratings-Report">Ratings</a>
-    </div>
 
 </div>
