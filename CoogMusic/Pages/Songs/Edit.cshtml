@@ -30,7 +30,7 @@
                                 <label for="genre">Genre:</label>
                                 <select id="genre" name="genre" required class="form-input" value="@Model.editSong.genre">
                                     <option value="">Choose an option</option>
-                                    @foreach (var genreOption in new List<string> { "Rock", "Pop", "Hip-Hop", "Jazz", "Classical", "Corrido", "Electronic", "DubStep", "Other" })
+                                    @foreach (var genreOption in new List<string> { "Rock", "Pop", "Hip-Hop", "Rap", "Jazz", "Classical", "Corrido", "Electronic", "DubStep", "Other" })
                                     {
                                         if (Model.editSong.genre == genreOption)
                                         {
