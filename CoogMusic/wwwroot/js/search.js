@@ -31,10 +31,21 @@
                     })
                         .then(response => response.json())
                         .then(data => {
+                            var errorMessageElement = document.getElementById("error-message");
+                            var successMessageElement = document.getElementById("success-message");
+
                             if (data.success) {
-                                alert('Song added to the playlist!');
+                                errorMessageElement.innerHTML = '';
+                                errorMessageElement.classList.remove('alert', 'alert-warning', 'alert-dismissible', 'fade', 'show');
+
+                                successMessageElement.innerHTML = '<strong>Song added to the playlist!</strong><button type="button" class="btn-close" data-bs-dismiss="alert"></button>';
+                                successMessageElement.classList.add('alert', 'alert-success', 'alert-dismissible', 'fade', 'show');
                             } else {
-                                alert('Failed to add the song to the playlist: ' + data.message);
+                                errorMessageElement.innerHTML = '<strong>Failed to add the song to the playlist: ' + data.message + '</strong><button type="button" class="btn-close" data-bs-dismiss="alert"></button>';
+                                errorMessageElement.classList.add('alert', 'alert-warning', 'alert-dismissible', 'fade', 'show');
+
+                                successMessageElement.innerHTML = '';
+                                successMessageElement.classList.remove('alert', 'alert-success', 'alert-dismissible', 'fade', 'show');
                             }
                         });
 
