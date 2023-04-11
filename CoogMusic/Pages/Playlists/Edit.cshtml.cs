@@ -9,8 +9,23 @@ namespace CoogMusic.Pages.Playlists
 {
 	public class EditModel : PageModel
     {
-        public void OnGet()
+        private readonly IConfiguration _configuration;
+        public List<SongView> PlaylistSongs { get; set; }
+
+        public EditModel(IConfiguration configuration)
         {
+            _configuration = configuration;
+        }
+
+        [BindProperty(SupportsGet = true)]
+        public int PlaylistId { get; set; }
+
+        public async Task OnGetAsync()
+        {
+            int playlistId = PlaylistId;
+
+            String connectionStr = _configuration.GetConnectionString("DefaultConnection");
+
         }
     }
 }
