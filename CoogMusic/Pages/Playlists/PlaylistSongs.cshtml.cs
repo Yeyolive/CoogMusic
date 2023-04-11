@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using MySql.Data.MySqlClient;
 
 namespace CoogMusic.Pages.Playlists
 {
@@ -17,9 +20,80 @@ namespace CoogMusic.Pages.Playlists
             _configuration = configuration;
         }
 
-        public async Task OnGetAsync(int playlistId)
+        [BindProperty(SupportsGet = true)]
+        public int PlaylistId { get; set; }
+
+        public async Task OnGetAsync()
         {
-            // ... add code to retrieve the songs in the specified playlist from the database ...
+            int playlistId = PlaylistId;
+
+            String connectionStr = _configuration.GetConnectionString("DefaultConnection");
+            try
+            {
+                using (MySqlConnection connection = new MySqlConnection(connectionStr))
+                {
+                    await connection.OpenAsync();
+                    MySqlTransaction mySqlTransaction = connection.BeginTransaction();
+                    String sql = @"
+                                    SELECT
+                                        s.id AS song_id,
+                                        s.title AS song_title,
+                                        s.genre AS song_genre,
+                                        s.upload_date AS song_upload_date,
+                                        s.duration AS song_duration,
+                                        s.track,
+                                        s.deleted,
+                                        s.explicit,
+                                        a.artist_id AS artist_id,
+                                        a.name AS artist_name
+                                    FROM
+                                        playlist_song AS ps
+                                    JOIN song AS s ON
+                                        ps.song_id = s.id
+                                    JOIN artist AS a ON
+                                        s.artist_id = a.artist_id
+                                    WHERE
+                                        ps.playlist_id = @PlaylistId AND
+                                        ps.deleted = FALSE
+                                    ORDER BY
+                                        s.title
+                                ";
+                    using (MySqlCommand command = new MySqlCommand(sql, connection))
+                    {
+                        command.Parameters.AddWithValue("@PlaylistId", playlistId);
+
+                        using (MySqlDataReader reader = command.ExecuteReader())
+                        {
+                            PlaylistSongs = new List<SongView>();
+
+                            while (await reader.ReadAsync())
+                            {
+                                SongView song = new SongView
+                                {
+                                    songId = reader.GetInt32("song_id"),
+                                    artistId = reader.GetInt32("artist_id"),
+                                    artistName = reader.GetString("artist_name"),
+                                    title = reader.GetString("song_title"),
+                                    genre = reader.IsDBNull("song_genre") ? null : reader.GetString("song_genre"),
+                                    trackBytes = (byte[])reader["track"],
+                                    CreateDate = reader.GetDateTime("song_upload_date").ToString("MM/dd/vyyy"),
+                                    deleted = reader.GetBoolean("deleted"),
+                                    Explicit = reader.GetBoolean("explicit"),
+                                    Duration = TimeSpan.Parse(reader.GetString("song_duration")),
+                                };
+                                if (song.deleted != true)
+                                {
+                                    PlaylistSongs.Add(song);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error Retrieving Playlist From Database: " + ex.Message);
+            }
         }
     }
 }
