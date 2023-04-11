@@ -1,9 +1,32 @@
-function playSong(songId, songTitle, artistName) {
+let queue = [];
+let currentSongIndex = 0;
+
+function playSongFromSearch(songId, songTitle, artistName) {
+    const song = {
+        songId: songId,
+        title: songTitle,
+        artistName: artistName
+    };
+    queue = [song]; // Set queue to contain only the current song
+    currentSongIndex = 0;
+    playSong(song);
+}
+
+function playSongFromPlaylist(playlistSongs, index) {
+    queue = playlistSongs; // Update the queue with the entire playlist
+    currentSongIndex = index;
+    playSong(queue[currentSongIndex]);
+}
+
+function playSong(song) {
+    if (!song) return;
+    //console.log(song);
+
     // Make an AJAX request to get the song data
-    document.getElementById("song-title").innerText = capitalizeFirstLetter(songTitle.toLowerCase());
-    document.getElementById("artist-name").innerText = capitalizeFirstLetter(artistName.toLowerCase());
+    document.getElementById("song-title").innerText = capitalizeFirstLetter(song.title.toLowerCase());
+    document.getElementById("artist-name").innerText = capitalizeFirstLetter(song.artistName.toLowerCase());
     var xhr = new XMLHttpRequest();
-    xhr.open('GET', '/Search/Index?handler=PlaySong&id=' + songId, true);
+    xhr.open('GET', '/Search/Index?handler=PlaySong&id=' + song.songId, true);
     xhr.responseType = 'blob';
     xhr.onload = function (e) {
         if (this.status == 200) {
@@ -19,10 +42,24 @@ function playSong(songId, songTitle, artistName) {
             // Update the play-pause button icon to the pause icon
             const playPauseButton = document.getElementById('play-pause-button');
             const playPauseIcon = playPauseButton.getElementsByTagName('i')[0];
-            playPauseIcon.className = 'fas fa-pause';
+            playPauseButton.innerHTML = '<i class="fas fa-pause"></i>';
         }
     };
     xhr.send();
+}
+
+function playNext() {
+    if (currentSongIndex < queue.length - 1) {
+        currentSongIndex++;
+        playSong(queue[currentSongIndex]);
+    }
+}
+
+function playPrevious() {
+    if (currentSongIndex > 0) {
+        currentSongIndex--;
+        playSong(queue[currentSongIndex]);
+    }
 }
 
 function capitalizeFirstLetter(string) {
@@ -30,7 +67,6 @@ function capitalizeFirstLetter(string) {
         return word.charAt(0).toUpperCase() + word.slice(1);
     }).join(' ');
 }
-
 
 document.addEventListener("DOMContentLoaded", function () {
     // Get UI elements
@@ -40,6 +76,17 @@ document.addEventListener("DOMContentLoaded", function () {
     const currentTime = document.getElementById("current-time");
     const fullLength = document.getElementById("full-length");
     const musicProgress = document.getElementById("music-progress");
+
+    const skipButton = document.getElementById("skip-button");
+    const prevButton = document.getElementById("prev-button");
+
+    skipButton.addEventListener("click", function () {
+        playNext();
+    });
+
+    prevButton.addEventListener("click", function () {
+        playPrevious();
+    });
 
     // Play/pause functionality
     playPauseButton.addEventListener("click", function () {

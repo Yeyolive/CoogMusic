@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Reflection.PortableExecutable;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using MySql.Data.MySqlClient;
+using Newtonsoft.Json;
 
 namespace CoogMusic.Pages.Playlists
 {
@@ -22,6 +24,8 @@ namespace CoogMusic.Pages.Playlists
 
         [BindProperty(SupportsGet = true)]
         public int PlaylistId { get; set; }
+
+        public List<SongView> playlistSongs = new List<SongView>();
 
         public async Task OnGetAsync()
         {
@@ -39,9 +43,7 @@ namespace CoogMusic.Pages.Playlists
                                         s.id AS song_id,
                                         s.title AS song_title,
                                         s.genre AS song_genre,
-                                        s.upload_date AS song_upload_date,
                                         s.duration AS song_duration,
-                                        s.track,
                                         s.deleted,
                                         s.explicit,
                                         a.artist_id AS artist_id,
@@ -64,7 +66,6 @@ namespace CoogMusic.Pages.Playlists
 
                         using (MySqlDataReader reader = command.ExecuteReader())
                         {
-                            PlaylistSongs = new List<SongView>();
 
                             while (await reader.ReadAsync())
                             {
@@ -75,15 +76,13 @@ namespace CoogMusic.Pages.Playlists
                                     artistName = reader.GetString("artist_name"),
                                     title = reader.GetString("song_title"),
                                     genre = reader.IsDBNull("song_genre") ? null : reader.GetString("song_genre"),
-                                    trackBytes = (byte[])reader["track"],
-                                    CreateDate = reader.GetDateTime("song_upload_date").ToString("MM/dd/vyyy"),
                                     deleted = reader.GetBoolean("deleted"),
                                     Explicit = reader.GetBoolean("explicit"),
                                     Duration = TimeSpan.Parse(reader.GetString("song_duration")),
                                 };
                                 if (song.deleted != true)
                                 {
-                                    PlaylistSongs.Add(song);
+                                    playlistSongs.Add(song);
                                 }
                             }
                         }

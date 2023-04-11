@@ -1,15 +1,22 @@
 ﻿@page
 @model CoogMusic.Pages.Playlists.PlaylistSongsModel
+@using Newtonsoft.Json;
 @{
     ViewData["Title"] = "Playlist Details";
+    //Console.WriteLine(@Html.Raw(JsonConvert.SerializeObject(Model.playlistSongs)));
+    var serializedPlaylistSongs = JsonConvert.SerializeObject(Model.playlistSongs);
 }
+
+<script>
+    let playlistSongsData = @Html.Raw(serializedPlaylistSongs);
+</script>
 
 @if (User.Identity.IsAuthenticated)
 {
     <br>
     <h1>Songs</h1>
     <a class="btn btn-primary btn-upload" href="/Playlists/Create">New Playlist</a>
-    @if (Model.PlaylistSongs.Any())
+    @if (Model.playlistSongs.Any())
     {
         <table class="table">
             <thead>
@@ -22,7 +29,8 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var item in Model.PlaylistSongs)
+                @{ int songIndex = 0; }
+                @foreach (var item in Model.playlistSongs)
                 {
                     <tr>
                         <td class="explicit-cell">
@@ -40,9 +48,10 @@
                             @if (User.Identity.IsAuthenticated)
                             {
                                 <a class="btn btn-primary btn-action"
-                                   onclick="playSong(&quot;@item.songId&quot;, &quot;@item.title&quot;, &quot;@item.artistName&quot;)">
+                                   onclick="playSongFromPlaylist(playlistSongsData, @songIndex)">
                                     <i class="fa-solid fa-play"></i>
                                 </a>
+                                songIndex++;
                                 <a class="btn btn-secondary btn-action"
                                    onclick="addToPlaylist(&quot;@item.songId&quot;)">
                                     <i class="fa-solid fa-minus"></i>
