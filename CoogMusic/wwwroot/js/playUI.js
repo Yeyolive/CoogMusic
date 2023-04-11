@@ -1,19 +1,3 @@
-
-// Function to toggle play once the song is loaded
-//function togglePlay() {
-//    const audio = document.getElementById('audio-player');
-//    const playPauseButton = document.getElementById('play-pause-button');
-//    const playPauseIcon = playPauseButton.getElementsByTagName('i')[0];
-
-//    if (audio.paused) {
-//        audio.play();
-//        playPauseIcon.className = 'fas fa-pause';
-//    } else {
-//        audio.pause();
-//        playPauseIcon.className = 'fas fa-play';
-//    }
-//}
-
 function playSong(songId, songTitle, artistName) {
     // Make an AJAX request to get the song data
     document.getElementById("song-title").innerText = capitalizeFirstLetter(songTitle.toLowerCase());
@@ -40,34 +24,6 @@ function playSong(songId, songTitle, artistName) {
     };
     xhr.send();
 }
-
-//function playSong(songId, songTitle, artistName) {
-//    // Make an AJAX request to get the song data
-//    document.getElementById("song-title").innerHTML = capitalizeFirstLetter(songTitle.toLowerCase());
-//    document.getElementById("artist-name").innerHTML = capitalizeFirstLetter(artistName.toLowerCase());
-
-//    var xhr = new XMLHttpRequest();
-//    xhr.open('GET', '/Search/Index?handler=PlaySong&id=' + songId, true);
-//    xhr.responseType = 'blob';
-//    xhr.onload = function (e) {
-//        if (this.status == 200) {
-//            // Create a blob URL for the audio data
-//            var blob = new Blob([this.response], { type: 'audio/mpeg' });
-//            var url = URL.createObjectURL(blob);
-
-//            // Update the audio player to play the new audio file
-//            var audio = document.getElementById('audio-player');
-//            audio.src = url;
-//            audio.play();
-
-//            // Update the play-pause button icon to the pause icon
-//            const playPauseButton = document.getElementById('play-pause-button');
-//            const playPauseIcon = playPauseButton.getElementsByTagName('i')[0];
-//            playPauseIcon.className = 'fas fa-pause';
-//        }
-//    };
-//    xhr.send();
-//}
 
 function capitalizeFirstLetter(string) {
     return string.split(' ').map(function (word) {
@@ -121,10 +77,3 @@ document.addEventListener("DOMContentLoaded", function () {
         return minutes.toString().padStart(2, "0") + ":" + remainingSeconds.toString().padStart(2, "0");
     }
 });
-
-//const audio = document.getElementById('audio-player');
-//audio.addEventListener('ended', () => {
-//    const playPauseButton = document.getElementById('play-pause-button');
-//    const playPauseIcon = playPauseButton.getElementsByTagName('i')[0];
-//    playPauseIcon.className = 'fas fa-play';
-//});
