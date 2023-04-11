@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using MySql.Data.MySqlClient;
 
 namespace CoogMusic.Pages.Albums
 {
@@ -19,15 +21,39 @@ namespace CoogMusic.Pages.Albums
 
         public List<AlbumInfo> albumInfo = new List<AlbumInfo>();
 
-        public void OnGet()
+        public async Task OnGetAsync()
         {
             try
             {
-                
+                String connStr = _configuration.GetConnectionString("DefaultConnection");
+                using (MySqlConnection connection = new MySqlConnection(connStr))
+                {
+                    await connection.OpenAsync();
+                    String getAlbumQuery = "SELECT a.id, a.title, a.description FROM album AS a JOIN artist AS r ON a.artist_id=r.artist_id WHERE r.artist_id=@UserID ORDER BY a.title";
+                    using (MySqlCommand command = new MySqlCommand(getAlbumQuery, connection))
+                    {
+                        command.Parameters.AddWithValue("@UserId", int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)));
+                        using (MySqlDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                AlbumInfo albumInfo = new AlbumInfo();
+                                albumInfo.Id = reader.GetInt32("id");
+                                //albumInfo.ArtistId = reader.GetInt32("artistid");
+                                //albumInfo.art = reader.GetByte("art");
+                                albumInfo.Title = reader.GetString("title");
+                                albumInfo.Description = reader.GetString("description");
+                                //albumInfo.ReleaseDate = reader.GetInt32("release_date");
+                            }
+                        }
+
+                    }
+                }
+
             }
             catch (Exception ex)
             {
-
+                Console.WriteLine("Error getting album from database: " + ex.Message);
             }
         }
     }
