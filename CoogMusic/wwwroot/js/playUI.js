@@ -1,5 +1,6 @@
 let queue = [];
 let currentSongIndex = 0;
+var currentSongID = null;
 
 function playSongFromSearch(songId, songTitle, artistName) {
     const song = {
@@ -20,6 +21,7 @@ function playSongFromPlaylist(playlistSongs, index) {
 
 function playSong(song) {
     if (!song) return;
+    currentSongID = song.songId;
     //console.log(song);
 
     // Make an AJAX request to get the song data
@@ -131,32 +133,47 @@ function selectStar(star) {
 
     for (var i = 0; i < stars.length; i++) {
         if (i <= rating - 1) {
-            stars[i].classList.remove('fa-regular fa-star fa-sm star');
-            stars[i].classList.add('fa-solid fa-star fa-sm');
+            stars[i].classList.remove('fa-regular');
+            stars[i].classList.remove('fa-star');
+            stars[i].classList.remove('fa-sm');
+            stars[i].classList.remove('star');
+            stars[i].classList.add('fa-solid');
+            stars[i].classList.add('fa-star');
+            stars[i].classList.add('fa-sm');
         } else {
-            stars[i].classList.remove('fa-solid fa-star fa-sm');
-            stars[i].classList.add('fa-regular fa-star fa-sm star');
+            stars[i].classList.remove('fa-solid');
+            stars[i].classList.remove('fa-star');
+            stars[i].classList.remove('fa-sm');
+            stars[i].classList.add('fa-regular');
+            stars[i].classList.add('fa-star');
+            stars[i].classList.add('fa-sm');
+            stars[i].classList.add('star');
         }
     }
     updateRating(currentSongID, rating);
 }
+
 
 function updateRating(songID, rating) {
     // Make an AJAX request to update the rating in database
     var xhr = new XMLHttpRequest();
     xhr.open('POST', '/Search/Index?handler=UpdateRating', true);
     xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xhr.setRequestHeader("RequestVerificationToken", document.getElementsByName('__RequestVerificationToken')[0].value);
 
     xhr.onload = function () {
         if (this.status == 200) {
-            // Handle successful update
-            console.log("Rating updated sucessfully");
+            var jsonResponse = JSON.parse(this.responseText);
+            if (jsonResponse.success) {
+                console.log(jsonResponse.message);
+            } else {
+                console.error(jsonResponse.message);
+            }
         }
         else {
-            // Handle error
             console.error("Error updating rating");
         }
     };
 
-    xhr.send(`songId=${songID}&rating=${rating}`);
+    xhr.send(`songID=${songID}&rating=${rating}`);
 }

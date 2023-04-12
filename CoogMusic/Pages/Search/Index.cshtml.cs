@@ -101,41 +101,53 @@ namespace CoogMusic.Pages.Search
             return File(songData, "audio/mpeg");
         }
 
-        public void OnPostUpdateRating(int songID, int rating)
+        [BindProperty(SupportsGet = true)]
+        public int rating { get; set; }
+
+        public IActionResult OnPostUpdateRating()
         {
             int userID = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
             String connectionStr = _configuration.GetConnectionString("DefaultConnection");
-            using (MySqlConnection connection = new MySqlConnection(connectionStr))
+            try
             {
-                connection.Open();
-                using (MySqlCommand command = new MySqlCommand("SELECT COUNT(*) FROM song_ratings WHERE listener_id = @ListenerID AND song_id = @SongID", connection))
+                using (MySqlConnection connection = new MySqlConnection(connectionStr))
                 {
-                    command.Parameters.AddWithValue("@ListenerID", userID);
-                    command.Parameters.AddWithValue("@songID", songID);
-
-                    int count = Convert.ToInt32(command.ExecuteScalar());
-
-                    if (count > 0)
+                    connection.Open();
+                    using (MySqlCommand command = new MySqlCommand("SELECT COUNT(*) FROM song_rating WHERE listener_id = @ListenerID AND song_id = @SongID", connection))
                     {
-                        using (MySqlCommand comm = new MySqlCommand("UPDATE song_ratings SET rating = @Rating WHERE listener_id = @ListenerID AND song_id = @SongID", connection))
+                        command.Parameters.AddWithValue("@ListenerID", userID);
+                        command.Parameters.AddWithValue("@songID", SongId);
+
+                        int count = Convert.ToInt32(command.ExecuteScalar());
+
+                        if (count > 0)
                         {
-                            comm.Parameters.AddWithValue("@Rating", rating);
-                            comm.Parameters.AddWithValue("@ListenerID", userID);
-                            comm.Parameters.AddWithValue("@SongID", songID);
-                            comm.ExecuteNonQuery();
+                            using (MySqlCommand comm = new MySqlCommand("UPDATE song_rating SET rating = @Rating WHERE listener_id = @ListenerID AND song_id = @SongID", connection))
+                            {
+                                comm.Parameters.AddWithValue("@Rating", rating);
+                                comm.Parameters.AddWithValue("@ListenerID", userID);
+                                comm.Parameters.AddWithValue("@SongID", SongId);
+                                comm.ExecuteNonQuery();
+                            }
                         }
-                    }
-                    else
-                    {
-                        using (MySqlCommand comm = new MySqlCommand("INSERT INTO song_ratings (listener_id, song_id, rating)  VALUES (@ListenerID, @SongID, @Rating)", connection))
+                        else
                         {
-                            comm.Parameters.AddWithValue("@ListenerID", userID);
-                            comm.Parameters.AddWithValue("@SongID", songID);
-                            comm.Parameters.AddWithValue("@Rating", rating);
-                            comm.ExecuteNonQuery();
+                            using (MySqlCommand comm = new MySqlCommand("INSERT INTO song_rating (listener_id, song_id, rating)  VALUES (@ListenerID, @SongID, @Rating)", connection))
+                            {
+                                comm.Parameters.AddWithValue("@ListenerID", userID);
+                                comm.Parameters.AddWithValue("@SongID", SongId);
+                                comm.Parameters.AddWithValue("@Rating", rating);
+                                comm.ExecuteNonQuery();
+                            }
                         }
                     }
                 }
+                return new JsonResult(new { success = true, message = "Rating updated successfully" });
+            }
+            catch (Exception ex)
+            {
+                return new JsonResult(new { success = false, message = $"Error updating rating: {ex.Message}" });
             }
         }
 
