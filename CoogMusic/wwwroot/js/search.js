@@ -8,8 +8,8 @@
             var container = document.getElementById("playlists-container");
             container.innerHTML = '';
             data.forEach(playlist => {
-                console.log('Playlist:', playlist);
-                console.log(songId);
+                //console.log('Playlist:', playlist);
+                //console.log(songId);
 
                 //var button = document.createElement('button');
                 //button.classList.add('btn', 'btn-primary', 'btn-action');
