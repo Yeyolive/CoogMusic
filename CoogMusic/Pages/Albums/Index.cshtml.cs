@@ -12,27 +12,32 @@ namespace CoogMusic.Pages.Albums
 
 	public class IndexModel : PageModel
     {
-        private readonly IConfiguration _configuration;
+        private readonly DbHelper _databaseHelper;
+        private readonly string connectionStr;
 
         public IndexModel(IConfiguration configuration)
         {
-            _configuration = configuration;
+            string connectionString = configuration.GetConnectionString("DefaultConnection");
+            connectionStr = connectionString;
+            _databaseHelper = new DbHelper(connectionString);
         }
 
         public List<AlbumInfo> albumInfo = new List<AlbumInfo>();
 
         public async Task OnGetAsync()
         {
+            int artistId = await _databaseHelper.GetArtistIdByUserId(int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)));
+            Console.WriteLine(artistId.ToString());
             try
             {
-                String connStr = _configuration.GetConnectionString("DefaultConnection");
+                String connStr = connectionStr;
                 using (MySqlConnection connection = new MySqlConnection(connStr))
                 {
                     await connection.OpenAsync();
                     String getAlbumQuery = "SELECT a.id, a.title, a.description FROM album AS a JOIN artist AS r ON a.artist_id=r.artist_id WHERE r.artist_id=@UserID ORDER BY a.title";
                     using (MySqlCommand command = new MySqlCommand(getAlbumQuery, connection))
                     {
-                        command.Parameters.AddWithValue("@UserId", int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)));
+                        command.Parameters.AddWithValue("@UserId", artistId);
                         using (MySqlDataReader reader = command.ExecuteReader())
                         {
                             while (reader.Read())

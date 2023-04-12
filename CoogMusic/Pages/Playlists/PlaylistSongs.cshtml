@@ -18,54 +18,56 @@
     <a class="btn btn-primary btn-upload" href="/Playlists/Create">New Playlist</a>
     @if (Model.playlistSongs.Any())
     {
-        <table class="table">
-            <thead>
-                <tr>
-                    <th class="table-header">Title</th>
-                    <th class="table-header">Artist</th>
-                    <th class="table-header">Genre</th>
-                    <th class="table-header">Duration</th>
-                    <th class="table-header"></th>
-                </tr>
-            </thead>
-            <tbody>
-                @{ int songIndex = 0; }
-                @foreach (var item in Model.playlistSongs)
-                {
+        <div class="main-content">
+            <table class="table">
+                <thead>
                     <tr>
-                        <td class="explicit-cell">
-                            @if (item.Explicit == true)
-                            {
-                                <span class="explicit-label">E</span>
-                                @:&nbsp;
-                            }
-                            @item.title
-                        </td>
-                        <td>@item.artistName</td>
-                        <td>@item.genre</td>
-                        <td>@(item.Duration?.ToString(@"mm\:ss") ?? "")</td>
-                        <td>
-                            @if (User.Identity.IsAuthenticated)
-                            {
-                                <a class="btn btn-primary btn-action"
-                                   onclick="playSongFromPlaylist(playlistSongsData, @songIndex)">
-                                    <i class="fa-solid fa-play"></i>
-                                </a>
-                                songIndex++;
-                                <a class="btn btn-secondary btn-action"
-                                   onclick="addToPlaylist(&quot;@item.songId&quot;)">
-                                    <i class="fa-solid fa-minus"></i>
-                                </a>
-                            }
-                            else
-                            {
-                                <span>Please log in to play music.</span>
-                            }
-                        </td>
+                        <th class="table-header">Title</th>
+                        <th class="table-header">Artist</th>
+                        <th class="table-header">Genre</th>
+                        <th class="table-header">Duration</th>
+                        <th class="table-header"></th>
                     </tr>
-                }
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @{ int songIndex = 0; }
+                    @foreach (var item in Model.playlistSongs)
+                    {
+                        <tr>
+                            <td class="explicit-cell">
+                                @if (item.Explicit == true)
+                                {
+                                    <span class="explicit-label">E</span>
+                                    @:&nbsp;
+                                }
+                                @item.title
+                            </td>
+                            <td>@item.artistName</td>
+                            <td>@item.genre</td>
+                            <td>@(item.Duration?.ToString(@"mm\:ss") ?? "")</td>
+                            <td>
+                                @if (User.Identity.IsAuthenticated)
+                                {
+                                    <a class="btn btn-primary btn-action"
+                                       onclick="playSongFromPlaylist(playlistSongsData, @songIndex)">
+                                        <i class="fa-solid fa-play"></i>
+                                    </a>
+                                    songIndex++;
+                                    <a class="btn btn-secondary btn-action"
+                                       onclick="addToPlaylist(&quot;@item.songId&quot;)">
+                                        <i class="fa-solid fa-minus"></i>
+                                    </a>
+                                }
+                                else
+                                {
+                                    <span>Please log in to play music.</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
     }
     else
     {
@@ -77,3 +79,16 @@ else
     <p>Please log in to access this page.</p>
 }
 @await Html.PartialAsync("_MusicPlayer")
+
+<style>
+    body {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+    }
+
+    .main-content {
+        flex-grow: 1;
+        padding-bottom: 100px; 
+    }
+</style>

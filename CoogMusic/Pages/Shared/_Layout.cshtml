@@ -18,7 +18,11 @@
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta2/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta2/js/all.min.js"></script>
+    <script src="https://kit.fontawesome.com/2de49e82ef.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta2/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta2/js/all.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+    
 </head>
 <body>
     <header>
@@ -43,20 +47,21 @@
                         </li>
                         
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Report/Index">Report</a>
-                        </li>
-                        <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-page="/Playlists/Index">My Playlists</a>
                         </li>
+                        @if (User.IsInRole("Artist"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-page="/Songs/Index">My Songs</a>
+                            </li>
+                        
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-page="/Albums/Index">My Albums</a>
+                            </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Songs/Index">My Songs</a>
+                            <a class="nav-link text-dark" asp-area="" asp-page="/Report/Index">Report</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Albums/Index">My Albums</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Privacy">Privacy</a>
-                        </li>
+                        }
                     </ul>
                     <partial name="_LoginPartial" />
                 </div>
