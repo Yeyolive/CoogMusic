@@ -170,7 +170,7 @@ namespace CoogMusic.Pages.Search
             using (var connection = new MySqlConnection(connectionString))
             {
                 await connection.OpenAsync();
-                using (var command = new MySqlCommand("SELECT p.id, p.user_id, p.title, p.description FROM playlist AS p WHERE user_id = @UserId", connection))
+                using (var command = new MySqlCommand("SELECT p.id, p.user_id, p.title, p.description, p.deleted FROM playlist AS p WHERE user_id = @UserId", connection))
                 {
                     command.Parameters.AddWithValue("@UserId", userId);
                     using (var reader = await command.ExecuteReaderAsync())
@@ -179,14 +179,16 @@ namespace CoogMusic.Pages.Search
                         {
                             var title = reader.GetString("title");
                             Console.WriteLine($"Title: {title}");
-                            playlists.Add(new PlaylistView
+                            if (reader.GetBoolean("deleted") != true)
                             {
-                                Id = reader.GetInt32("id"),
-                                UserId = reader.GetInt32("user_id"),
-                                Title = reader.GetString("title"),
-                                Description = !reader.IsDBNull(reader.GetOrdinal("description")) ? reader.GetString("description") : null,
-                                // Add other fields if needed
-                            });
+                                playlists.Add(new PlaylistView
+                                {
+                                    Id = reader.GetInt32("id"),
+                                    UserId = reader.GetInt32("user_id"),
+                                    Title = reader.GetString("title"),
+                                    Description = !reader.IsDBNull(reader.GetOrdinal("description")) ? reader.GetString("description") : null,
+                                });
+                            }
                         }
                     }
                 }
