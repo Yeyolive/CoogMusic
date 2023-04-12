@@ -42,9 +42,6 @@
                             <a class="nav-link text-dark" asp-area="" asp-page="/Search/Index">Search</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Report/Index">Report</a>
-                        </li>
-                        <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-page="/Playlists/Index">My Playlists</a>
                         </li>
                         @if (User.IsInRole("Artist"))
@@ -52,16 +49,14 @@
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-page="/Songs/Index">My Songs</a>
                             </li>
-                        }
-                        @if (User.IsInRole("Artist"))
-                            {
+                        
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-page="/Albums/Index">My Albums</a>
                             </li>
-                            }
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Privacy">Privacy</a>
+                            <a class="nav-link text-dark" asp-area="" asp-page="/Report/Index">Report</a>
                         </li>
+                        }
                     </ul>
                     <partial name="_LoginPartial" />
                 </div>
