@@ -178,7 +178,7 @@ namespace CoogMusic.Pages.Search
                         while (await reader.ReadAsync())
                         {
                             var title = reader.GetString("title");
-                            Console.WriteLine($"Title: {title}");
+
                             if (reader.GetBoolean("deleted") != true)
                             {
                                 playlists.Add(new PlaylistView
