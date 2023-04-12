@@ -47,12 +47,18 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-page="/Playlists/Index">My Playlists</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Songs/Index">My Songs</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Albums/Index">My Albums</a>
-                        </li>
+                        @if (User.IsInRole("Artist"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-page="/Songs/Index">My Songs</a>
+                            </li>
+                        }
+                        @if (User.IsInRole("Artist"))
+                            {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-page="/Albums/Index">My Albums</a>
+                            </li>
+                            }
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-page="/Privacy">Privacy</a>
                         </li>
