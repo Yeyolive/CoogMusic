@@ -124,3 +124,39 @@ document.addEventListener("DOMContentLoaded", function () {
         return minutes.toString().padStart(2, "0") + ":" + remainingSeconds.toString().padStart(2, "0");
     }
 });
+
+function selectStar(star) {
+    var stars = document.querySelectorAll('.star');
+    var rating = star.dataset.rating;
+
+    for (var i = 0; i < stars.length; i++) {
+        if (i <= rating - 1) {
+            stars[i].classList.remove('fa-regular fa-star fa-sm star');
+            stars[i].classList.add('fa-solid fa-star fa-sm');
+        } else {
+            stars[i].classList.remove('fa-solid fa-star fa-sm');
+            stars[i].classList.add('fa-regular fa-star fa-sm star');
+        }
+    }
+    updateRating(currentSongID, rating);
+}
+
+function updateRating(songID, rating) {
+    // Make an AJAX request to update the rating in database
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', '/Search/Index?handler=UpdateRating', true);
+    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+    xhr.onload = function () {
+        if (this.status == 200) {
+            // Handle successful update
+            console.log("Rating updated sucessfully");
+        }
+        else {
+            // Handle error
+            console.error("Error updating rating");
+        }
+    };
+
+    xhr.send(`songId=${songID}&rating=${rating}`);
+}

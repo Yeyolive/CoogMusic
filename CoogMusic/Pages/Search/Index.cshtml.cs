@@ -101,6 +101,44 @@ namespace CoogMusic.Pages.Search
             return File(songData, "audio/mpeg");
         }
 
+        public void OnPostUpdateRating(int songID, int rating)
+        {
+            int userID = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            String connectionStr = _configuration.GetConnectionString("DefaultConnection");
+            using (MySqlConnection connection = new MySqlConnection(connectionStr))
+            {
+                connection.Open();
+                using (MySqlCommand command = new MySqlCommand("SELECT COUNT(*) FROM song_ratings WHERE listener_id = @ListenerID AND song_id = @SongID", connection))
+                {
+                    command.Parameters.AddWithValue("@ListenerID", userID);
+                    command.Parameters.AddWithValue("@songID", songID);
+
+                    int count = Convert.ToInt32(command.ExecuteScalar());
+
+                    if (count > 0)
+                    {
+                        using (MySqlCommand comm = new MySqlCommand("UPDATE song_ratings SET rating = @Rating WHERE listener_id = @ListenerID AND song_id = @SongID", connection))
+                        {
+                            comm.Parameters.AddWithValue("@Rating", rating);
+                            comm.Parameters.AddWithValue("@ListenerID", userID);
+                            comm.Parameters.AddWithValue("@SongID", songID);
+                            comm.ExecuteNonQuery();
+                        }
+                    }
+                    else
+                    {
+                        using (MySqlCommand comm = new MySqlCommand("INSERT INTO song_ratings (listener_id, song_id, rating)  VALUES (@ListenerID, @SongID, @Rating)", connection))
+                        {
+                            comm.Parameters.AddWithValue("@ListenerID", userID);
+                            comm.Parameters.AddWithValue("@SongID", songID);
+                            comm.Parameters.AddWithValue("@Rating", rating);
+                            comm.ExecuteNonQuery();
+                        }
+                    }
+                }
+            }
+        }
+
         [BindProperty(SupportsGet = true)]
         public int SongId { get; set; }
 
