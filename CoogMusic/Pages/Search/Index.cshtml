@@ -14,7 +14,7 @@
         <div id="playlists-container"></div>
     </div>
 </div>
-<div>
+<div class="main-content">
     <div class="searching">
         <form method="POST" class="search-bar">
             <label for="search-input">Search:</label>
@@ -90,3 +90,17 @@
     </div>
     @await Html.PartialAsync("_MusicPlayer")
 </div>
+
+<style>
+    body {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+    }
+
+    .main-content {
+        flex-grow: 1;
+        padding-bottom: 100px; /* Adjust this value depending on the height of your music player */
+    }
+
+</style>
