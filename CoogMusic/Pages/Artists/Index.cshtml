@@ -1,0 +1,69 @@
+﻿@page
+@model CoogMusic.Pages.Artists.IndexModel
+@{
+    ViewData["Title"] = "Artists";
+}
+
+@if (User.Identity.IsAuthenticated)
+{
+    @if (User.IsInRole("Listener"))
+    {
+
+            <header>
+
+                <link rel="stylesheet" href="StyleSheet.css" />
+
+                <style>
+                    h1 {
+                        border: 2px solid navy;
+                        padding: 20px;
+                        background-color:midnightblue;
+                        color: white;
+                    }
+
+                    h2 {
+                        border: 2px solid navy;
+                        padding: 20px;
+                        background-color: midnightblue;
+                        color: white;
+                    }
+                </style>
+
+                <h1 class="text-center">Artists</h1>
+                <h2 class="text-left">Featured Artists</h2>
+                <h2 class="text-left">Most followed Artists</h2>
+                <h2 class="text-left">Most liked Artists</h2>
+
+            </header>
+
+            <body>
+
+                <nav>
+                    <p>
+                        More
+                    </p>
+                    <ul>
+
+                    <li><a href="#">Followed</a></li>
+                    <li><a href="#">Liked</a></li>
+
+
+
+                </ul>
+
+
+                </nav>
+
+
+            </body>
+
+    }
+    else
+    {
+        <p> You cannot access this page. </p>
+    }
+}
+else
+{
+    <p>You must log in to access this page.</p>
+}
