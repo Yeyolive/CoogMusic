@@ -1,0 +1,77 @@
+﻿@page
+@model CoogMusic.Pages.Albums.AlbumSongsModel;
+@using Newtonsoft.Json;
+@{
+    ViewData["Title"] = "Album Details";
+    var serializedAlbumSongs = JsonConvert.SerializeObject(Model.albumSongs);
+}
+
+<script>
+    let playlistSongsData = @Html.Raw(serializedAlbumSongs);
+</script>
+
+@if (User.Identity.IsAuthenticated)
+{
+    <br>
+    <h1>Songs</h1>
+    <a class="btn btn-primary btn-upload" href="/Albums/Upload">New Album</a>
+    @if (Model.albumSongs.Any())
+    {
+        <div class="main-content">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th class="table-header">Title</th>
+                        <th class="table-header">Artist</th>
+                        <th class="table-header">Genre</th>
+                        <th class="table-header">Duration</th>
+                        <th class="table-header"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int songIndex = 0;
+                    }
+                    @foreach (var item in Model.albumSongs)
+                    {
+                        <tr>
+                            <td class="explicit-cell">
+                                @if (item.Explicit == true)
+                                {
+                                    <span class="explicit-label">E</span>
+                                    @:&nbsp;
+                                }
+                                @item.title
+                            </td>
+                            <td>@item.artistName</td>
+                            <td>@item.genre</td>
+                            <td>@(item.Duration?.ToString(@"mm\:ss") ?? "")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <p>You do not have any songs. Please add some then come back!</p>
+    }
+}
+else
+{
+    <p>Please log in to access this page.</p>
+}
+@await Html.PartialAsync("_MusicPlayer")
+
+<style>
+    body {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+    }
+
+    .main-content {
+        flex-grow: 1;
+        padding-bottom: 100px;
+    }
+</style>

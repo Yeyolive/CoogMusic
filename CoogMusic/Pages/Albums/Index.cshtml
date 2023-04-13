@@ -34,9 +34,18 @@
                                 <td>@item.Description</td>
 
                                 <td>
-                                    <a class="btn btn-primary btn-action" href="/Albums/Edit?id=@item.AlbumId">Edit</a>
-                                    <a class="btn btn-primary btn-action" href="/Albums/Songs?id=@item.AlbumId">View Songs</a>
-                                    <a class="btn btn-danger btn-action" href="/Albums/Delete?id=@item.AlbumId">Delete</a>
+                                    <a class="btn btn-primary btn-action" asp-page="/Albums/AlbumSongs" asp-route-albumId="@item.Id">
+                                        <span class="fa-layers fa-fw">
+                                            <i class="fas fa-square-full" data-fa-transform="shrink-8 right-4 down-2.7" data-fa-mask="fas fa-bars"></i>
+                                            <i class="fas fa-play" data-fa-transform="shrink-8 right-5 down-4"></i>
+                                        </span>
+                                    </a>
+                                    <a class="btn btn-primary btn-action" href="/Albums/Edit?id=@item.AlbumId">
+                                        <i class="fa-solid fa-pen-to-square"></i>
+                                    </a>
+                                    <a class="btn btn-danger btn-action" href="/Albums/Delete?id=@item.AlbumId">
+                                        <i class="fa-solid fa-trash-can"></i>
+                                    </a>
                                 </td>
                             </tr>
                         }

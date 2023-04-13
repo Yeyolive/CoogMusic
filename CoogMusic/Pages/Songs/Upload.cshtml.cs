@@ -37,7 +37,39 @@ namespace CoogMusic.Pages.Songs
         public async void OnGetAsync()
         {
             songInfo.artistId = await _databaseHelper.GetArtistIdByUserId(int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)));
-
+            try
+            {
+                using (MySqlConnection conn = new MySqlConnection(connectionStr))
+                {
+                    await conn.OpenAsync();
+                    String albumListQuery = "SELECT a.id, r.artist_id, a.title, a.deleted FROM album AS a JOIN artist AS r ON a.artist_id=r.artist_id WHERE r.artist_id=@UserID";
+                    using (MySqlCommand command = new MySqlCommand(albumListQuery, conn))
+                    {
+                        command.Parameters.AddWithValue("@UserId", songInfo.artistId);
+                        using (MySqlDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {                           
+                                AlbumInfo album = new AlbumInfo();
+                                album.AlbumId = reader.GetInt32("id");
+                                album.ArtistId = reader.GetInt32("artist_id");
+                                album.Title = reader.GetString("title");
+                                album.deleted = reader.GetBoolean("deleted");
+                                if(album.deleted != true)
+                                {
+                                    listAlbums.Add(album);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error getting album from database: " + ex.Message);
+            }
+            
+           
         }
 
         [Authorize(Roles = "Artist")]

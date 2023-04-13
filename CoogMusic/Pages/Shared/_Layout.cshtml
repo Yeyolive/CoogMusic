@@ -24,7 +24,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
     
 </head>
-<body>
+<body data-is-authenticated="@User.Identity.IsAuthenticated">
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container">
@@ -45,24 +45,27 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-page="/Artists/Index">Artists</a>
                         </li>
-                        
+
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-page="/Playlists/Index">My Playlists</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/History/Index">My History</a>
-                        </li>
                         @if (User.IsInRole("Artist"))
-                        {
+                            {
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-page="/Songs/Index">My Songs</a>
                             </li>
-                        
+
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-page="/Albums/Index">My Albums</a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-page="/Report/Index">Report</a>
+                            </li>
+                        }
+                        else
+                        {
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Report/Index">Report</a>
+                            <a class="nav-link text-dark" asp-area="" asp-page="/History/Index">My History</a>
                         </li>
                         }
                     </ul>
@@ -94,5 +97,6 @@
 
 
     @await RenderSectionAsync("Scripts", required: false)
+
 </body>
 </html>
