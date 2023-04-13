@@ -1,6 +1,8 @@
 let queue = [];
 let currentSongIndex = 0;
 var currentSongID = null;
+var currentArtistName = null;
+var currentArtistId = null;
 
 function playSongFromSearch(songId, songTitle, artistName) {
     const song = {
@@ -26,6 +28,7 @@ function playSong(song) {
         return;
     }
     starsContainer.style.display = "block";
+
     currentSongID = song.songId;
     //console.log(song);
 
@@ -38,6 +41,9 @@ function playSong(song) {
     xhr.responseType = 'blob';
     xhr.onload = function (e) {
         if (this.status == 200) {
+            // Get Artist ID from response header
+            currentArtistId = parseInt(this.getResponseHeader("artist-id"));
+
             // Create a blob URL for the audio data
             var blob = new Blob([this.response], { type: 'audio/mpeg' });
             var url = URL.createObjectURL(blob);
@@ -168,7 +174,7 @@ function updateRating(songID, rating) {
     xhr.setRequestHeader("RequestVerificationToken", document.getElementsByName('__RequestVerificationToken')[0].value);
 
     xhr.onload = function () {
-        if (this.status == 200) {
+        if (this.status == 200) { 
             var jsonResponse = JSON.parse(this.responseText);
             if (jsonResponse.success) {
                 console.log(jsonResponse.message);
@@ -185,3 +191,28 @@ function updateRating(songID, rating) {
 }
 
 document.getElementById("stars-container").style.display = "none";
+
+const followButton = document.querySelector('.followButton');
+
+followButton.addEventListener('click', () => {
+    // Code to follow the artist goes here
+    var xhr = new XMLHttpRequest();
+    var artistId = currentArtistId;
+
+    //console.log(artistId);
+    xhr.open('POST', '/Search/Index?handler=FollowArtist', true);
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    xhr.setRequestHeader("RequestVerificationToken", document.getElementsByName('__RequestVerificationToken')[0].value);
+
+    xhr.onreadystatechange = () => {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+            if (xhr.status === 200) {
+                console.log('Artist followed successfully!');
+            } else {
+                console.error('An error occurred while following the artist.');
+            }
+        }
+    };
+    //xhr.send(JSON.stringify({ artistName: currentArtistName }));
+    xhr.send(`ArtistId=${artistId}`);
+});

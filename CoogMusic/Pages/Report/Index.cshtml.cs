@@ -9,6 +9,7 @@ using System.Linq;
 using System.Security.Claims;
 using MySql.Data.MySqlClient;
 
+
 namespace CoogMusic.Pages.Report
 {
 
@@ -35,6 +36,7 @@ namespace CoogMusic.Pages.Report
                 using (MySqlConnection connection = new MySqlConnection(connectionStr))
                 {
                     connection.Open();
+                    // there is no s.album_id in song? 
                     String sql = "SELECT s.id, s.artist_id, s.album_id, s.title, s.deleted FROM song AS s JOIN artist AS a ON s.artist_id=a.artist_id WHERE a.user_id=@UserId ORDER BY s.title";
                     using (MySqlCommand command = new MySqlCommand(sql, connection))
                     {

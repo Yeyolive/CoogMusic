@@ -85,12 +85,14 @@ namespace CoogMusic.Pages.Search
         {
             // Retrieve the BLOB data for the song with the specified ID
             byte[] songData;
+            int? artistId;
+
             String connectionStr = _configuration.GetConnectionString("DefaultConnection");
             using (MySqlConnection connection = new MySqlConnection(connectionStr))
             {
                 connection.Open();
 
-                String sql = "SELECT track FROM song WHERE id = @Id";
+                String sql = "SELECT track, artist_id FROM song WHERE id = @Id";
                 using (MySqlCommand command = new MySqlCommand(sql, connection))
                 {
                     command.Parameters.AddWithValue("@Id", id);
@@ -99,6 +101,7 @@ namespace CoogMusic.Pages.Search
                         if (reader.Read())
                         {
                             songData = (byte[])reader["track"];
+                            artistId = reader["artist_id"] as int?;
                         }
                         else
                         {
@@ -107,46 +110,59 @@ namespace CoogMusic.Pages.Search
                     }
                 }
             }
-            // Return the BLOB data as a file with the correct MIME type
+            // Return the BLOB data as a file with the correct MIME type and artistId in the response header
+            Response.Headers.Add("artist-id", artistId.ToString());
             return File(songData, "audio/mpeg");
         }
 
-        /*[HttpPost]
-        public ActionResult Follow(string artistName)
+        [BindProperty(SupportsGet = true)]
+        public int ArtistId { get; set; }
+
+        public IActionResult OnPostFollowArtist()
         {
-            // Save follow into database
             int userID = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var ArtistId = Request.Form["artistId"];
+            int artistID = int.Parse(ArtistId);
+
+            //Console.WriteLine("ARTIST ID: " + artistID);
             String connectionStr = _configuration.GetConnectionString("DefaultConnection");
-            String query = "SELECT COUNT(*) FROM listeners AS l, follows AS f WHERE l.id = @UserId OR f.listener_id != @UserId";
-            String query2 = "SELECT COUNT(*) FROM listener WHERE listener_id = @UserId AND NOT EXISTS (SELECT * FROM follows WHERE listener_id = @UserId AND artist_id = @ArtistId)";
             try
             {
                 using (MySqlConnection connection = new MySqlConnection(connectionStr))
                 {
                     connection.Open();
-                    using (MySqlCommand sqlCommand = new MySqlCommand(query, connection))
-                    {
-                        sqlCommand.Parameters.AddWithValue("@UserId", userID);
-                        int count = Convert.ToInt32(command.ExecuteScalar());
 
-                        if (count > 0)
+                    String sql = @"
+                        INSERT INTO follows (listener_id, artist_id)
+                        VALUES (@UserID, @ArtistID)
+                        ON DUPLICATE KEY UPDATE
+                        listener_id = IF(listener_id = @UserID, NULL, listener_id),
+                        artist_id = IF(artist_id = @ArtistID, NULL, artist_id);
+                    ";
+
+                    using (MySqlCommand followArtist = new MySqlCommand(sql, connection))
+                    {
+                        followArtist.Parameters.AddWithValue("@UserID", userID);
+                        followArtist.Parameters.AddWithValue("@ArtistID", artistID);
+                        int rowsAffected = followArtist.ExecuteNonQuery();
+
+                        if (rowsAffected > 0)
                         {
-                            using (MySql command = new MySqlCommand(query2, connection))
-                            {
-                                command.Parameters.AddWithValue("@UserId", userID);
-                                command.Parameters.AddWithValue("@ArtistId", )
-                            }
+                            return new JsonResult(new { success = true, message = "Followed artist successfully" });
                         }
                         else
                         {
-
+                            return new JsonResult(new { success = true, message = "Unfollowed artist successfully" });
                         }
                     }
                 }
             }
+            catch (Exception exc)
+            {
+                return new JsonResult(new { success = false, message = $"Error following artist: {exc.Message}" });
+            }
+        }
 
-    
-        }*/
 
         [BindProperty(SupportsGet = true)]
         public int rating { get; set; }
