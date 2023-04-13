@@ -22,19 +22,18 @@ namespace CoogMusic.Pages.Albums
             _databaseHelper = new DbHelper(connectionString);
         }
 
-        public List<AlbumInfo> albumInfo = new List<AlbumInfo>();
+        public List<AlbumInfo> albumList = new List<AlbumInfo>();
 
         public async Task OnGetAsync()
         {
             int artistId = await _databaseHelper.GetArtistIdByUserId(int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)));
-            Console.WriteLine(artistId.ToString());
             try
             {
                 String connStr = connectionStr;
                 using (MySqlConnection connection = new MySqlConnection(connStr))
                 {
                     await connection.OpenAsync();
-                    String getAlbumQuery = "SELECT a.id, a.title, a.description FROM album AS a JOIN artist AS r ON a.artist_id=r.artist_id WHERE r.artist_id=@UserID ORDER BY a.title";
+                    String getAlbumQuery = "SELECT a.id, r.artist_id, a.title, a.description, a.deleted FROM album AS a JOIN artist AS r ON a.artist_id=r.artist_id WHERE r.artist_id=@UserID ORDER BY a.title";
                     using (MySqlCommand command = new MySqlCommand(getAlbumQuery, connection))
                     {
                         command.Parameters.AddWithValue("@UserId", artistId);
@@ -43,12 +42,18 @@ namespace CoogMusic.Pages.Albums
                             while (reader.Read())
                             {
                                 AlbumInfo albumInfo = new AlbumInfo();
-                                albumInfo.Id = reader.GetInt32("id");
-                                //albumInfo.ArtistId = reader.GetInt32("artistid");
+                                albumInfo.AlbumId = reader.GetInt32("id");
+                                albumInfo.ArtistId = reader.GetInt32("artist_id");
                                 //albumInfo.art = reader.GetByte("art");
                                 albumInfo.Title = reader.GetString("title");
                                 albumInfo.Description = reader.GetString("description");
+                                albumInfo.deleted = reader.GetBoolean("deleted");
                                 //albumInfo.ReleaseDate = reader.GetInt32("release_date");
+                                if(albumInfo.deleted != true)
+                                {
+                                    albumList.Add(albumInfo);
+                                }
+
                             }
                         }
 
