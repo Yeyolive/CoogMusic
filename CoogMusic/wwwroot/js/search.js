@@ -19,7 +19,6 @@
             data.forEach(playlist => {
                 var listItem = document.createElement('li');
                 listItem.textContent = playlist.title;
-                listItem.textContent = playlist.description;
                 listItem.style.cursor = 'pointer';
                 listItem.onclick = function () {
                     // Add the song to the selected playlist

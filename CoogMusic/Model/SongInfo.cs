@@ -14,6 +14,7 @@ public class SongInfo
     public String? artist;
     public String? genre;
     public String? title;
+    public Boolean IsInPlaylist { get; set; }
     public Boolean? deleted;
     public Boolean? Explicit;
     public TimeSpan? Duration;
@@ -31,6 +32,7 @@ public class SongView
     public String? artist;
     public String? genre;
     public String? title;
+    public Boolean IsInPlaylist { get; set; }
     public Boolean? Explicit;
     public TimeSpan? Duration;
     public Boolean? deleted;
