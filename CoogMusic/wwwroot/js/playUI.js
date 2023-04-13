@@ -171,7 +171,7 @@ function updateRating(songID, rating) {
     xhr.setRequestHeader("RequestVerificationToken", document.getElementsByName('__RequestVerificationToken')[0].value);
 
     xhr.onload = function () {
-        if (this.status == 200) {
+        if (this.status == 200) { 
             var jsonResponse = JSON.parse(this.responseText);
             if (jsonResponse.success) {
                 console.log(jsonResponse.message);
@@ -197,9 +197,10 @@ followButton.addEventListener('click', () => {
     var artistName = currentArtistName;
     xhr.open('POST', '/Search/Index?handler=FollowArtist', true);
     xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-    xhr.setRequestHeader("RequestVerificationToken", document.getElementsByName('__RequestVerificationToken')[0].value);
-    /*xhr.onload = function () {
+    xhr.setRequestHeader("RequestVerificationToken", $('input:hidden[name="__RequestVerificationToken"]').val());
+/*    xhr.onload = function () {
         if (this.status == 200) {
+            console.log(xhr.responseText);
             var jsonResponse = JSON.parse(this.responseText);
             if (jsonResponse.success) {
                 console.log(jsonResponse.message);
@@ -212,8 +213,6 @@ followButton.addEventListener('click', () => {
             console.error("Error following artist");
         }
     };*/
-
-    
 
     xhr.onreadystatechange = () => {
         if (xhr.readyState === XMLHttpRequest.DONE) {

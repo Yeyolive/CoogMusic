@@ -117,8 +117,8 @@ namespace CoogMusic.Pages.Search
         public IActionResult OnPostFollowing()
         {
             int userID = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var ArtistName = Request.Form["artistName"];
             int artistID = 0;
-
             String connectionStr = _configuration.GetConnectionString("DefaultConnection");
             try
             {
@@ -127,7 +127,7 @@ namespace CoogMusic.Pages.Search
                     connection.Open();
                     // Check if user is a listener and not artist
                     string sql = "SELECT COUNT(*) FROM listener WHERE id = @UserID";
-                    using ( MySqlCommand command = new MySqlCommand(sql, connection))
+                    using (MySqlCommand command = new MySqlCommand(sql, connection))
                     {
                         command.Parameters.AddWithValue("@UserID", userID);
                         int count = Convert.ToInt32(command.ExecuteScalar());
@@ -136,7 +136,7 @@ namespace CoogMusic.Pages.Search
                         string getArtistIdQ = "SELECT artist_id FROM artist WHERE name = @ArtistName";
                         using (MySqlCommand getArtistIdCommand = new MySqlCommand(getArtistIdQ, connection))
                         {
-                            getArtistIdCommand.Parameters.AddWithValue("@ArtistName", artistName);
+                            getArtistIdCommand.Parameters.AddWithValue("@ArtistName", ArtistName);
                             artistID = Convert.ToInt32(getArtistIdCommand.ExecuteScalar());
                         }
 
@@ -167,7 +167,8 @@ namespace CoogMusic.Pages.Search
                                 {
                                     // Listener will follow artist
                                     string follow = "INSERT INTO follows (listener_id, artist_id) VALUES (@UserID, @ArtistID)";
-                                    using (MySqlCommand followArtist = new MySqlCommand(follow, connection)) {
+                                    using (MySqlCommand followArtist = new MySqlCommand(follow, connection))
+                                    {
                                         followArtist.Parameters.AddWithValue("@UserID", userID);
                                         followArtist.Parameters.AddWithValue("@ArtistID", artistID);
                                         followArtist.ExecuteNonQuery();
@@ -179,8 +180,8 @@ namespace CoogMusic.Pages.Search
                         else
                         {
                             // User is not a listener
+                            Console.WriteLine("User is artist");
                             return new JsonResult(new { success = false, message = "Artists cannot follow artists" });
-
                         }
                     }
                 }
