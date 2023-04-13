@@ -33,10 +33,18 @@ namespace CoogMusic.Pages.Search
                 String connectionStr = _configuration.GetConnectionString("DefaultConnection");
                 using (MySqlConnection connection = new MySqlConnection(connectionStr))
                 {
-                    connection.Open(); 
-                    String sql = "SELECT s.id, s.artist_id, s.title, s.genre, s.track, s.upload_date, s.deleted, s.explicit, s.duration, a.name FROM song AS s JOIN artist AS a ON s.artist_id=a.artist_id WHERE s.title LIKE @SearchTerm OR a.name LIKE @SearchTerm;";
+                    connection.Open();
+                    //String sql = "SELECT s.id, s.artist_id, s.title, s.genre, s.track, s.upload_date, s.deleted, s.explicit, s.duration, a.name FROM song AS s JOIN artist AS a ON s.artist_id=a.artist_id WHERE s.title LIKE @SearchTerm OR a.name LIKE @SearchTerm;";
+                    String sql = @"
+                                SELECT s.id, s.artist_id, s.title, s.genre, s.track, s.upload_date, s.deleted, s.explicit, s.duration, a.name,
+                                (SELECT COUNT(*) FROM playlist_song AS ps WHERE ps.song_id = s.id AND ps.user_id = @UserId AND ps.deleted=false) > 0 AS is_in_playlist
+                                FROM song AS s
+                                JOIN artist AS a ON s.artist_id=a.artist_id
+                                WHERE s.title LIKE @SearchTerm OR a.name LIKE @SearchTerm;
+                                ";
                     using (MySqlCommand command = new MySqlCommand(sql, connection))
                     {
+                        command.Parameters.AddWithValue("@UserId", int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)));
                         command.Parameters.AddWithValue("@SearchTerm", "%" + searched + "%");
 
                         using (MySqlDataReader reader = command.ExecuteReader())
@@ -54,6 +62,8 @@ namespace CoogMusic.Pages.Search
                                 songInfo.deleted = reader.GetBoolean("deleted");
                                 songInfo.Explicit = reader.GetBoolean("explicit");
                                 songInfo.Duration = TimeSpan.Parse(reader.GetString("duration"));
+
+                                songInfo.IsInPlaylist = reader.GetBoolean("is_in_playlist");
 
                                 if (songInfo.deleted != true)
                                 {

@@ -67,9 +67,9 @@
                                        onclick="playSongFromSearch(&quot;@item.songId&quot;, &quot;@item.title&quot;, &quot;@item.artistName&quot;)">
                                         <i class="fa-solid fa-play"></i>
                                     </a>
-                                    <a class="btn btn-secondary btn-action"
+                                    <a class="btn @(item.IsInPlaylist ? "btn-success" : "btn-secondary") btn-action"
                                        onclick="addToPlaylist(&quot;@item.songId&quot;)">
-                                        <i class="fa-solid fa-plus"></i>
+                                        <i class="fa-solid fa-@(item.IsInPlaylist ? "check" : "plus")"></i>
                                     </a>
                                 }
                                 else
