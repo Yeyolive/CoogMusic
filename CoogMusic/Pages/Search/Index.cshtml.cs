@@ -106,7 +106,8 @@ namespace CoogMusic.Pages.Search
 
         public IActionResult OnPostUpdateRating()
         {
-            int userID = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var userID = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            int Rating = Convert.ToInt32(Request.Form["rating"]);
 
             String connectionStr = _configuration.GetConnectionString("DefaultConnection");
             try
@@ -117,7 +118,7 @@ namespace CoogMusic.Pages.Search
                     using (MySqlCommand command = new MySqlCommand("SELECT COUNT(*) FROM song_rating WHERE listener_id = @ListenerID AND song_id = @SongID", connection))
                     {
                         command.Parameters.AddWithValue("@ListenerID", userID);
-                        command.Parameters.AddWithValue("@songID", SongId);
+                        command.Parameters.AddWithValue("@SongID", SongId);
 
                         int count = Convert.ToInt32(command.ExecuteScalar());
 
@@ -125,7 +126,7 @@ namespace CoogMusic.Pages.Search
                         {
                             using (MySqlCommand comm = new MySqlCommand("UPDATE song_rating SET rating = @Rating WHERE listener_id = @ListenerID AND song_id = @SongID", connection))
                             {
-                                comm.Parameters.AddWithValue("@Rating", rating);
+                                comm.Parameters.AddWithValue("@Rating", Rating);
                                 comm.Parameters.AddWithValue("@ListenerID", userID);
                                 comm.Parameters.AddWithValue("@SongID", SongId);
                                 comm.ExecuteNonQuery();
@@ -137,7 +138,7 @@ namespace CoogMusic.Pages.Search
                             {
                                 comm.Parameters.AddWithValue("@ListenerID", userID);
                                 comm.Parameters.AddWithValue("@SongID", SongId);
-                                comm.Parameters.AddWithValue("@Rating", rating);
+                                comm.Parameters.AddWithValue("@Rating", Rating);
                                 comm.ExecuteNonQuery();
                             }
                         }
