@@ -5,32 +5,38 @@
 }
 
 @*
-Contains a way for the User (Listner and Artist) to create reports (profile) 
-Artist Report: View ratings of Artist (themselves) || List of each of song w/ ratings
-Listener Report: Hours of music streamed || Top 3 songs and Top 3 artists
+    Contains a way for the User (Listner and Artist) to create reports (profile)
+    Artist Report: View ratings of Artist (themselves) || List of each of song w/ ratings
+    Listener Report: Hours of music streamed || Top 3 songs and Top 3 artists
 *@
+@if (User.Identity.IsAuthenticated)
+{
+    if (User.IsInRole("Artist"))
+        {
 <div>
     <h1 class="text-center">Artist Reports</h1>
 
+
+
     <form class="form-container">
         <div>
-        <label for="song-name">Song name:</label>
-        @*<input type="text" id="song-name" name="song-name">*@
-        <select id="song" name="SongId" required class="form-input" value="">
-            <option value="" selected>Choose a Song:</option>
-            @foreach (var item in Model.listSongs)
+            <label for="song-name">Song name:</label>
+            @*<input type="text" id="song-name" name="song-name">*@
+            <select id="song" name="SongId" required class="form-input" value="">
+                <option value="" selected>Choose a Song:</option>
+                @foreach (var item in Model.listSongs)
                 {
                     if (item.deleted != true)
                     {
-                        <option value="@item.songId">@item.title</option>
+                <option value="@item.songId">@item.title</option>
                     }
                 }
-        </select>
+            </select>
         </div>
-            <hr>
+        <hr>
 
         <div>
-          
+
 
             <label for="album-name">Album name:</label>
             @*<input type="text" id="album-name" name="album-name">*@
@@ -40,20 +46,34 @@ Listener Report: Hours of music streamed || Top 3 songs and Top 3 artists
                 {
                     if (item.deleted != true)
                     {
-                        <option value="@item.songId">@item.title</option>
+                <option value="@item.songId">@item.title</option>
                     }
                 }
             </select>
 
-            </div>
+        </div>
 
-            <div class="text-center">
-                <a class="btn btn-primary btn-action" href="/Report/Listener-Report">Listeners</a>
-                <a class="btn btn-primary btn-action" href="/Report/Mostplayed-Report">Most PLayed</a>
-                <a class="btn btn-primary btn-action" href="/Report/Ratings-Report">Ratings</a>
-            </div>
+        <div class="text-center">
+            <a class="btn btn-primary btn-action" href="/Report/Listener-Report">Listeners</a>
+
+            <a class="btn btn-primary btn-action" href="/Report/Ratings-Report">Ratings</a>
+
+            <br />
+            <br />
+            <p>or</p>
+            <a class="btn btn-primary btn-action" href="/Report/Mostplayed-Report">Most Played</a>
+        </div>
 
 
     </form>
 
 </div>
+}
+else{
+<p>You may not access this page.</p>
+}
+}
+else
+{
+<p>You must log in to access this page.</p>
+}
