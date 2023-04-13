@@ -1,28 +1,61 @@
 ﻿@page
+@using CoogMusic.Pages;
+
 @model CoogMusic.Pages.Report.Ratings_ReportModel
 @{
-    ViewData["Title"] = "Report";
+    ViewData["Title"] = "Rating Report";
 }
-<div>
-    <h1 class="text-center">Ratings Report</h1>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th class="table-header">Album Name</th>
-                <th class="table-header">Ratings</th>
-            </tr>
-        </thead>
+<h1>Rating Report</h1>
 
-    <</table>
+<form method="post">
+    <label asp-for="SelectedAlbumId">Select an album</label>
+    <select asp-for="SelectedAlbumId" asp-items="@(Model.Albums != null ? new SelectList(Model.Albums, "Id", "Title") : new SelectList(Enumerable.Empty<AlbumInfo>(), "Id", "Title"))"></select>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th class="table-header">Song Name</th>
-                <th class="table-header">Ratings</th>
-            </tr>
-        </thead>
-    </table>
 
-</div>
+    <button type="submit">Generate Report</button>
+</form>
+
+@if (Model.ReportData != null)
+{
+<table>
+    <thead>
+        <tr>
+            <th>Song Name</th>
+            <th>Rating</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var songRating in Model.ReportData.SongRatings)
+            {
+        <tr>
+            <td>@songRating.SongTitle</td>
+            <td>@(songRating != null ? ((double?)songRating.Rating)?.ToString("F2") : "-")</td>
+        </tr>
+            }
+    </tbody>
+    <tfoot>
+        <tr>
+            <td>Total Album Rating:</td>
+            <td>@Model.ReportData.AlbumAverageRating</td>
+        </tr>
+    </tfoot>
+</table>
+}
+else
+{
+<table>
+    <thead>
+        <tr>
+            <th style="padding-right: 50px;">Song Name</th>
+            <th>Rating</th>
+
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td colspan="2">No data to display.</td>
+        </tr>
+    </tbody>
+</table>
+}
