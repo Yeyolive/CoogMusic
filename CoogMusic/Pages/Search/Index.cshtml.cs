@@ -33,10 +33,18 @@ namespace CoogMusic.Pages.Search
                 String connectionStr = _configuration.GetConnectionString("DefaultConnection");
                 using (MySqlConnection connection = new MySqlConnection(connectionStr))
                 {
-                    connection.Open(); 
-                    String sql = "SELECT s.id, s.artist_id, s.title, s.genre, s.track, s.upload_date, s.deleted, s.explicit, s.duration, a.name FROM song AS s JOIN artist AS a ON s.artist_id=a.artist_id WHERE s.title LIKE @SearchTerm OR a.name LIKE @SearchTerm;";
+                    connection.Open();
+                    //String sql = "SELECT s.id, s.artist_id, s.title, s.genre, s.track, s.upload_date, s.deleted, s.explicit, s.duration, a.name FROM song AS s JOIN artist AS a ON s.artist_id=a.artist_id WHERE s.title LIKE @SearchTerm OR a.name LIKE @SearchTerm;";
+                    String sql = @"
+                                SELECT s.id, s.artist_id, s.title, s.genre, s.track, s.upload_date, s.deleted, s.explicit, s.duration, a.name,
+                                (SELECT COUNT(*) FROM playlist_song AS ps WHERE ps.song_id = s.id AND ps.user_id = @UserId AND ps.deleted=false) > 0 AS is_in_playlist
+                                FROM song AS s
+                                JOIN artist AS a ON s.artist_id=a.artist_id
+                                WHERE s.title LIKE @SearchTerm OR a.name LIKE @SearchTerm;
+                                ";
                     using (MySqlCommand command = new MySqlCommand(sql, connection))
                     {
+                        command.Parameters.AddWithValue("@UserId", int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)));
                         command.Parameters.AddWithValue("@SearchTerm", "%" + searched + "%");
 
                         using (MySqlDataReader reader = command.ExecuteReader())
@@ -54,6 +62,8 @@ namespace CoogMusic.Pages.Search
                                 songInfo.deleted = reader.GetBoolean("deleted");
                                 songInfo.Explicit = reader.GetBoolean("explicit");
                                 songInfo.Duration = TimeSpan.Parse(reader.GetString("duration"));
+
+                                songInfo.IsInPlaylist = reader.GetBoolean("is_in_playlist");
 
                                 if (songInfo.deleted != true)
                                 {
@@ -102,11 +112,94 @@ namespace CoogMusic.Pages.Search
         }
 
         [BindProperty(SupportsGet = true)]
+        public string artistName { get; set; }
+
+        public IActionResult OnPostFollowing(artistName)
+        {
+            int userID = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var ArtistName = Request.Form["artistName"];
+            int artistID = 0;
+            String connectionStr = _configuration.GetConnectionString("DefaultConnection");
+            try
+            {
+                using (MySqlConnection connection = new MySqlConnection(connectionStr))
+                {
+                    connection.Open();
+                    // Check if user is a listener and not artist
+                    string sql = "SELECT COUNT(*) FROM listener WHERE id = @UserID";
+                    using (MySqlCommand command = new MySqlCommand(sql, connection))
+                    {
+                        command.Parameters.AddWithValue("@UserID", userID);
+                        int count = Convert.ToInt32(command.ExecuteScalar());
+
+                        // Get artist_id from artist table with matching name = artistName
+                        string getArtistIdQ = "SELECT artist_id FROM artist WHERE name = @ArtistName";
+                        using (MySqlCommand getArtistIdCommand = new MySqlCommand(getArtistIdQ, connection))
+                        {
+                            getArtistIdCommand.Parameters.AddWithValue("@ArtistName", ArtistName);
+                            artistID = Convert.ToInt32(getArtistIdCommand.ExecuteScalar());
+                        }
+
+                        // If user_id is in listener table (user is listener)
+                        if (count > 0)
+                        {
+                            string query = "SELECT COUNT(*) FROM follows WHERE listener_id = @UserID AND artist_id = @ArtistID";
+                            using (MySqlCommand alrFollowing = new MySqlCommand(query, connection))
+                            {
+                                alrFollowing.Parameters.AddWithValue("@UserID", userID);
+                                alrFollowing.Parameters.AddWithValue("@ArtistID", artistID);
+                                int followed = Convert.ToInt32(alrFollowing.ExecuteScalar());
+
+                                // If listener already follows the artist
+                                if (followed > 0)
+                                {
+                                    // Listener will unfollow artist
+                                    string unfollow = "DELETE FROM follows WHERE listener_id = @UserID AND artist_id = @ArtistID";
+                                    using (MySqlCommand unfollowArtist = new MySqlCommand(unfollow, connection))
+                                    {
+                                        unfollowArtist.Parameters.AddWithValue("@UserID", userID);
+                                        unfollowArtist.Parameters.AddWithValue("@ArtistID", artistID);
+                                        unfollowArtist.ExecuteNonQuery();
+                                    }
+                                    return new JsonResult(new { success = true, message = "Unfollowed artist successfully" });
+                                }
+                                else
+                                {
+                                    // Listener will follow artist
+                                    string follow = "INSERT INTO follows (listener_id, artist_id) VALUES (@UserID, @ArtistID)";
+                                    using (MySqlCommand followArtist = new MySqlCommand(follow, connection))
+                                    {
+                                        followArtist.Parameters.AddWithValue("@UserID", userID);
+                                        followArtist.Parameters.AddWithValue("@ArtistID", artistID);
+                                        followArtist.ExecuteNonQuery();
+                                    }
+                                    return new JsonResult(new { success = true, message = "Followed artist successfully" });
+                                }
+                            }
+                        }
+                        else
+                        {
+                            // User is not a listener
+                            Console.WriteLine("User is artist");
+                            return new JsonResult(new { success = false, message = "Artists cannot follow artists" });
+                        }
+                    }
+                }
+            }
+            catch (Exception exc)
+            {
+                return new JsonResult(new { success = false, message = $"Error following artist: {exc.Message}" });
+            }
+        }
+
+        [BindProperty(SupportsGet = true)]
         public int rating { get; set; }
 
         public IActionResult OnPostUpdateRating()
         {
             int userID = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            int Rating = Convert.ToInt32(Request.Form["rating"]);
+            int SongId = Convert.ToInt32(Request.Form["songID"]);
 
             String connectionStr = _configuration.GetConnectionString("DefaultConnection");
             try
@@ -114,30 +207,30 @@ namespace CoogMusic.Pages.Search
                 using (MySqlConnection connection = new MySqlConnection(connectionStr))
                 {
                     connection.Open();
-                    using (MySqlCommand command = new MySqlCommand("SELECT COUNT(*) FROM song_rating WHERE listener_id = @ListenerID AND song_id = @SongID", connection))
+                    using (MySqlCommand command = new MySqlCommand("SELECT COUNT(*) FROM song_rating WHERE user_id = @UserID AND song_id = @SongID", connection))
                     {
-                        command.Parameters.AddWithValue("@ListenerID", userID);
-                        command.Parameters.AddWithValue("@songID", SongId);
+                        command.Parameters.AddWithValue("@UserID", userID);
+                        command.Parameters.AddWithValue("@SongID", SongId);
 
                         int count = Convert.ToInt32(command.ExecuteScalar());
 
                         if (count > 0)
                         {
-                            using (MySqlCommand comm = new MySqlCommand("UPDATE song_rating SET rating = @Rating WHERE listener_id = @ListenerID AND song_id = @SongID", connection))
+                            using (MySqlCommand comm = new MySqlCommand("UPDATE song_rating SET rating = @Rating WHERE user_id = @UserID AND song_id = @SongID", connection))
                             {
-                                comm.Parameters.AddWithValue("@Rating", rating);
-                                comm.Parameters.AddWithValue("@ListenerID", userID);
+                                comm.Parameters.AddWithValue("@Rating", Rating);
+                                comm.Parameters.AddWithValue("@UserID", userID);
                                 comm.Parameters.AddWithValue("@SongID", SongId);
                                 comm.ExecuteNonQuery();
                             }
                         }
                         else
                         {
-                            using (MySqlCommand comm = new MySqlCommand("INSERT INTO song_rating (listener_id, song_id, rating)  VALUES (@ListenerID, @SongID, @Rating)", connection))
+                            using (MySqlCommand comm = new MySqlCommand("INSERT INTO song_rating (user_id, song_id, rating)  VALUES (@UserID, @SongID, @Rating)", connection))
                             {
-                                comm.Parameters.AddWithValue("@ListenerID", userID);
+                                comm.Parameters.AddWithValue("@UserID", userID);
                                 comm.Parameters.AddWithValue("@SongID", SongId);
-                                comm.Parameters.AddWithValue("@Rating", rating);
+                                comm.Parameters.AddWithValue("@Rating", Rating);
                                 comm.ExecuteNonQuery();
                             }
                         }
@@ -170,7 +263,7 @@ namespace CoogMusic.Pages.Search
             using (var connection = new MySqlConnection(connectionString))
             {
                 await connection.OpenAsync();
-                using (var command = new MySqlCommand("SELECT p.id, p.user_id, p.title, p.description FROM playlist AS p WHERE user_id = @UserId", connection))
+                using (var command = new MySqlCommand("SELECT p.id, p.user_id, p.title, p.description, p.deleted FROM playlist AS p WHERE user_id = @UserId", connection))
                 {
                     command.Parameters.AddWithValue("@UserId", userId);
                     using (var reader = await command.ExecuteReaderAsync())
@@ -178,15 +271,17 @@ namespace CoogMusic.Pages.Search
                         while (await reader.ReadAsync())
                         {
                             var title = reader.GetString("title");
-                            Console.WriteLine($"Title: {title}");
-                            playlists.Add(new PlaylistView
+
+                            if (reader.GetBoolean("deleted") != true)
                             {
-                                Id = reader.GetInt32("id"),
-                                UserId = reader.GetInt32("user_id"),
-                                Title = reader.GetString("title"),
-                                Description = !reader.IsDBNull(reader.GetOrdinal("description")) ? reader.GetString("description") : null,
-                                // Add other fields if needed
-                            });
+                                playlists.Add(new PlaylistView
+                                {
+                                    Id = reader.GetInt32("id"),
+                                    UserId = reader.GetInt32("user_id"),
+                                    Title = reader.GetString("title"),
+                                    Description = !reader.IsDBNull(reader.GetOrdinal("description")) ? reader.GetString("description") : null,
+                                });
+                            }
                         }
                     }
                 }
@@ -210,6 +305,22 @@ namespace CoogMusic.Pages.Search
             {
                 await connection.OpenAsync();
                 MySqlTransaction mySqlTransaction = connection.BeginTransaction();
+
+                String checkSql = "SELECT COUNT(*) FROM playlist_song WHERE playlist_id = @PlaylistId AND song_id = @SongId AND deleted = FALSE;";
+                using (MySqlCommand checkCommand = new MySqlCommand(checkSql, connection))
+                {
+                    checkCommand.Transaction = mySqlTransaction;
+
+                    checkCommand.Parameters.AddWithValue("@PlaylistId", PlaylistSongData.PlaylistId);
+                    checkCommand.Parameters.AddWithValue("@SongId", PlaylistSongData.SongId);
+                    int count = Convert.ToInt32(await checkCommand.ExecuteScalarAsync());
+
+                    if (count > 0)
+                    {
+                        // Song is already in the playlist
+                        return new JsonResult(new { success = false, message = "The song is already in the playlist."});
+                    }
+                }
 
                 String sql = "INSERT INTO playlist_song (playlist_id, song_id) VALUES (@PlaylistId, @SongId);";
                 using (MySqlCommand command = new MySqlCommand(sql, connection))

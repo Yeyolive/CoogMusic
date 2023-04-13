@@ -53,8 +53,7 @@
                                         <i class="fa-solid fa-play"></i>
                                     </a>
                                     songIndex++;
-                                    <a class="btn btn-secondary btn-action"
-                                       onclick="addToPlaylist(&quot;@item.songId&quot;)">
+                                    <a class="btn btn-secondary btn-action" asp-page="/Playlists/Remove" asp-route-songId="@item.songId" asp-route-playlistId="@Model.PlaylistId">
                                         <i class="fa-solid fa-minus"></i>
                                     </a>
                                 }

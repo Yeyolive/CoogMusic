@@ -1,21 +1,22 @@
 ﻿function addToPlaylist(songId) {
     // Show the modal
     var modal = document.getElementById("playlist-modal");
-    modal.style.display = "block";
 
     // Load user's playlists and display them
     $.get("/Search?handler=UserPlaylists", function (data) {
-            var container = document.getElementById("playlists-container");
-            container.innerHTML = '';
+        var container = document.getElementById("playlists-container");
+        container.innerHTML = '';
+
+        if (data.length === 0) {
+            var errorMessageElement = document.getElementById("error-message");
+            errorMessageElement.innerHTML = '<strong>You do not have any playlists.</strong><button type="button" class="btn-close" data-bs-dismiss="alert"></button>';
+            errorMessageElement.classList.add('alert', 'alert-warning', 'alert-dismissible', 'fade', 'show');
+
+            // Close the modal
+            modal.style.display = "none";
+        } else {
+            modal.style.display = "block";
             data.forEach(playlist => {
-                //console.log('Playlist:', playlist);
-                //console.log(songId);
-
-                //var button = document.createElement('button');
-                //button.classList.add('btn', 'btn-primary', 'btn-action');
-                //button.textContent = playlist.Title;
-                //button.onclick = function () {
-
                 var listItem = document.createElement('li');
                 listItem.textContent = playlist.title;
                 listItem.style.cursor = 'pointer';
@@ -49,15 +50,15 @@
                             }
                         });
 
-
                     // Close the modal
                     modal.style.display = "none";
                 };
-                //container.appendChild(button);
                 container.appendChild(listItem);
             });
-        });
+        }
+    });
 }
+
 
 // Add the modal script
 var modal = document.getElementById("playlist-modal");

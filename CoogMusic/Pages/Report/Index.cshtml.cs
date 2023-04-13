@@ -1,10 +1,17 @@
-using MySql.Data.MySqlClient;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Configuration;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
+using MySql.Data.MySqlClient;
 
 namespace CoogMusic.Pages.Report
 {
+
     public class IndexModel : PageModel
     {
         private readonly IConfiguration _configuration;
@@ -19,18 +26,19 @@ namespace CoogMusic.Pages.Report
 
         public void OnGet()
         {
+
+
             try
             {
+                int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
                 String connectionStr = _configuration.GetConnectionString("DefaultConnection");
                 using (MySqlConnection connection = new MySqlConnection(connectionStr))
                 {
                     connection.Open();
-                    // Change this query for sorting
-                    String sql = "SELECT s.id, s.artist_id, s.album_id s.title, s.deleted FROM song AS s JOIN artist AS a ON s.artist_id=a.artist_id WHERE a.user_id=@UserId ORDER BY s.title";
-                    // Change this query to show only songs from the Artist that is logged in
+                    String sql = "SELECT s.id, s.artist_id, s.album_id, s.title, s.deleted FROM song AS s JOIN artist AS a ON s.artist_id=a.artist_id WHERE a.user_id=@UserId ORDER BY s.title";
                     using (MySqlCommand command = new MySqlCommand(sql, connection))
                     {
-                        command.Parameters.AddWithValue("@UserId", int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)));
+                        command.Parameters.AddWithValue("@UserId", userId);
                         using (MySqlDataReader reader = command.ExecuteReader())
                         {
                             while (reader.Read())
@@ -54,13 +62,8 @@ namespace CoogMusic.Pages.Report
             {
                 Console.WriteLine("Exception" + ex.ToString());
             }
-
         }
 
-        // When submit is pressed, this will activate
-        //public Task OnPostAsync()
-        //{
 
-        //}
     }
 }
