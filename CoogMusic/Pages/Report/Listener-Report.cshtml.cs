@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using CoogMusic.Data;
+using System.Security.Claims;
 
 namespace CoogMusic.Pages.Report
 {
@@ -17,32 +18,39 @@ namespace CoogMusic.Pages.Report
         public string SelectedAlbumTitle { get; set; }
         public string ReportHtml { get; set; }
 
-        private readonly IConfiguration _configuration;
+        private readonly DbHelper _databaseHelper;
+        private readonly string connectionStr;
 
         public Listener_ReportModel(IConfiguration configuration)
         {
-            _configuration = configuration;
+            string connectionString = configuration.GetConnectionString("DefaultConnection");
+            connectionStr = connectionString;
+            _databaseHelper = new DbHelper(connectionString);
         }
 
         public async Task OnGetAsync()
         {
-            using (var connection = new MySqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+            using (var connection = new MySqlConnection(connectionStr))
             {
                 await connection.OpenAsync();
-                using (var command = new MySqlCommand("SELECT * FROM Album", connection))
-                using (var reader = await command.ExecuteReaderAsync())
+                using (var command = new MySqlCommand("SELECT * FROM Album WHERE artist_id=@ArtistId", connection))
                 {
-                    Albums = new List<AlbumInfo>();
-                    while (await reader.ReadAsync())
+                    int artistId = await _databaseHelper.GetArtistIdByUserId(int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)));
+                    command.Parameters.AddWithValue("@ArtistId", artistId);
+                    using (var reader = await command.ExecuteReaderAsync())
                     {
-                        Albums.Add(new AlbumInfo
+                        Albums = new List<AlbumInfo>();
+                        while (await reader.ReadAsync())
                         {
-                            Id = reader.GetInt32(reader.GetOrdinal("id")),
-                            Title = reader.GetString(reader.GetOrdinal("title")),
-                            ArtistId = reader.GetInt32(reader.GetOrdinal("artist_id"))
+                            Albums.Add(new AlbumInfo
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("id")),
+                                Title = reader.GetString(reader.GetOrdinal("title")),
+                                ArtistId = reader.GetInt32(reader.GetOrdinal("artist_id"))
 
-                        });
+                            });
 
+                        }
                     }
                 }
             }
@@ -56,7 +64,7 @@ namespace CoogMusic.Pages.Report
                 throw new ArgumentException("Album not found");
             }
 
-            string connectionString = _configuration.GetConnectionString("DefaultConnection");
+            string connectionString = connectionStr;
             using (var connection = new MySqlConnection(connectionString))
             using (var command = new MySqlCommand())
             {
