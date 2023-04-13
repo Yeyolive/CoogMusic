@@ -162,11 +162,11 @@ function selectStar(star) {
             stars[i].classList.add('star');
         }
     }
-    updateRating(currentSongID, rating);
+    updateRating(currentSongID, rating, currentArtistId);
 }
 
 
-function updateRating(songID, rating) {
+function updateRating(songID, rating, artistId) {
     // Make an AJAX request to update the rating in database
     var xhr = new XMLHttpRequest();
     xhr.open('POST', '/Search/Index?handler=UpdateRating', true);
@@ -187,7 +187,7 @@ function updateRating(songID, rating) {
         }
     };
 
-    xhr.send(`songID=${songID}&rating=${rating}`);
+    xhr.send(`songID=${songID}&rating=${rating}&ArtistId=${artistId}`);
 }
 
 document.getElementById("stars-container").style.display = "none";
