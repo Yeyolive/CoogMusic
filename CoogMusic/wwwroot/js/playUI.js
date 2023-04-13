@@ -1,6 +1,7 @@
 let queue = [];
 let currentSongIndex = 0;
 var currentSongID = null;
+var 
 
 function playSongFromSearch(songId, songTitle, artistName) {
     const song = {
@@ -13,6 +14,34 @@ function playSongFromSearch(songId, songTitle, artistName) {
     playSong(song);
 }
 
+/*function followArtist(artistName) {
+    var followButton = $('a[onclick="followArtist(\'' + artistName + '\')"]');
+
+    if (followButton.hasClass('btn-danger')) {
+        // Unfollow artist
+        $.ajax({
+            url: '/Search/Index?handler=Unfollow',
+            type: 'POST',
+            data: { artistName: artistName },
+            success: function () {
+                followButton.removeClass('fa-regular fa-user');
+                followButton.addClass('fa-solid fa-user');
+            }
+        });
+    } else {
+        // Follow artist
+        $.ajax({
+            url: '/Search/Index?handler=Follow',
+            type: 'POST',
+            data: { artistName: artistName },
+            success: function () {
+                followButton.removeClass('fa-solid fa-user');
+                followButton.addClass('fa-regular fa-user');
+            }
+        });
+    }
+}
+*/
 function playSongFromPlaylist(playlistSongs, index) {
     queue = playlistSongs; // Update the queue with the entire playlist
     currentSongIndex = index;
