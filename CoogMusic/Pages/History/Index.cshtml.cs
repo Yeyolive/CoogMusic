@@ -50,7 +50,7 @@ namespace CoogMusic.Pages.History
                                 historyofuser.title = reader.GetString ("title");
                                 historyofuser.genre = reader.GetString ("genre");
                                 historyofuser.artist = reader.GetString("name");
-                                historyofuser.last_played = reader.GetDateTime("play_time").ToString("MM/dd/yyyy hh:mm:ss");
+                                historyofuser.last_played = reader.GetDateTime("play_time").ToString("MM/dd/yyyy hh:mm:s tt'");
                                 listSongs.Add(historyofuser);
                             }
                         }
