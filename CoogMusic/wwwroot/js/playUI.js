@@ -198,21 +198,6 @@ followButton.addEventListener('click', () => {
     xhr.open('POST', '/Search/Index?handler=FollowArtist', true);
     xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
     xhr.setRequestHeader("RequestVerificationToken", $('input:hidden[name="__RequestVerificationToken"]').val());
-/*    xhr.onload = function () {
-        if (this.status == 200) {
-            console.log(xhr.responseText);
-            var jsonResponse = JSON.parse(this.responseText);
-            if (jsonResponse.success) {
-                console.log(jsonResponse.message);
-            }
-            else {
-                console.error(jsonResponse.message);
-            }
-        }
-        else {
-            console.error("Error following artist");
-        }
-    };*/
 
     xhr.onreadystatechange = () => {
         if (xhr.readyState === XMLHttpRequest.DONE) {
@@ -224,5 +209,5 @@ followButton.addEventListener('click', () => {
         }
     };
     //xhr.send(JSON.stringify({ artistName: currentArtistName }));
-    xhr.send('artistName=${currentArtistName}');
+    xhr.send(`artistName=${currentArtistName}`);
 });

@@ -114,7 +114,7 @@ namespace CoogMusic.Pages.Search
         [BindProperty(SupportsGet = true)]
         public string artistName { get; set; }
 
-        public IActionResult OnPostFollowing()
+        public IActionResult OnPostFollowing(artistName)
         {
             int userID = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
             var ArtistName = Request.Form["artistName"];
