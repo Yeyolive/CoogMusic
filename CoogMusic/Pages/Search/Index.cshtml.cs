@@ -214,6 +214,22 @@ namespace CoogMusic.Pages.Search
                 await connection.OpenAsync();
                 MySqlTransaction mySqlTransaction = connection.BeginTransaction();
 
+                String checkSql = "SELECT COUNT(*) FROM playlist_song WHERE playlist_id = @PlaylistId AND song_id = @SongId AND deleted = FALSE;";
+                using (MySqlCommand checkCommand = new MySqlCommand(checkSql, connection))
+                {
+                    checkCommand.Transaction = mySqlTransaction;
+
+                    checkCommand.Parameters.AddWithValue("@PlaylistId", PlaylistSongData.PlaylistId);
+                    checkCommand.Parameters.AddWithValue("@SongId", PlaylistSongData.SongId);
+                    int count = Convert.ToInt32(await checkCommand.ExecuteScalarAsync());
+
+                    if (count > 0)
+                    {
+                        // Song is already in the playlist
+                        return new JsonResult(new { success = false, message = "The song is already in the playlist."});
+                    }
+                }
+
                 String sql = "INSERT INTO playlist_song (playlist_id, song_id) VALUES (@PlaylistId, @SongId);";
                 using (MySqlCommand command = new MySqlCommand(sql, connection))
                 {
