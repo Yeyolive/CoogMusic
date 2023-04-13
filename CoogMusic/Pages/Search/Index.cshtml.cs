@@ -166,14 +166,14 @@ namespace CoogMusic.Pages.Search
 
         [BindProperty(SupportsGet = true)]
         public int rating { get; set; }
+        public int artistid { get; set; }
 
         public IActionResult OnPostUpdateRating()
         {
             int userID = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
             int Rating = Convert.ToInt32(Request.Form["rating"]);
             int SongId = Convert.ToInt32(Request.Form["songID"]);
-            var ArtistId = Request.Form["artistId"];
-            int artistID = int.Parse(ArtistId);
+            var artistID = Convert.ToInt32(Request.Form["artistid"]);
 
             String connectionStr = _configuration.GetConnectionString("DefaultConnection");
             try
