@@ -2,6 +2,7 @@ let queue = [];
 let currentSongIndex = 0;
 var currentSongID = null;
 var currentArtistName = null;
+var currentArtistId = null;
 
 function playSongFromSearch(songId, songTitle, artistName) {
     const song = {
@@ -29,7 +30,6 @@ function playSong(song) {
     starsContainer.style.display = "block";
 
     currentSongID = song.songId;
-    currentArtistName = song.artistName;
     //console.log(song);
 
 
@@ -41,6 +41,9 @@ function playSong(song) {
     xhr.responseType = 'blob';
     xhr.onload = function (e) {
         if (this.status == 200) {
+            // Get Artist ID from response header
+            currentArtistId = parseInt(this.getResponseHeader("artist-id"));
+
             // Create a blob URL for the audio data
             var blob = new Blob([this.response], { type: 'audio/mpeg' });
             var url = URL.createObjectURL(blob);
@@ -194,10 +197,12 @@ const followButton = document.querySelector('.followButton');
 followButton.addEventListener('click', () => {
     // Code to follow the artist goes here
     var xhr = new XMLHttpRequest();
-    var artistName = currentArtistName;
+    var artistId = currentArtistId;
+
+    //console.log(artistId);
     xhr.open('POST', '/Search/Index?handler=FollowArtist', true);
     xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-    xhr.setRequestHeader("RequestVerificationToken", $('input:hidden[name="__RequestVerificationToken"]').val());
+    xhr.setRequestHeader("RequestVerificationToken", document.getElementsByName('__RequestVerificationToken')[0].value);
 
     xhr.onreadystatechange = () => {
         if (xhr.readyState === XMLHttpRequest.DONE) {
@@ -209,5 +214,5 @@ followButton.addEventListener('click', () => {
         }
     };
     //xhr.send(JSON.stringify({ artistName: currentArtistName }));
-    xhr.send(`artistName=${currentArtistName}`);
+    xhr.send(`ArtistId=${artistId}`);
 });
