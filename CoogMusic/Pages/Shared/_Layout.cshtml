@@ -49,11 +49,8 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-page="/Playlists/Index">My Playlists</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/History/Index">My History</a>
-                        </li>
                         @if (User.IsInRole("Artist"))
-                        {
+                            {
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-page="/Songs/Index">My Songs</a>
                             </li>
@@ -64,6 +61,12 @@
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-page="/Report/Index">Report</a>
                             </li>
+                        }
+                        else
+                        {
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-page="/History/Index">My History</a>
+                        </li>
                         }
                     </ul>
                     <partial name="_LoginPartial" />
