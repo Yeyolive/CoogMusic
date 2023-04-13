@@ -18,33 +18,6 @@
         
     </header>
 
-    <main>
-        <section>
-            <h2 class="title">Latest Songs</h2>
-            <table class="table">
-                <tr>
-                    <th class="table-header">Title</th>
-                    <th class="table-header">Artist</th>
-                    <th class="table-header">Genre</th>
-                    <th class="table-header">Play</th>
-                </tr>
-                @*@foreach (var song in Model.Songs)
-                {
-                    <tr>
-                        <td>@song.Title</td>
-                        <td>@song.Artist</td>
-                        <td>@song.Genre</td>
-                        <td>
-                            <a href="/song/@song.Id" class="btn btn-primary btn-action">View</a>
-                            <a href="/song/@song.Id/delete" class="btn btn-danger btn-action">Delete</a>
-                    Have a play button here instead!!
-                        </td>
-                    </tr>
-                }*@
-            </table>
-        </section>
-    </main>
-</div>
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
