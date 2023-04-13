@@ -106,7 +106,7 @@ namespace CoogMusic.Pages.Search
 
         public IActionResult OnPostUpdateRating()
         {
-            var userID = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            int userID = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
             int Rating = Convert.ToInt32(Request.Form["rating"]);
 
             String connectionStr = _configuration.GetConnectionString("DefaultConnection");
@@ -115,28 +115,28 @@ namespace CoogMusic.Pages.Search
                 using (MySqlConnection connection = new MySqlConnection(connectionStr))
                 {
                     connection.Open();
-                    using (MySqlCommand command = new MySqlCommand("SELECT COUNT(*) FROM song_rating WHERE listener_id = @ListenerID AND song_id = @SongID", connection))
+                    using (MySqlCommand command = new MySqlCommand("SELECT COUNT(*) FROM song_rating WHERE user_id = @UserID AND song_id = @SongID", connection))
                     {
-                        command.Parameters.AddWithValue("@ListenerID", userID);
+                        command.Parameters.AddWithValue("@UserID", userID);
                         command.Parameters.AddWithValue("@SongID", SongId);
 
                         int count = Convert.ToInt32(command.ExecuteScalar());
 
                         if (count > 0)
                         {
-                            using (MySqlCommand comm = new MySqlCommand("UPDATE song_rating SET rating = @Rating WHERE listener_id = @ListenerID AND song_id = @SongID", connection))
+                            using (MySqlCommand comm = new MySqlCommand("UPDATE song_rating SET rating = @Rating WHERE user_id = @UserID AND song_id = @SongID", connection))
                             {
                                 comm.Parameters.AddWithValue("@Rating", Rating);
-                                comm.Parameters.AddWithValue("@ListenerID", userID);
+                                comm.Parameters.AddWithValue("@UserID", userID);
                                 comm.Parameters.AddWithValue("@SongID", SongId);
                                 comm.ExecuteNonQuery();
                             }
                         }
                         else
                         {
-                            using (MySqlCommand comm = new MySqlCommand("INSERT INTO song_rating (listener_id, song_id, rating)  VALUES (@ListenerID, @SongID, @Rating)", connection))
+                            using (MySqlCommand comm = new MySqlCommand("INSERT INTO song_rating (user_id, song_id, rating)  VALUES (@UserID, @SongID, @Rating)", connection))
                             {
-                                comm.Parameters.AddWithValue("@ListenerID", userID);
+                                comm.Parameters.AddWithValue("@UserID", userID);
                                 comm.Parameters.AddWithValue("@SongID", SongId);
                                 comm.Parameters.AddWithValue("@Rating", Rating);
                                 comm.ExecuteNonQuery();
