@@ -42,7 +42,7 @@ namespace CoogMusic.Pages.Albums
                             while (reader.Read())
                             {
                                 AlbumInfo albumInfo = new AlbumInfo();
-                                albumInfo.Id = reader.GetInt32("id");
+                                albumInfo.AlbumId = reader.GetInt32("id");
                                 albumInfo.ArtistId = reader.GetInt32("artist_id");
                                 //albumInfo.art = reader.GetByte("art");
                                 albumInfo.Title = reader.GetString("title");
