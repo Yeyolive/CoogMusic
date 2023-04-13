@@ -172,6 +172,8 @@ namespace CoogMusic.Pages.Search
             int userID = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
             int Rating = Convert.ToInt32(Request.Form["rating"]);
             int SongId = Convert.ToInt32(Request.Form["songID"]);
+            var ArtistId = Request.Form["artistId"];
+            int artistID = int.Parse(ArtistId);
 
             String connectionStr = _configuration.GetConnectionString("DefaultConnection");
             try
@@ -188,21 +190,23 @@ namespace CoogMusic.Pages.Search
 
                         if (count > 0)
                         {
-                            using (MySqlCommand comm = new MySqlCommand("UPDATE song_rating SET rating = @Rating WHERE user_id = @UserID AND song_id = @SongID", connection))
+                            using (MySqlCommand comm = new MySqlCommand("UPDATE song_rating SET rating = @Rating WHERE user_id = @UserID AND song_id = @SongID AND artist_id = @ArtistID", connection))
                             {
                                 comm.Parameters.AddWithValue("@Rating", Rating);
                                 comm.Parameters.AddWithValue("@UserID", userID);
                                 comm.Parameters.AddWithValue("@SongID", SongId);
+                                comm.Parameters.AddWithValue("@ArtistID", artistID);
                                 comm.ExecuteNonQuery();
                             }
                         }
                         else
                         {
-                            using (MySqlCommand comm = new MySqlCommand("INSERT INTO song_rating (user_id, song_id, rating)  VALUES (@UserID, @SongID, @Rating)", connection))
+                            using (MySqlCommand comm = new MySqlCommand("INSERT INTO song_rating (user_id, song_id,artist_id, rating)  VALUES (@UserID, @SongID, @ArtistID, @Rating)", connection))
                             {
                                 comm.Parameters.AddWithValue("@UserID", userID);
                                 comm.Parameters.AddWithValue("@SongID", SongId);
                                 comm.Parameters.AddWithValue("@Rating", Rating);
+                                comm.Parameters.AddWithValue("@ArtistID", artistID);
                                 comm.ExecuteNonQuery();
                             }
                         }
