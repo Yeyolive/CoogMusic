@@ -187,7 +187,7 @@ function updateRating(songID, rating, artistId) {
         }
     };
 
-    xhr.send(`songID=${songID}&rating=${rating}&ArtistId=${artistid}`);
+    xhr.send(`songID=${songID}&rating=${rating}&ArtistId=${artistId}`);
 }
 
 document.getElementById("stars-container").style.display = "none";
