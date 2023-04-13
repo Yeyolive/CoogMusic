@@ -45,3 +45,13 @@
         </section>
     </main>
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Check if the user is authenticated
+        var isAuthenticated = document.body.getAttribute('data-is-authenticated') === 'True';
+        if (!isAuthenticated) {
+            window.location.href = '/Accounts/LoginTwo';
+        }
+    });
+</script>
