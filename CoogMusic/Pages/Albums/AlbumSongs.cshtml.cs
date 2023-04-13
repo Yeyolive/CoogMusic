@@ -49,14 +49,14 @@ namespace CoogMusic.Pages.Albums
                                         a.artist_id AS artist_id,
                                         a.name AS artist_name
                                     FROM
-                                        album_songs AS as
+                                        album_song
                                     JOIN song AS s ON
-                                        as.song_id = s.id
+                                        album_song.song_id = s.id
                                     JOIN artist AS a ON
                                         s.artist_id = a.artist_id
                                     WHERE
-                                        as.album_id = @AlbumId AND
-                                        as.deleted = FALSE
+                                        album_song.album_id = @AlbumId AND
+                                        album_song.deleted = FALSE
                                     ORDER BY
                                         s.title
                                 ";
@@ -91,7 +91,7 @@ namespace CoogMusic.Pages.Albums
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Error Retrieving Playlist From Database: " + ex.Message);
+                Console.WriteLine("Error Retrieving Album From Database: " + ex.Message);
             }
         }
     }
