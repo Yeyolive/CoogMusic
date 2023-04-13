@@ -20,9 +20,15 @@ function playSongFromPlaylist(playlistSongs, index) {
 }
 
 function playSong(song) {
-    if (!song) return;
+    const starsContainer = document.getElementById("stars-container");
+    if (!song) {
+        starsContainer.style.display = "none";
+        return;
+    }
+    starsContainer.style.display = "block";
     currentSongID = song.songId;
     //console.log(song);
+
 
     // Make an AJAX request to get the song data
     document.getElementById("song-title").innerText = capitalizeFirstLetter(song.title.toLowerCase());
@@ -177,3 +183,5 @@ function updateRating(songID, rating) {
 
     xhr.send(`songID=${songID}&rating=${rating}`);
 }
+
+document.getElementById("stars-container").style.display = "none";
