@@ -1,7 +1,7 @@
 let queue = [];
 let currentSongIndex = 0;
 var currentSongID = null;
-var 
+var currentArtistName = null;
 
 function playSongFromSearch(songId, songTitle, artistName) {
     const song = {
@@ -14,34 +14,6 @@ function playSongFromSearch(songId, songTitle, artistName) {
     playSong(song);
 }
 
-/*function followArtist(artistName) {
-    var followButton = $('a[onclick="followArtist(\'' + artistName + '\')"]');
-
-    if (followButton.hasClass('btn-danger')) {
-        // Unfollow artist
-        $.ajax({
-            url: '/Search/Index?handler=Unfollow',
-            type: 'POST',
-            data: { artistName: artistName },
-            success: function () {
-                followButton.removeClass('fa-regular fa-user');
-                followButton.addClass('fa-solid fa-user');
-            }
-        });
-    } else {
-        // Follow artist
-        $.ajax({
-            url: '/Search/Index?handler=Follow',
-            type: 'POST',
-            data: { artistName: artistName },
-            success: function () {
-                followButton.removeClass('fa-solid fa-user');
-                followButton.addClass('fa-regular fa-user');
-            }
-        });
-    }
-}
-*/
 function playSongFromPlaylist(playlistSongs, index) {
     queue = playlistSongs; // Update the queue with the entire playlist
     currentSongIndex = index;
@@ -55,7 +27,9 @@ function playSong(song) {
         return;
     }
     starsContainer.style.display = "block";
+
     currentSongID = song.songId;
+    currentArtistName = song.artistName;
     //console.log(song);
 
 
@@ -214,3 +188,42 @@ function updateRating(songID, rating) {
 }
 
 document.getElementById("stars-container").style.display = "none";
+
+const followButton = document.querySelector('.followButton');
+
+followButton.addEventListener('click', () => {
+    // Code to follow the artist goes here
+    var xhr = new XMLHttpRequest();
+    var artistName = currentArtistName;
+    xhr.open('POST', '/Search/Index?handler=FollowArtist', true);
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    xhr.setRequestHeader("RequestVerificationToken", document.getElementsByName('__RequestVerificationToken')[0].value);
+    /*xhr.onload = function () {
+        if (this.status == 200) {
+            var jsonResponse = JSON.parse(this.responseText);
+            if (jsonResponse.success) {
+                console.log(jsonResponse.message);
+            }
+            else {
+                console.error(jsonResponse.message);
+            }
+        }
+        else {
+            console.error("Error following artist");
+        }
+    };*/
+
+    
+
+    xhr.onreadystatechange = () => {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+            if (xhr.status === 200) {
+                console.log('Artist followed successfully!');
+            } else {
+                console.error('An error occurred while following the artist.');
+            }
+        }
+    };
+    //xhr.send(JSON.stringify({ artistName: currentArtistName }));
+    xhr.send('artistName=${currentArtistName}');
+});

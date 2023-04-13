@@ -111,42 +111,84 @@ namespace CoogMusic.Pages.Search
             return File(songData, "audio/mpeg");
         }
 
-        /*[HttpPost]
-        public ActionResult Follow(string artistName)
+        [BindProperty(SupportsGet = true)]
+        public string artistName { get; set; }
+
+        public IActionResult OnPostFollowing()
         {
-            // Save follow into database
             int userID = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            int artistID = 0;
+
             String connectionStr = _configuration.GetConnectionString("DefaultConnection");
-            String query = "SELECT COUNT(*) FROM listeners AS l, follows AS f WHERE l.id = @UserId OR f.listener_id != @UserId";
-            String query2 = "SELECT COUNT(*) FROM listener WHERE listener_id = @UserId AND NOT EXISTS (SELECT * FROM follows WHERE listener_id = @UserId AND artist_id = @ArtistId)";
             try
             {
                 using (MySqlConnection connection = new MySqlConnection(connectionStr))
                 {
                     connection.Open();
-                    using (MySqlCommand sqlCommand = new MySqlCommand(query, connection))
+                    // Check if user is a listener and not artist
+                    string sql = "SELECT COUNT(*) FROM listener WHERE id = @UserID";
+                    using ( MySqlCommand command = new MySqlCommand(sql, connection))
                     {
-                        sqlCommand.Parameters.AddWithValue("@UserId", userID);
+                        command.Parameters.AddWithValue("@UserID", userID);
                         int count = Convert.ToInt32(command.ExecuteScalar());
 
+                        // Get artist_id from artist table with matching name = artistName
+                        string getArtistIdQ = "SELECT artist_id FROM artist WHERE name = @ArtistName";
+                        using (MySqlCommand getArtistIdCommand = new MySqlCommand(getArtistIdQ, connection))
+                        {
+                            getArtistIdCommand.Parameters.AddWithValue("@ArtistName", artistName);
+                            artistID = Convert.ToInt32(getArtistIdCommand.ExecuteScalar());
+                        }
+
+                        // If user_id is in listener table (user is listener)
                         if (count > 0)
                         {
-                            using (MySql command = new MySqlCommand(query2, connection))
+                            string query = "SELECT COUNT(*) FROM follows WHERE listener_id = @UserID AND artist_id = @ArtistID";
+                            using (MySqlCommand alrFollowing = new MySqlCommand(query, connection))
                             {
-                                command.Parameters.AddWithValue("@UserId", userID);
-                                command.Parameters.AddWithValue("@ArtistId", )
+                                alrFollowing.Parameters.AddWithValue("@UserID", userID);
+                                alrFollowing.Parameters.AddWithValue("@ArtistID", artistID);
+                                int followed = Convert.ToInt32(alrFollowing.ExecuteScalar());
+
+                                // If listener already follows the artist
+                                if (followed > 0)
+                                {
+                                    // Listener will unfollow artist
+                                    string unfollow = "DELETE FROM follows WHERE listener_id = @UserID AND artist_id = @ArtistID";
+                                    using (MySqlCommand unfollowArtist = new MySqlCommand(unfollow, connection))
+                                    {
+                                        unfollowArtist.Parameters.AddWithValue("@UserID", userID);
+                                        unfollowArtist.Parameters.AddWithValue("@ArtistID", artistID);
+                                        unfollowArtist.ExecuteNonQuery();
+                                    }
+                                }
+                                else
+                                {
+                                    // Listener will follow artist
+                                    string follow = "INSERT INTO follows (listener_id, artist_id) VALUES (@UserID, @ArtistID)";
+                                    using (MySqlCommand followArtist = new MySqlCommand(follow, connection)) {
+                                        followArtist.Parameters.AddWithValue("@UserID", userID);
+                                        followArtist.Parameters.AddWithValue("@ArtistID", artistID);
+                                        followArtist.ExecuteNonQuery();
+                                    }
+                                }
                             }
+                            return new JsonResult(new { success = true, message = "Followed artist successfully" });
                         }
                         else
                         {
+                            // User is not a listener
+                            return new JsonResult(new { success = false, message = "Artists cannot follow artists" });
 
                         }
                     }
                 }
             }
-
-    
-        }*/
+            catch (Exception exc)
+            {
+                return new JsonResult(new { success = false, message = $"Error following artist: {exc.Message}" });
+            }
+        }
 
         [BindProperty(SupportsGet = true)]
         public int rating { get; set; }
