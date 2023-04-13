@@ -111,6 +111,43 @@ namespace CoogMusic.Pages.Search
             return File(songData, "audio/mpeg");
         }
 
+        /*[HttpPost]
+        public ActionResult Follow(string artistName)
+        {
+            // Save follow into database
+            int userID = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            String connectionStr = _configuration.GetConnectionString("DefaultConnection");
+            String query = "SELECT COUNT(*) FROM listeners AS l, follows AS f WHERE l.id = @UserId OR f.listener_id != @UserId";
+            String query2 = "SELECT COUNT(*) FROM listener WHERE listener_id = @UserId AND NOT EXISTS (SELECT * FROM follows WHERE listener_id = @UserId AND artist_id = @ArtistId)";
+            try
+            {
+                using (MySqlConnection connection = new MySqlConnection(connectionStr))
+                {
+                    connection.Open();
+                    using (MySqlCommand sqlCommand = new MySqlCommand(query, connection))
+                    {
+                        sqlCommand.Parameters.AddWithValue("@UserId", userID);
+                        int count = Convert.ToInt32(command.ExecuteScalar());
+
+                        if (count > 0)
+                        {
+                            using (MySql command = new MySqlCommand(query2, connection))
+                            {
+                                command.Parameters.AddWithValue("@UserId", userID);
+                                command.Parameters.AddWithValue("@ArtistId", )
+                            }
+                        }
+                        else
+                        {
+
+                        }
+                    }
+                }
+            }
+
+    
+        }*/
+
         [BindProperty(SupportsGet = true)]
         public int rating { get; set; }
 
