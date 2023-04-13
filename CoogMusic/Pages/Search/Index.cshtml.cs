@@ -161,6 +161,7 @@ namespace CoogMusic.Pages.Search
                                         unfollowArtist.Parameters.AddWithValue("@ArtistID", artistID);
                                         unfollowArtist.ExecuteNonQuery();
                                     }
+                                    return new JsonResult(new { success = true, message = "Unfollowed artist successfully" });
                                 }
                                 else
                                 {
@@ -171,9 +172,9 @@ namespace CoogMusic.Pages.Search
                                         followArtist.Parameters.AddWithValue("@ArtistID", artistID);
                                         followArtist.ExecuteNonQuery();
                                     }
+                                    return new JsonResult(new { success = true, message = "Followed artist successfully" });
                                 }
                             }
-                            return new JsonResult(new { success = true, message = "Followed artist successfully" });
                         }
                         else
                         {
