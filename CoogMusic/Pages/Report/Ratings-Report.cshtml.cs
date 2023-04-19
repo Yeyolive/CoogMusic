@@ -23,6 +23,7 @@ namespace CoogMusic.Pages.Report
         private readonly DbHelper _dbHelper;
         private readonly string connectionStr;
 
+
         
         public Ratings_ReportModel(IConfiguration configuration)
         {
@@ -72,36 +73,82 @@ namespace CoogMusic.Pages.Report
             {
                 SelectedAlbumId = selectedAlbumId;
                 command.Connection = connection;
-                command.CommandText = "SELECT song.title, song_rating.rating FROM song_rating JOIN album_song ON song_rating.song_id = album_song.song_id JOIN song ON song.id = song_rating.song_id WHERE album_song.album_id=@albumId";
+                command.CommandText = "SELECT  song.title, IFNULL(AVG(song_rating.rating), 0) AS avg_rating, COUNT(DISTINCT song_rating.user_id) AS num_listeners_rated FROM song JOIN album_song ON song.id = album_song.song_id LEFT JOIN song_rating ON song.id = song_rating.song_id WHERE album_song.album_id = @albumId GROUP BY song.id, song.title";
                 command.Parameters.AddWithValue("@albumId", SelectedAlbumId);
                 connection.Open();
 
                 using (var reader = command.ExecuteReader())
                 {
                     StringBuilder html = new StringBuilder();
+                    List<Dictionary<string, string>> data = new List<Dictionary<string, string>>();
                     html.Append("<table>");
-                    html.Append("<tr><th>Song Title</th><th>Rating</th></tr>");
-                    double totalAlbumRating = 0;
+                    html.Append("<tr><th>Song Title</th><th class='rating-column'>Rating</th><th class='listener-column'>Number of listeners rated</th></tr>");
+                    html.Append("<style>.rating-column { padding-left: 200px; } .listener-column { padding-left: 300px; }</style>");
+
+                    float totalAlbumRating = 0;
                     int count = 0;
+                    bool empty = true;
 
                     while (reader.Read())
                     {
-
+                        empty = false;
+                        Dictionary<string, string> item1 = new Dictionary<string, string>();
                         var songTitle = reader.GetString("title");
-                        var rating = reader.GetInt32("rating");
+                        var rating = reader.GetFloat("avg_rating");
+                        var listenerCount = reader.GetInt32("num_listeners_rated");
+                        item1.Add("title", songTitle);
+                        if (rating == 0)
+                        {
+                            item1.Add("rating", "No ratings yet");
+                        }
+                        else
+                        {
+                            item1.Add("rating", rating.ToString());
+                        }
+                        
+                        item1.Add("listeners", listenerCount.ToString());
+                        data.Add(item1);
+
                         totalAlbumRating += rating;
-                        if(rating > 0)
+                        if (rating > 0)
                         {
                             count++;
                         }
 
-                        html.Append("<tr>");
-                        html.Append("<td>" + songTitle + "</td>");
-                        html.Append("<td>" + rating.ToString() + "</td>");
-                        html.Append("</tr>");
                     }
-                    totalAlbumRating = totalAlbumRating / count;
-                    html.Append("<tr><td>Total album rating:</td><td>" + totalAlbumRating.ToString() + "</td></tr>");
+                    foreach (Dictionary<string, string> item in data)
+                    {
+                        // Get the title, rating, and listeners values from the current item
+                        string title = item["title"];
+                        string rating = item["rating"];
+                        string listeners = item["listeners"];
+
+                        // Create a new row with the title, rating, and listeners values
+                        string newRow = "<tr><td>" + title + "</td><td class='rating-column'>" + rating + "</td><td class='listener-column'>" + listeners + "</td></tr>";
+                        html.Append(newRow);
+                    }
+
+
+                    string Row = "<tr><td>" + "" + "</td><td class='rating-column'>" + "" + "</td><td class='listener-column'>" + "" + "</td></tr>";
+                    if (empty == false)
+                    {
+                        totalAlbumRating = totalAlbumRating / count;
+                        html.Append(Row); // Add two empty rows
+                        html.Append(Row);
+                        html.Append(Row);
+                        html.Append(Row); 
+                        html.Append(Row);
+                        html.Append(Row);
+                        html.Append(Row);
+                        html.Append(Row);
+                        html.Append(Row);
+
+                        html.Append("<tr><td>Total album rating:</td><td>" + totalAlbumRating.ToString() + "</td></tr>");
+                    }
+                    else
+                    {
+                        html.Append("<tr><td>No songs in this album.</td><td></td></tr>");
+                    }
 
                     html.Append("</table>");
 
