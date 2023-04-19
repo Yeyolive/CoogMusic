@@ -66,11 +66,7 @@ namespace CoogMusic.Pages.Report
 
         public async Task<string> GenerateListenerReport(int selectedAlbumId)
         {
-            if (selectedAlbumId == 0)
-            {
-                // handle the case where the album is null, e.g. by throwing an exception or returning a default value
-                throw new ArgumentException("Album not found");
-            }
+
 
             
             using (var connection = new MySqlConnection(connectionStr))

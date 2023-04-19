@@ -8,19 +8,6 @@
 
 <div>
     <h1 class="text-center">Listeners Report</h1>
-    @* <form method="get">
-            <div class="form-group">
-                <label for="selectedAlbumId">Select an album:</label>
-                <select class="form-control" id="selectedAlbumId" name="selectedAlbumId">
-                    @foreach (var album in Model.Albums)
-                    {
-                    <option value="@album.Id">@album.Title</option>
-                    }
-                </select>
-
-            </div>
-            <button type="submit" asp-page-handler="GenerateListenerReport" class="btn btn-primary">Generate Report</button>
-        </form> *@
     <form method="post">
         <select asp-for="SelectedAlbumId" asp-items="@(new SelectList(Model.Albums, "Id", "Title"))">
             <option value="">-- Select an album --</option>
