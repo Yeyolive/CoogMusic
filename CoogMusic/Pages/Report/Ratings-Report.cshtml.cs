@@ -79,7 +79,7 @@ namespace CoogMusic.Pages.Report
                 using (var reader = command.ExecuteReader())
                 {
                     StringBuilder html = new StringBuilder();
-                    html.Append("<table");
+                    html.Append("<table>");
                     html.Append("<tr><th>Song Title</th><th>Rating</th></tr>");
                     double totalAlbumRating = 0;
                     int count = 0;
