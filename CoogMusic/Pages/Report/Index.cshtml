@@ -4,11 +4,7 @@
     ViewData["Title"] = "Report";
 }
 
-@*
-    Contains a way for the User (Listner and Artist) to create reports (profile)
-    Artist Report: View ratings of Artist (themselves) || List of each of song w/ ratings
-    Listener Report: Hours of music streamed || Top 3 songs and Top 3 artists
-*@
+
 @if (User.Identity.IsAuthenticated)
 {
     if (User.IsInRole("Artist"))
@@ -19,40 +15,6 @@
 
 
     <form class="form-container">
-        @*     <div>
-                <label for="song-name">Song name:</label>
-                //<input type="text" id="song-name" name="song-name">
-                <select id="song" name="SongId" required class="form-input" value="">
-                    <option value="" selected>Choose a Song:</option>
-                    @foreach (var item in Model.listSongs)
-                    {
-                        if (item.deleted != true)
-                        {
-                    <option value="@item.songId">@item.title</option>
-                        }
-                    }
-                </select>
-            </div>
-            <hr>
-
-            <div>
-
-
-                <label for="album-name">Album name:</label>
-                //<input type="text" id="album-name" name="album-name">
-            <select id="song" name="AlbumId" required class="form-input" value="">
-                <option value="" selected>Choose a Album:</option>
-
-                @foreach (var item in Model.listSongs)
-                    {
-                        if (item.deleted != true)
-                        {
-                <option value="@item.songId">@item.title</option>
-                        }
-                    }
-            </select>
-
-            </div> *@
 
         <div class="text-center">
             <a class="btn btn-primary btn-action" href="/Report/Listener-Report">Listeners</a>
@@ -71,11 +33,4 @@
 
 </div>
 }
-else{
-<p>You may not access this page.</p>
-}
-}
-else
-{
-<p>You must log in to access this page.</p>
 }
