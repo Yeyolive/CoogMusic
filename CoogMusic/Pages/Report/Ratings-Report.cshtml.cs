@@ -7,6 +7,7 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using CoogMusic.Data;
 using System.Security.Claims;
+using System.Text;
 
 namespace CoogMusic.Pages.Report
 {
@@ -16,15 +17,15 @@ namespace CoogMusic.Pages.Report
         [BindProperty]
         public int SelectedAlbumId { get; set; }
         public string SelectedAlbumTitle { get; set; }
-        public ReportData ReportData { get; set; }
         public int ArtistId;
+        public string ReportHtml { get; set; }
         private readonly DbHelper _dbHelper;
         private readonly string connectionStr;
 
-
+        
         public Ratings_ReportModel(IConfiguration configuration)
         {
-            
+
             string connectionString = configuration.GetConnectionString("DefaultConnection");
             connectionStr = connectionString;
             _dbHelper = new DbHelper(connectionString);
@@ -61,90 +62,60 @@ namespace CoogMusic.Pages.Report
             }
         }
 
-        public async Task<IActionResult> OnPostGenerateReportAsync()
+        public async Task<string> GenerateRatingReport(int selectedAlbumId)
         {
+
+
             using (var connection = new MySqlConnection(connectionStr))
+            using (var command = new MySqlCommand())
             {
-                await connection.OpenAsync();
+                SelectedAlbumId = selectedAlbumId;
+                command.Connection = connection;
+                command.CommandText = "SELECT song.title, song_rating.rating FROM song_rating JOIN album_song ON song_rating.song_id = album_song.song_id JOIN song ON song.id = song_rating.song_id WHERE album_song.album_id=@albumId";
+                command.Parameters.AddWithValue("@albumId", SelectedAlbumId);
+                connection.Open();
 
-                using (var command = new MySqlCommand("SELECT * FROM Album WHERE Id=@id", connection))
+                using (var reader = command.ExecuteReader())
                 {
-                    command.Parameters.AddWithValue("@id", SelectedAlbumId);
+                    StringBuilder html = new StringBuilder();
+                    html.Append("<table");
+                    html.Append("<tr><th>Song Title</th><th>Rating</th></tr>");
+                    double totalAlbumRating = 0;
 
-                    using (var reader = await command.ExecuteReaderAsync())
+                    while (reader.Read())
                     {
-                        if (!await reader.ReadAsync())
-                        {
-                            return NotFound();
-                        }
 
-                        SelectedAlbumTitle = reader.GetString(reader.GetOrdinal("title"));
+                        var songTitle = reader.GetString("title");
+                        var rating = reader.GetInt32("rating");
+                        totalAlbumRating += rating;
+
+                        html.Append("<tr>");
+                        html.Append("<td>" + songTitle + "</td>");
+                        html.Append("<td>" + rating.ToString() + "</td>");
+                        html.Append("</tr>");
                     }
-                }
+                    html.Append("<tr><td>Total album rating:</td><td>" + totalAlbumRating.ToString() + "</td></tr>");
 
-                using (var command = new MySqlCommand("SELECT AVG(Rating) FROM SongRating WHERE SongId IN (SELECT Id FROM Song WHERE AlbumId=@albumId)", connection))
-                {
-                    command.Parameters.AddWithValue("@albumId", SelectedAlbumId);
+                    html.Append("</table>");
 
-                    var albumAverageRating = (await command.ExecuteScalarAsync() as double?) ?? 0;
+                    await OnGetAsync();
+                    SelectedAlbumTitle = Albums.FirstOrDefault(a => a.Id == selectedAlbumId)?.Title ?? "";
+                    ReportHtml = html.ToString();
+
+                    return ReportHtml;
 
 
-                    using (var command2 = new MySqlCommand("SELECT * FROM Song WHERE AlbumId=@albumId", connection))
-                    {
-                        command2.Parameters.AddWithValue("@albumId", SelectedAlbumId);
-
-                        using (var reader = await command2.ExecuteReaderAsync())
-                        {
-                            ReportData = new ReportData
-                            {
-                                AlbumAverageRating = albumAverageRating,
-                                SongRatings = new List<SongRating>()
-                            };
-
-                            while (await reader.ReadAsync())
-                            {
-                                var songTitle = reader.GetString(reader.GetOrdinal("title"));
-                                var songId = reader.GetInt32(reader.GetOrdinal("id"));
-
-                                using (var command3 = new MySqlCommand("SELECT AVG(Rating) FROM SongRating WHERE SongId=@songId", connection))
-                                {
-                                    command3.Parameters.AddWithValue("@songId", songId);
-
-                                    var songAverageRating = (double)(await command3.ExecuteScalarAsync() ?? 0);
-
-                                    ReportData.SongRatings.Add(new SongRating
-                                    {
-                                        SongTitle = songTitle,
-                                        Rating = songAverageRating
-                                    });
-                                }
-                            }
-                        }
-                    }
                 }
             }
 
+        }
+
+        public async Task<IActionResult> OnPostGenerateReportAsync(int selectedAlbumId)
+        {
+            await GenerateRatingReport(selectedAlbumId);
             return Page();
         }
-    }
 
 
-
-    public class SongRating
-    {
-        public string SongTitle { get; set; }
-        public double Rating { get; set; }
-        public double AverageRating { get; set; }
-
-    }
-
-    public class ReportData
-    {
-        public double AlbumAverageRating { get; set; }
-        public List<SongRating> SongRatings
-        {
-            get; set;
-
-        }
     }
 }
