@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using CoogMusic.Data;
 using System.Security.Claims;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace CoogMusic.Pages.Report
 {
@@ -81,6 +82,7 @@ namespace CoogMusic.Pages.Report
                     html.Append("<table");
                     html.Append("<tr><th>Song Title</th><th>Rating</th></tr>");
                     double totalAlbumRating = 0;
+                    int count = 0;
 
                     while (reader.Read())
                     {
@@ -88,18 +90,23 @@ namespace CoogMusic.Pages.Report
                         var songTitle = reader.GetString("title");
                         var rating = reader.GetInt32("rating");
                         totalAlbumRating += rating;
+                        if(rating > 0)
+                        {
+                            count++;
+                        }
 
                         html.Append("<tr>");
                         html.Append("<td>" + songTitle + "</td>");
                         html.Append("<td>" + rating.ToString() + "</td>");
                         html.Append("</tr>");
                     }
+                    totalAlbumRating = totalAlbumRating / count;
                     html.Append("<tr><td>Total album rating:</td><td>" + totalAlbumRating.ToString() + "</td></tr>");
 
                     html.Append("</table>");
 
                     await OnGetAsync();
-                    SelectedAlbumTitle = Albums.FirstOrDefault(a => a.Id == selectedAlbumId)?.Title ?? "";
+  
                     ReportHtml = html.ToString();
 
                     return ReportHtml;
