@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using CoogMusic.Data;
+using System.Security.Claims;
 
 namespace CoogMusic.Pages.Report
 {
@@ -16,38 +17,53 @@ namespace CoogMusic.Pages.Report
         public int SelectedAlbumId { get; set; }
         public string SelectedAlbumTitle { get; set; }
         public ReportData ReportData { get; set; }
+        public int ArtistId;
+        private readonly DbHelper _dbHelper;
+        private readonly string connectionStr;
 
-        private readonly IConfiguration _configuration;
 
         public Ratings_ReportModel(IConfiguration configuration)
         {
-            _configuration = configuration;
+            
+            string connectionString = configuration.GetConnectionString("DefaultConnection");
+            connectionStr = connectionString;
+            _dbHelper = new DbHelper(connectionString);
         }
 
         public async Task OnGetAsync()
         {
-            using (var connection = new MySqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+            ArtistId = await _dbHelper.GetArtistIdByUserId(int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)));
+            using (var connection = new MySqlConnection(connectionStr))
             {
                 await connection.OpenAsync();
-                using (var command = new MySqlCommand("SELECT * FROM Album", connection))
-                using (var reader = await command.ExecuteReaderAsync())
+                using (var command = new MySqlCommand("SELECT id,artist_id,title FROM album WHERE artist_id = @ArtistId", connection))
                 {
-                    Albums = new List<AlbumInfo>();
-                    while (await reader.ReadAsync())
+                    command.Parameters.AddWithValue("@ArtistId", ArtistId);
+
+
+                    using (var reader = await command.ExecuteReaderAsync())
                     {
-                        Albums.Add(new AlbumInfo
+                        Albums = new List<AlbumInfo>();
+                        while (await reader.ReadAsync())
                         {
-                            Id = reader.GetInt32(reader.GetOrdinal("id")),
-                            Title = reader.GetString(reader.GetOrdinal("title"))
-                        });
+                            Albums.Add(new AlbumInfo
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("id")),
+                                Title = reader.GetString(reader.GetOrdinal("title")),
+                                ArtistId = reader.GetInt32(reader.GetOrdinal("artist_id"))
+
+                            });
+
+                        }
                     }
                 }
+
             }
         }
 
         public async Task<IActionResult> OnPostGenerateReportAsync()
         {
-            using (var connection = new MySqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+            using (var connection = new MySqlConnection(connectionStr))
             {
                 await connection.OpenAsync();
 
