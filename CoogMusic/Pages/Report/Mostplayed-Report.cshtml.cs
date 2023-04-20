@@ -15,7 +15,7 @@ namespace CoogMusic.Pages.Report
 {
     public class Mostplayed_ReportModel : PageModel
     {
-        public List<AlbumInfo> Albums { get; set; }
+        public List<AlbumInfo> Albums = new List<AlbumInfo>();
         public int SelectedAlbumId { get; set; }
         public string SelectedAlbumTitle { get; set; }
         public int ArtistID;
@@ -31,11 +31,43 @@ namespace CoogMusic.Pages.Report
             string connectionString = configuration.GetConnectionString("DefaultConnection");
             connectionStr = connectionString;
             _dbHelper = new DbHelper(connectionString);
-            ReportTitle = "Most Played Report";
+           
         }
 
-        public async Task<IActionResult> OnGetAsync()
+        public async Task OnGetAsync()
         {
+            ArtistID = await _dbHelper.GetArtistIdByUserId(int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)));
+            using (var connection = new MySqlConnection(connectionStr))
+            {
+                await connection.OpenAsync();
+                using (var command = new MySqlCommand("SELECT id,artist_id,title FROM album WHERE artist_id = @ArtistId", connection))
+                {
+                    command.Parameters.AddWithValue("@ArtistId", ArtistID);
+
+
+                    using (var reader = await command.ExecuteReaderAsync())
+                    {
+                        Albums = new List<AlbumInfo>();
+                        while (await reader.ReadAsync())
+                        {
+                            Albums.Add(new AlbumInfo
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("id")),
+                                Title = reader.GetString(reader.GetOrdinal("title")),
+                                ArtistId = reader.GetInt32(reader.GetOrdinal("artist_id"))
+
+                            });
+
+                        }
+                    }
+                }
+
+            }
+        }
+
+        public async Task<string> GenerateMostplayedReport(int AlbumId)
+        {
+
             // saves artists userId in the variable  
             ArtistID = _dbHelper.GetArtistIdByUserId(int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier))).Result;
 
@@ -43,7 +75,7 @@ namespace CoogMusic.Pages.Report
             using (var command = new MySqlCommand())
             {
                 command.Connection = connection;
-                command.CommandText = "SELECT s.title AS Song_Title, COUNT(*) AS Times_Played FROM listening_history lh JOIN song s ON lh.song_id = s.id AND s.artist_id = @ArtistId GROUP BY s.id, s.title ORDER BY Times_Played DESC LIMIT 20";
+                command.CommandText = "SELECT s.title AS Song_Title, COUNT(*) AS Times_Played FROM listening_history lh JOIN song s ON lh.song_id = s.id AND s.artist_id = @ArtistId WHERE deleted = 0 GROUP BY s.id, s.title ORDER BY Times_Played DESC LIMIT 20";
                 command.Parameters.AddWithValue("@ArtistId", ArtistID);
                 connection.Open();
 
@@ -81,9 +113,14 @@ namespace CoogMusic.Pages.Report
                     ReportHtml=html.ToString();
 
 
-                    return Content(ReportHtml, "text/html");
+                    return ReportHtml;
                 }
             }
+        }
+        public async Task<IActionResult> OnPostGenerateReportAsync(int AlbumId)
+        {
+            await GenerateMostplayedReport(AlbumId);
+            return Page();
         }
 
 
