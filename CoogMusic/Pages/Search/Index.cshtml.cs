@@ -121,7 +121,7 @@ namespace CoogMusic.Pages.Search
         public IActionResult OnPostFollowArtist()
         {
             int userID = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-            var ArtistId = Request.Form["artistId"];
+            var ArtistId = Request.Form["ArtistId"];
             int artistID = int.Parse(ArtistId);
 
             //Console.WriteLine("ARTIST ID: " + artistID);
