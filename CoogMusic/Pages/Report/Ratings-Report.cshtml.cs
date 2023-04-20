@@ -6,6 +6,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using CoogMusic.Data;
+using System.Security.Claims;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace CoogMusic.Pages.Report
 {
@@ -15,120 +18,158 @@ namespace CoogMusic.Pages.Report
         [BindProperty]
         public int SelectedAlbumId { get; set; }
         public string SelectedAlbumTitle { get; set; }
-        public ReportData ReportData { get; set; }
+        public int ArtistId;
+        public string ReportHtml { get; set; }
+        private readonly DbHelper _dbHelper;
+        private readonly string connectionStr;
 
-        private readonly IConfiguration _configuration;
 
+        
         public Ratings_ReportModel(IConfiguration configuration)
         {
-            _configuration = configuration;
+
+            string connectionString = configuration.GetConnectionString("DefaultConnection");
+            connectionStr = connectionString;
+            _dbHelper = new DbHelper(connectionString);
         }
 
         public async Task OnGetAsync()
         {
-            using (var connection = new MySqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+            ArtistId = await _dbHelper.GetArtistIdByUserId(int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)));
+            using (var connection = new MySqlConnection(connectionStr))
             {
                 await connection.OpenAsync();
-                using (var command = new MySqlCommand("SELECT * FROM Album", connection))
-                using (var reader = await command.ExecuteReaderAsync())
+                using (var command = new MySqlCommand("SELECT id,artist_id,title FROM album WHERE artist_id = @ArtistId", connection))
                 {
-                    Albums = new List<AlbumInfo>();
-                    while (await reader.ReadAsync())
-                    {
-                        Albums.Add(new AlbumInfo
-                        {
-                            Id = reader.GetInt32(reader.GetOrdinal("id")),
-                            Title = reader.GetString(reader.GetOrdinal("title"))
-                        });
-                    }
-                }
-            }
-        }
+                    command.Parameters.AddWithValue("@ArtistId", ArtistId);
 
-        public async Task<IActionResult> OnPostGenerateReportAsync()
-        {
-            using (var connection = new MySqlConnection(_configuration.GetConnectionString("DefaultConnection")))
-            {
-                await connection.OpenAsync();
-
-                using (var command = new MySqlCommand("SELECT * FROM Album WHERE Id=@id", connection))
-                {
-                    command.Parameters.AddWithValue("@id", SelectedAlbumId);
 
                     using (var reader = await command.ExecuteReaderAsync())
                     {
-                        if (!await reader.ReadAsync())
+                        Albums = new List<AlbumInfo>();
+                        while (await reader.ReadAsync())
                         {
-                            return NotFound();
-                        }
+                            Albums.Add(new AlbumInfo
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("id")),
+                                Title = reader.GetString(reader.GetOrdinal("title")),
+                                ArtistId = reader.GetInt32(reader.GetOrdinal("artist_id"))
 
-                        SelectedAlbumTitle = reader.GetString(reader.GetOrdinal("title"));
+                            });
+
+                        }
                     }
                 }
 
-                using (var command = new MySqlCommand("SELECT AVG(Rating) FROM SongRating WHERE SongId IN (SELECT Id FROM Song WHERE AlbumId=@albumId)", connection))
+            }
+        }
+
+        public async Task<string> GenerateRatingReport(int selectedAlbumId)
+        {
+
+
+            using (var connection = new MySqlConnection(connectionStr))
+            using (var command = new MySqlCommand())
+            {
+                SelectedAlbumId = selectedAlbumId;
+                command.Connection = connection;
+                command.CommandText = "SELECT  song.title, IFNULL(AVG(song_rating.rating), 0) AS avg_rating, COUNT(DISTINCT song_rating.user_id) AS num_listeners_rated FROM song JOIN album_song ON song.id = album_song.song_id LEFT JOIN song_rating ON song.id = song_rating.song_id WHERE album_song.album_id = @albumId GROUP BY song.id, song.title";
+                command.Parameters.AddWithValue("@albumId", SelectedAlbumId);
+                connection.Open();
+
+                using (var reader = command.ExecuteReader())
                 {
-                    command.Parameters.AddWithValue("@albumId", SelectedAlbumId);
+                    StringBuilder html = new StringBuilder();
+                    List<Dictionary<string, string>> data = new List<Dictionary<string, string>>();
+                    html.Append("<table>");
+                    html.Append("<tr><th>Song Title</th><th class='rating-column'>Rating</th><th class='listener-column'>Number of listeners rated</th></tr>");
+                    html.Append("<style>.rating-column { padding-left: 200px; } .listener-column { padding-left: 300px; }</style>");
 
-                    var albumAverageRating = (await command.ExecuteScalarAsync() as double?) ?? 0;
+                    float totalAlbumRating = 0;
+                    int count = 0;
+                    bool empty = true;
 
-
-                    using (var command2 = new MySqlCommand("SELECT * FROM Song WHERE AlbumId=@albumId", connection))
+                    while (reader.Read())
                     {
-                        command2.Parameters.AddWithValue("@albumId", SelectedAlbumId);
-
-                        using (var reader = await command2.ExecuteReaderAsync())
+                        empty = false;
+                        Dictionary<string, string> item1 = new Dictionary<string, string>();
+                        var songTitle = reader.GetString("title");
+                        var rating = reader.GetFloat("avg_rating");
+                        var listenerCount = reader.GetInt32("num_listeners_rated");
+                        item1.Add("title", songTitle);
+                        if (rating == 0)
                         {
-                            ReportData = new ReportData
-                            {
-                                AlbumAverageRating = albumAverageRating,
-                                SongRatings = new List<SongRating>()
-                            };
-
-                            while (await reader.ReadAsync())
-                            {
-                                var songTitle = reader.GetString(reader.GetOrdinal("title"));
-                                var songId = reader.GetInt32(reader.GetOrdinal("id"));
-
-                                using (var command3 = new MySqlCommand("SELECT AVG(Rating) FROM SongRating WHERE SongId=@songId", connection))
-                                {
-                                    command3.Parameters.AddWithValue("@songId", songId);
-
-                                    var songAverageRating = (double)(await command3.ExecuteScalarAsync() ?? 0);
-
-                                    ReportData.SongRatings.Add(new SongRating
-                                    {
-                                        SongTitle = songTitle,
-                                        Rating = songAverageRating
-                                    });
-                                }
-                            }
+                            item1.Add("rating", "No ratings yet");
                         }
+                        else
+                        {
+                            item1.Add("rating", rating.ToString());
+                        }
+                        
+                        item1.Add("listeners", listenerCount.ToString());
+                        data.Add(item1);
+
+                        totalAlbumRating += rating;
+                        if (rating > 0)
+                        {
+                            count++;
+                        }
+
                     }
+                    foreach (Dictionary<string, string> item in data)
+                    {
+                        // Get the title, rating, and listeners values from the current item
+                        string title = item["title"];
+                        string rating = item["rating"];
+                        string listeners = item["listeners"];
+
+                        // Create a new row with the title, rating, and listeners values
+                        string newRow = "<tr><td>" + title + "</td><td class='rating-column'>" + rating + "</td><td class='listener-column'>" + listeners + "</td></tr>";
+                        html.Append(newRow);
+                    }
+
+
+                    string Row = "<tr><td>" + "" + "</td><td class='rating-column'>" + "" + "</td><td class='listener-column'>" + "" + "</td></tr>";
+                    if (empty == false)
+                    {
+                        totalAlbumRating = totalAlbumRating / count;
+                        html.Append(Row); // Add two empty rows
+                        html.Append(Row);
+                        html.Append(Row);
+                        html.Append(Row); 
+                        html.Append(Row);
+                        html.Append(Row);
+                        html.Append(Row);
+                        html.Append(Row);
+                        html.Append(Row);
+
+                        html.Append("<tr><td>Total album rating:</td><td>" + totalAlbumRating.ToString() + "</td></tr>");
+                    }
+                    else
+                    {
+                        html.Append("<tr><td>No songs in this album.</td><td></td></tr>");
+                    }
+
+                    html.Append("</table>");
+
+                    await OnGetAsync();
+  
+                    ReportHtml = html.ToString();
+
+                    return ReportHtml;
+
+
                 }
             }
 
+        }
+
+        public async Task<IActionResult> OnPostGenerateReportAsync(int selectedAlbumId)
+        {
+            await GenerateRatingReport(selectedAlbumId);
             return Page();
         }
-    }
 
 
-
-    public class SongRating
-    {
-        public string SongTitle { get; set; }
-        public double Rating { get; set; }
-        public double AverageRating { get; set; }
-
-    }
-
-    public class ReportData
-    {
-        public double AlbumAverageRating { get; set; }
-        public List<SongRating> SongRatings
-        {
-            get; set;
-
-        }
     }
 }

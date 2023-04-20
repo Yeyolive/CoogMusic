@@ -17,26 +17,33 @@ namespace CoogMusic.Pages.Report
         public int SelectedAlbumId { get; set; }
         public string SelectedAlbumTitle { get; set; }
         public string ReportHtml { get; set; }
-
-        private readonly DbHelper _databaseHelper;
+        public int ArtistId;
+        private readonly DbHelper _dbHelper;
         private readonly string connectionStr;
+
+
+        private readonly IConfiguration _configuration;
 
         public Listener_ReportModel(IConfiguration configuration)
         {
+            
             string connectionString = configuration.GetConnectionString("DefaultConnection");
             connectionStr = connectionString;
-            _databaseHelper = new DbHelper(connectionString);
+            _dbHelper = new DbHelper(connectionString);
+
         }
 
         public async Task OnGetAsync()
         {
+            ArtistId = await _dbHelper.GetArtistIdByUserId(int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)));
             using (var connection = new MySqlConnection(connectionStr))
             {
                 await connection.OpenAsync();
-                using (var command = new MySqlCommand("SELECT * FROM Album WHERE artist_id=@ArtistId", connection))
+                using (var command = new MySqlCommand("SELECT id,artist_id,title FROM album WHERE artist_id = @ArtistId", connection))
                 {
-                    int artistId = await _databaseHelper.GetArtistIdByUserId(int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)));
-                    command.Parameters.AddWithValue("@ArtistId", artistId);
+                    command.Parameters.AddWithValue("@ArtistId", ArtistId);
+
+
                     using (var reader = await command.ExecuteReaderAsync())
                     {
                         Albums = new List<AlbumInfo>();
@@ -53,19 +60,16 @@ namespace CoogMusic.Pages.Report
                         }
                     }
                 }
+
             }
         }
 
         public async Task<string> GenerateListenerReport(int selectedAlbumId)
         {
-            if (selectedAlbumId == 0)
-            {
-                // handle the case where the album is null, e.g. by throwing an exception or returning a default value
-                throw new ArgumentException("Album not found");
-            }
 
-            string connectionString = connectionStr;
-            using (var connection = new MySqlConnection(connectionString))
+
+            
+            using (var connection = new MySqlConnection(connectionStr))
             using (var command = new MySqlCommand())
             {
                 SelectedAlbumId = selectedAlbumId;

@@ -1,19 +1,20 @@
 ﻿@page
 @model CoogMusic.Pages.Report.Mostplayed_ReportModel
-@{
-    ViewData["Title"] = "Report";
-}
-<div>
-    <h1 class="text-center">Most Played Report</h1>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th class="table-header">Song Name</th>
-                <th class="table-header">Times Played</th>
-            </tr>
-        </thead>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body>
+    <h1>@Model.ReportTitle</h1>
 
-    </table>
+    <div>@Html.Raw(Model.ReportHtml)</div>
 
-</div>
+    <script src="_framework/blazor.webassembly.js"></script>
+    <script src="_framework/aspnetcore-browser-refresh.js"></script>
+</body>
+</html>
