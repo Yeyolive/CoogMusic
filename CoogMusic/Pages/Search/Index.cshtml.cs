@@ -124,40 +124,34 @@ namespace CoogMusic.Pages.Search
             int artistID = int.Parse(Request.Form["ArtistId"]);
 
             String connectionStr = _configuration.GetConnectionString("DefaultConnection");
-            try
+
+            using (MySqlConnection connection = new MySqlConnection(connectionStr))
             {
-                using (MySqlConnection connection = new MySqlConnection(connectionStr))
+                connection.Open();
+
+                String sql = @"
+                    INSERT INTO follows (listener_id, artist_id)
+                    VALUES (@UserID, @ArtistID)
+                    ON DUPLICATE KEY UPDATE
+                    listener_id = IF(listener_id = @UserID, NULL, listener_id),
+                    artist_id = IF(artist_id = @ArtistID, NULL, artist_id);
+                ";
+
+                using (MySqlCommand followArtist = new MySqlCommand(sql, connection))
                 {
-                    connection.Open();
+                    followArtist.Parameters.AddWithValue("@UserID", userID);
+                    followArtist.Parameters.AddWithValue("@ArtistID", artistID);
+                    int rowsAffected = followArtist.ExecuteNonQuery();
 
-                    String sql = @"
-                        INSERT INTO follows (listener_id, artist_id)
-                        VALUES (@UserID, @ArtistID)
-                        ON DUPLICATE KEY UPDATE
-                        listener_id = IF(listener_id = @UserID, NULL, listener_id),
-                        artist_id = IF(artist_id = @ArtistID, NULL, artist_id);
-                    ";
-
-                    using (MySqlCommand followArtist = new MySqlCommand(sql, connection))
+                    if (rowsAffected > 0)
                     {
-                        followArtist.Parameters.AddWithValue("@UserID", userID);
-                        followArtist.Parameters.AddWithValue("@ArtistID", artistID);
-                        int rowsAffected = followArtist.ExecuteNonQuery();
-
-                        if (rowsAffected > 0)
-                        {
-                            return new JsonResult(new { success = true, message = "Followed artist successfully" });
-                        }
-                        else
-                        {
-                            return new JsonResult(new { success = true, message = "Unfollowed artist successfully" });
-                        }
+                        return new JsonResult(new { success = true, message = "Followed artist successfully" });
+                    }
+                    else
+                    {
+                        return new JsonResult(new { success = true, message = "Unfollowed artist successfully" };
                     }
                 }
-            }
-            catch (Exception exc)
-            {
-                return new JsonResult(new { success = false, message = $"Error following artist: {exc.Message}" });
             }
         }
 
