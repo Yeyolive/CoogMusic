@@ -174,6 +174,7 @@ namespace CoogMusic.Pages.Search
             int Rating = Convert.ToInt32(Request.Form["rating"]);
             int SongId = Convert.ToInt32(Request.Form["songID"]);
             var artistID = Convert.ToInt32(Request.Form["artistid"]);
+            int artistID = int.Parse(ArtistId);
 
             String connectionStr = _configuration.GetConnectionString("DefaultConnection");
             try
