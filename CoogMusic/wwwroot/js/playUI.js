@@ -214,5 +214,5 @@ followButton.addEventListener('click', () => {
         }
     };
     //xhr.send(JSON.stringify({ artistName: currentArtistName }));
-    xhr.send(`artistid=${artistId}`);
+    xhr.send(`ArtistId=${artistId}`);
 });

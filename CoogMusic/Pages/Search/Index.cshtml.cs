@@ -116,12 +116,12 @@ namespace CoogMusic.Pages.Search
         }
 
         [BindProperty(SupportsGet = true)]
-        public int artistid { get; set; }
+        public int ArtistId { get; set; }
 
         public IActionResult OnPostFollowArtist()
         {
             int userID = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-            int artistId = Convert.ToInt32(Request.Form["artistid"]);
+            int artistID = int.Parse(Request.Form["ArtistId"]);
 
             String connectionStr = _configuration.GetConnectionString("DefaultConnection");
             try
@@ -141,7 +141,7 @@ namespace CoogMusic.Pages.Search
                     using (MySqlCommand followArtist = new MySqlCommand(sql, connection))
                     {
                         followArtist.Parameters.AddWithValue("@UserID", userID);
-                        followArtist.Parameters.AddWithValue("@ArtistID", artistId);
+                        followArtist.Parameters.AddWithValue("@ArtistID", artistID);
                         int rowsAffected = followArtist.ExecuteNonQuery();
 
                         if (rowsAffected > 0)
