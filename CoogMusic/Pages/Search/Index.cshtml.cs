@@ -116,13 +116,13 @@ namespace CoogMusic.Pages.Search
         }
 
         [BindProperty(SupportsGet = true)]
-        public int ArtistId { get; set; }
+        public int artistid { get; set; }
 
         public IActionResult OnPostFollowArtist()
         {
             int userID = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-            var ArtistId = Request.Form["ArtistId"];
-            int artistID = int.Parse(ArtistId);
+            var ArtistId = Request.Form["artistid"];
+            int artistId = int.Parse(ArtistId);
 
             //Console.WriteLine("ARTIST ID: " + artistID);
             String connectionStr = _configuration.GetConnectionString("DefaultConnection");
@@ -143,7 +143,7 @@ namespace CoogMusic.Pages.Search
                     using (MySqlCommand followArtist = new MySqlCommand(sql, connection))
                     {
                         followArtist.Parameters.AddWithValue("@UserID", userID);
-                        followArtist.Parameters.AddWithValue("@ArtistID", artistID);
+                        followArtist.Parameters.AddWithValue("@ArtistID", artistId);
                         int rowsAffected = followArtist.ExecuteNonQuery();
 
                         if (rowsAffected > 0)
@@ -166,15 +166,14 @@ namespace CoogMusic.Pages.Search
 
         [BindProperty(SupportsGet = true)]
         public int rating { get; set; }
-        public int artistid { get; set; }
+        public int ratingArtID { get; set; }
 
         public IActionResult OnPostUpdateRating()
         {
             int userID = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
             int Rating = Convert.ToInt32(Request.Form["rating"]);
             int SongId = Convert.ToInt32(Request.Form["songID"]);
-            var artistID = Convert.ToInt32(Request.Form["artistid"]);
-            int artistID = int.Parse(ArtistId);
+            int artistID = Convert.ToInt32(Request.Form["ratingArtID"]);
 
             String connectionStr = _configuration.GetConnectionString("DefaultConnection");
             try

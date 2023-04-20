@@ -187,7 +187,7 @@ function updateRating(songID, rating, artistId) {
         }
     };
 
-    xhr.send(`songID=${songID}&rating=${rating}&ArtistId=${artistId}`);
+    xhr.send(`songID=${songID}&rating=${rating}&ratingArtID=${artistId}`);
 }
 
 document.getElementById("stars-container").style.display = "none";
@@ -214,5 +214,5 @@ followButton.addEventListener('click', () => {
         }
     };
     //xhr.send(JSON.stringify({ artistName: currentArtistName }));
-    xhr.send(`ArtistId=${artistId}`);
+    xhr.send(`artistid=${artistId}`);
 });
