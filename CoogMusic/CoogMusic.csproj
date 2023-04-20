@@ -27,10 +27,12 @@
   <ItemGroup>
     <Folder Include="Pages\Albums\" />
     <Folder Include="Pages\Playlists\" />
+    <Folder Include="Pages\Notification\" />
   </ItemGroup>
 
   <ItemGroup>
     <None Remove="Pages\Albums\" />
     <None Remove="Pages\Playlists\" />
+    <None Remove="Pages\Notification\" />
   </ItemGroup>
 </Project>
