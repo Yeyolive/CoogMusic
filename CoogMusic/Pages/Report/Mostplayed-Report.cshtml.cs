@@ -70,13 +70,13 @@ namespace CoogMusic.Pages.Report
 
             // saves artists userId in the variable  
             ArtistID = _dbHelper.GetArtistIdByUserId(int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier))).Result;
-
+            SelectedAlbumId = AlbumId;
             using (var connection = new MySqlConnection(connectionStr))
             using (var command = new MySqlCommand())
             {
                 command.Connection = connection;
-                command.CommandText = "SELECT s.title AS Song_Title, COUNT(*) AS Times_Played FROM listening_history lh JOIN song s ON lh.song_id = s.id AND s.artist_id = @ArtistId WHERE deleted = 0 GROUP BY s.id, s.title ORDER BY Times_Played DESC LIMIT 20";
-                command.Parameters.AddWithValue("@ArtistId", ArtistID);
+                command.CommandText = "SELECT s.title, COUNT(l.song_id) AS play_count FROM album_song AS a JOIN song AS s ON a.song_id = s.id JOIN listening_history AS l ON a.song_id = l.song_id WHERE a.album_id = @selectedAlbumId GROUP BY s.id, s.title ORDER BY play_count DESC LIMIT 20";
+                command.Parameters.AddWithValue("@selectedAlbumId", SelectedAlbumId);
                 connection.Open();
 
                 using (var reader = command.ExecuteReader())
@@ -92,8 +92,8 @@ namespace CoogMusic.Pages.Report
                     {
                         Dictionary<string, string> item1 = new Dictionary<string, string>();
 
-                        var songTitle = reader.GetString("Song_Title");
-                        var timesPlayed = reader.GetInt32("Times_Played");
+                        var songTitle = reader.GetString("title");
+                        var timesPlayed = reader.GetInt32("play_count");
                         item1.Add("title", songTitle);
                         item1.Add("played", timesPlayed.ToString());
                         data.Add(item1);
