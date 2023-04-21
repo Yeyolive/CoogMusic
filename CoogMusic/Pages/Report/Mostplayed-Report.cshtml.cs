@@ -87,9 +87,10 @@ namespace CoogMusic.Pages.Report
                     html.Append("<table>");
                     html.Append("<tr><th>Song Title</th><th class='times-played'>Times Played</th></tr>");
                     html.Append("<style>.times-played { padding-left: 200px; } </style>");
-
+                    bool empty = true;
                     while (reader.Read())
                     {
+                        empty = false;
                         Dictionary<string, string> item1 = new Dictionary<string, string>();
 
                         var songTitle = reader.GetString("title");
@@ -108,8 +109,12 @@ namespace CoogMusic.Pages.Report
                         string newRow = "<tr><td>" + title + "</td><td class='times-played'>" + played + "</td></tr>";
                         html.Append(newRow);
                     }
+                    if (empty == true)
+                    {
+                        html.Append("<tr><td>No songs in this album.</td><td></td></tr>");
+                    }
 
-                    html.Append("</table>");
+                        html.Append("</table>");
                     ReportHtml=html.ToString();
 
 
