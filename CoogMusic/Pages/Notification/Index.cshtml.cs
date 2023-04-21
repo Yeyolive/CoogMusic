@@ -4,6 +4,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using MySql.Data.MySqlClient;
+using Microsoft.Extensions.Configuration;
+using System.Security.Claims;
+using System.Data;
+using Newtonsoft.Json;
+
 
 namespace CoogMusic.Pages.Notification
 {
@@ -24,8 +30,33 @@ namespace CoogMusic.Pages.Notification
             _databaseHelper = new DbHelper(connectionString);
         }
 
-        public void OnGet()
+        public List<NotificationMessage> GetNotifications(int userId)
         {
+            List<NotificationMessage> notifications = new List<NotificationMessage>();
+            using (MySqlConnection connection = new MySqlConnection(connectionStr))
+            {
+                connection.Open();
+                string sql = "SELECT * FROM notifications WHERE user_id = @userId";
+                using (MySqlCommand command = new MySqlCommand(sql, connection))
+                {
+                    command.Parameters.AddWithValue("@userId", userId);
+                    using (MySqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            NotificationMessage notification = new NotificationMessage();
+                            notification.Message = reader["message"].ToString();
+                            notifications.Add(notification);
+                        }
+                    }
+                }
+            }
+            return notifications;
+        }
+
+        public class NotificationMessage
+        {
+            public string Message { get; set; }
         }
     }
 }

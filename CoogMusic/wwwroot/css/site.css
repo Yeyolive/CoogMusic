@@ -25,3 +25,12 @@ body {
 #notificationBell {
     margin-right: 5px;
 }
+
+.notification-message {
+    border-bottom: 1px solid #ccc;
+    padding: 10px;
+}
+
+    .notification-message:last-child {
+        border-bottom: none;
+    }
