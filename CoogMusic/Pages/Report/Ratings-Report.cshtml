@@ -7,7 +7,7 @@
 }
 
 <div>
-    <h1 class="text-center">Reports</h1>
+    <h1 class="text-center">Rating Reports</h1>
     <form method="post" id="report-form">
         <div class="form-group">
             <label for="selectAlbum">Select an album:</label>
@@ -34,11 +34,11 @@
     <div class="mt-3">
         @if(Model.SelectedAlbumId != null )
             {
-        <h3 class="text-center mb-3">Rating Report for Album @Model.SelectedAlbumTitle</h3>
+        <h3 class="text-center mb-3">@Model.SelectedAlbumTitle</h3>
             }
             else
             {
-        <h3 class="text-center mb-3">Rating Report for Song @Model.SelectedSongTitle</h3>
+        <h3 class="text-center mb-3"> @Model.SelectedSongTitle</h3>
             }
         @Html.Raw(Model.ReportHtml)
     </div>
