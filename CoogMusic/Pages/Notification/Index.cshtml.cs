@@ -32,14 +32,14 @@ namespace CoogMusic.Pages.Notification
             _databaseHelper = new DbHelper(connectionString);
         }
 
-
-        public List<NotificationMessage> GetNotifications(int UserId)
+        [HttpGet]
+        public JsonResult OnGetDisplayNotifications()
         {
-            List<NotificationMessage> notifications = new List<NotificationMessage>();
+            List<NotificationData> notifications = new List<NotificationData>();
             using (MySqlConnection connection = new MySqlConnection(connectionStr))
             {
                 connection.Open();
-                string sql = "SELECT * FROM notifications WHERE user_id = @userId";
+                string sql = "SELECT * FROM notification WHERE artist_id = @userId";
                 using (MySqlCommand command = new MySqlCommand(sql, connection))
                 {
                     command.Parameters.AddWithValue("@userId", UserId);
@@ -47,17 +47,22 @@ namespace CoogMusic.Pages.Notification
                     {
                         while (reader.Read())
                         {
-                            NotificationMessage notification = new NotificationMessage();
-                            notification.Message = reader["message"].ToString();
+                            NotificationData notification = new NotificationData();
+                            /*notification.Message = reader["message"].ToString();
+                            */
+                            notification.Message = "inside c# fcunti djf";
                             notifications.Add(notification);
                         }
                     }
                 }
             }
-            return notifications;
+            return new JsonResult(notifications);
         }
 
-        public class NotificationMessage
+
+
+
+        public class NotificationData
         {
             public string Message { get; set; }
         }
