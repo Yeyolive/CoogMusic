@@ -22,6 +22,8 @@ namespace CoogMusic.Pages.Notification
         private readonly DbHelper _databaseHelper;
         // Access this by calling connectionStr variable in your functions (GLOBAL)
         private readonly string connectionStr;
+        public int UserId => int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
 
         public IndexModel(IConfiguration configuration)
         {
@@ -30,7 +32,8 @@ namespace CoogMusic.Pages.Notification
             _databaseHelper = new DbHelper(connectionString);
         }
 
-        public List<NotificationMessage> GetNotifications(int userId)
+
+        public List<NotificationMessage> GetNotifications(int UserId)
         {
             List<NotificationMessage> notifications = new List<NotificationMessage>();
             using (MySqlConnection connection = new MySqlConnection(connectionStr))
@@ -39,7 +42,7 @@ namespace CoogMusic.Pages.Notification
                 string sql = "SELECT * FROM notifications WHERE user_id = @userId";
                 using (MySqlCommand command = new MySqlCommand(sql, connection))
                 {
-                    command.Parameters.AddWithValue("@userId", userId);
+                    command.Parameters.AddWithValue("@userId", UserId);
                     using (MySqlDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())

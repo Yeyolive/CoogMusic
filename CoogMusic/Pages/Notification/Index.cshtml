@@ -3,6 +3,32 @@
 @{
     ViewData["Title"] = "Notifications";
 }
+
+<!-- Include the jQuery library -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Include the notifications.js file -->
+<script src="/js/notifications.js"></script>
+
+
+
 <div class="text-center">
     <h1>Notifications</h1>
 </div>
+
+<!-- Create a container for the notifications -->
+<div id="notifications-container"></div>
+<!-- Call the displayNotifications function -->
+@section scripts {
+    <script>
+        $(document).ready(function () {
+            // Get the userId from the server and store it in a JavaScript variable
+            var userId = @Json.Serialize(Model.UserId);
+
+            // Call your function to display notifications passing the userId as parameter
+            displayNotifications(userId);
+        });
+    </script>
+}
+
+
