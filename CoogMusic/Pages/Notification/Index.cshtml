@@ -17,18 +17,18 @@
 </div>
 
 <!-- Create a container for the notifications -->
-<div id="notifications-container"></div>
-<!-- Call the displayNotifications function -->
-@section scripts {
-    <script>
-        $(document).ready(function () {
-            // Get the userId from the server and store it in a JavaScript variable
-            var userId = @Json.Serialize(Model.UserId);
-
-            // Call your function to display notifications passing the userId as parameter
-            displayNotifications(userId);
-        });
-    </script>
-}
+<div id="notifications-container">
+    @if (Model.notifications.Any())
+        {
+            foreach (var item in Model.notifications)
+            {
+                <p>@item.Message</p>
+            }
+        }
+        else
+        {
+            <p>you do not have any notifications, come back later</p>
+        }
+</div>
 
 
