@@ -111,7 +111,8 @@ namespace CoogMusic.Pages.Report
 
 
                     command.Connection = connection;
-                    command.CommandText = "SELECT s.title AS Song_Title, COUNT(*) AS Times_Played FROM listening_history lh JOIN album_song als ON lh.song_id = als.song_id JOIN song s ON als.song_id = s.id AND als.album_id = @AlbumId GROUP BY s.id, s.title ORDER BY Times_Played DESC";
+                    command.CommandText = "SELECT s.title AS Song_Title, COUNT(*) AS Times_Played,CASE WHEN song.deleted = 1 THEN 'Yes' ELSE 'No' END AS is_deleted FROM listening_history lh JOIN album_song als ON lh.song_id = als.song_id JOIN song s ON als.song_id = s.id AND als.album_id = @AlbumId LEFT JOIN song ON s.id = song.id GROUP BY s.id, s.title, is_deleted ORDER BY Song_Title ASC";
+                    
 
                     command.Parameters.AddWithValue("@AlbumId", SelectedAlbumId);
                     connection.Open();
@@ -120,8 +121,8 @@ namespace CoogMusic.Pages.Report
                         StringBuilder html = new StringBuilder();
                         html.Append("<table>");
                         
-                        html.Append("<tr><th>Song Title</th><th class='stream-column'>Streamed");
-                        html.Append("<style>.stream-column { padding-left: 200px; } </style>");
+                        html.Append("<tr><th>Song Title</th><th class='stream-column'>Streamed</th><th class='deleted-column'>Song Deleted</th></tr>");
+                        html.Append("<style>.stream-column { padding-left: 200px; }.deleted-column { padding-left: 200px; } </style>");
 
                         int totalAlbumStreams = 0;
 
@@ -129,15 +130,16 @@ namespace CoogMusic.Pages.Report
                         {   empty = false;
                             string songTitle = reader.GetString("Song_Title");
                             int streamCount = reader.GetInt32("Times_Played");
+                            var deleted = reader.GetString("is_deleted");
                             totalAlbumStreams += streamCount;
-                            string newRow = "<tr><td>" + songTitle + "</td><td class='stream-column'>" + streamCount.ToString() + "</td></tr>";
+                            string newRow = "<tr><td>" + songTitle + "</td><td class='stream-column'>" + streamCount.ToString() + "</td><td class='deleted-column'>" + deleted + "</td></tr>";
                             html.Append(newRow);
 
                             
                         }
                         if (empty == false)
                         {
-                            string Row = "<tr><td>" + "" + "</td><td class='rating-column'>" + "" + "</td><td class='listener-column'>" + "" + "</td></tr>";
+                            string Row = "<tr><td>" + "" + "</td><td class='rating-column'>" + "" + "</td><td class='listener-column'>" + "" + "</td><td class='deleted-column'>" + "" + "</td></tr>";
                             html.Append(Row); // Add empty rows
                             html.Append(Row);
                             html.Append(Row);
@@ -180,7 +182,8 @@ namespace CoogMusic.Pages.Report
 
 
                     command.Connection = connection;
-                    command.CommandText = "SELECT s.title AS Song_Title, COUNT(*) AS Times_Played FROM listening_history lh JOIN song s ON lh.song_id = s.id AND s.id = @SongId GROUP BY s.id, s.title ORDER BY Times_Played DESC  ";
+                    command.CommandText = "SELECT s.title AS Song_Title, COUNT(*) AS Times_Played, CASE WHEN song.deleted = 1 THEN 'Yes' ELSE 'No' END AS is_deleted FROM listening_history lh JOIN song s ON lh.song_id = s.id AND s.id = @SongId LEFT JOIN song ON s.id = song.id GROUP BY s.id, s.title, is_deleted ORDER BY Song_Title ASC";
+
 
                     command.Parameters.AddWithValue("@SongId", SelectedSongId);
                     connection.Open();
@@ -189,8 +192,8 @@ namespace CoogMusic.Pages.Report
                         StringBuilder html = new StringBuilder();
                         html.Append("<table>");
 
-                        html.Append("<tr><th>Song Title</th><th class='stream-column'>Streamed");
-                        html.Append("<style>.stream-column { padding-left: 200px; } </style>");
+                        html.Append("<tr><th>Song Title</th><th class='stream-column'>Streamed</th><th class='deleted-column'>Song Deleted</th></tr>");
+                        html.Append("<style>.stream-column { padding-left: 200px; }.deleted-column { padding-left: 200px; } </style>");
 
 
                         bool notStreamed = true;
@@ -199,9 +202,10 @@ namespace CoogMusic.Pages.Report
                             notStreamed = false;
                             string songTitle = reader.GetString("Song_Title");
                             int streamCount = reader.GetInt32("Times_Played");
+                            var deleted = reader.GetString("is_deleted");
 
 
-                            string newRow = "<tr><td>" + songTitle + "</td><td class='stream-column'>" + streamCount.ToString() + "</td></tr>";
+                            string newRow = "<tr><td>" + songTitle + "</td><td class='stream-column'>" + streamCount.ToString() + "</td><td class='deleted-column'>" + deleted + "</td></tr>";
                             html.Append(newRow);
 
                         }
