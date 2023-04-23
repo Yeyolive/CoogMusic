@@ -132,6 +132,7 @@ namespace CoogMusic.Pages.Search
 
                     String sql = "INSERT INTO follows (listener_id, artist_id) VALUES (@UserID, @ArtistID)";
 
+
                     using (MySqlCommand followArtist = new MySqlCommand(sql, connection))
                     {
                         followArtist.Parameters.AddWithValue("@UserID", userID);

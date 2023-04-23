@@ -51,7 +51,6 @@ namespace CoogMusic.Pages.Notification
                             NotificationData notification = new NotificationData();
                             notification.Message = reader["message"].ToString();
                             Console.WriteLine(notification.Message);
-                            //notification.Message = "inside c# fcunti djf";
                             notifications.Add(notification);
                         }
                     }
