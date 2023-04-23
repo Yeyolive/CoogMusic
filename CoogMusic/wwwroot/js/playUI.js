@@ -199,19 +199,24 @@ followButton.addEventListener('click', () => {
     var xhr = new XMLHttpRequest();
     var artistId = currentArtistId;
 
+    console.log('following artist: ' + artistId);
     //console.log(artistId);
     xhr.open('POST', '/Search/Index?handler=FollowArtist', true);
     xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
     xhr.setRequestHeader("RequestVerificationToken", document.getElementsByName('__RequestVerificationToken')[0].value);
 
-    xhr.onreadystatechange = () => {
-        if (xhr.readyState === XMLHttpRequest.DONE) {
-            if (xhr.status === 200) {
-                console.log('Artist followed successfully!');
+    xhr.onload = function () {
+        if (this.status === 200) {
+            var jsonResponse = JSON.parse(this.responseText);
+            if (jsonResponse.success) {
+                    console.log(jsonResponse.message);
             } else {
-                console.error('An error occurred while following the artist.');
+                    console.error(jsonResponse.message);
             }
+        } else {
+            console.error('An error occurred while following the artist.');
         }
+        
     };
     //xhr.send(JSON.stringify({ artistName: currentArtistName }));
     xhr.send(`ArtistId=${artistId}`);
