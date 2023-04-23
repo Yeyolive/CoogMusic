@@ -112,7 +112,7 @@ namespace CoogMusic.Pages.Report
             {
                 
                 command.Connection = connection;
-                command.CommandText = "SELECT  song.title, IFNULL(AVG(song_rating.rating), 0) AS avg_rating, COUNT(DISTINCT song_rating.user_id) AS num_listeners_rated FROM song JOIN album_song ON song.id = album_song.song_id LEFT JOIN song_rating ON song.id = song_rating.song_id WHERE album_song.album_id = @albumId GROUP BY song.id, song.title";
+                command.CommandText = "SELECT  song.title,  IFNULL(AVG(song_rating.rating), 0) AS avg_rating,  COUNT(DISTINCT song_rating.user_id) AS num_listeners_rated,  CASE   WHEN song.deleted = 1 THEN 'Yes'    ELSE 'No'  END AS is_deleted FROM song  JOIN album_song ON song.id = album_song.song_id  LEFT JOIN song_rating ON song.id = song_rating.song_id WHERE  album_song.album_id = @albumId GROUP BY  song.id,  song.title,  is_deleted";
                 command.Parameters.AddWithValue("@albumId", SelectedAlbumId);
                 connection.Open();
 
@@ -121,8 +121,8 @@ namespace CoogMusic.Pages.Report
                         StringBuilder html = new StringBuilder();
                         List<Dictionary<string, string>> data = new List<Dictionary<string, string>>();
                         html.Append("<table>");
-                        html.Append("<tr><th>Song Title</th><th class='rating-column'>Rating</th><th class='listener-column'>Number of listeners rated</th></tr>");
-                        html.Append("<style>.rating-column { padding-left: 200px; } .listener-column { padding-left: 300px; }</style>");
+                        html.Append("<tr><th>Song Title</th><th class='rating-column'>Rating</th><th class='listener-column'>Number of listeners rated</th><th class='deleted-column'>Song Deleted</th></tr>");
+                        html.Append("<style>.rating-column { padding-left: 150px; } .listener-column { padding-left: 150px; }.deleted-column { padding-left: 100px; }</style>");
 
                         float totalAlbumRating = 0;
                         int count = 0;
@@ -135,10 +135,11 @@ namespace CoogMusic.Pages.Report
                             var songTitle = reader.GetString("title");
                             var rating = reader.GetFloat("avg_rating");
                             var listenerCount = reader.GetInt32("num_listeners_rated");
+                            var deleted = reader.GetString("is_deleted");
                             item1.Add("title", songTitle);
                             if (rating == 0)
                             {
-                                item1.Add("rating", "No ratings yet");
+                                item1.Add("rating", "Not rated");
                             }
                             else
                             {
@@ -146,6 +147,7 @@ namespace CoogMusic.Pages.Report
                             }
 
                             item1.Add("listeners", listenerCount.ToString());
+                            item1.Add("deleted",deleted);
                             data.Add(item1);
 
                             totalAlbumRating += rating;
@@ -161,14 +163,15 @@ namespace CoogMusic.Pages.Report
                             string title = item["title"];
                             string rating = item["rating"];
                             string listeners = item["listeners"];
+                            String deleted = item["deleted"];
 
                             // Create a new row with the title, rating, and listeners values
-                            string newRow = "<tr><td>" + title + "</td><td class='rating-column'>" + rating + "</td><td class='listener-column'>" + listeners + "</td></tr>";
+                            string newRow = "<tr><td>" + title + "</td><td class='rating-column'>" + rating + "</td><td class='listener-column'>" + listeners + "</td><td class='deleted-column'>" + deleted + "</td></tr>";
                             html.Append(newRow);
                         }
 
 
-                        string Row = "<tr><td>" + "" + "</td><td class='rating-column'>" + "" + "</td><td class='listener-column'>" + "" + "</td></tr>";
+                        string Row = "<tr><td>" + "" + "</td><td class='rating-column'>" + "" + "</td><td class='listener-column'>" + "" + "</td><td class='deleted-column'>" + ""+ "</td></tr>";
                         if (empty == false)
                         {
                             totalAlbumRating = totalAlbumRating / count;
@@ -207,7 +210,7 @@ namespace CoogMusic.Pages.Report
                 {
 
                     command.Connection = connection;
-                    command.CommandText = "SELECT song.title, IFNULL(AVG(song_rating.rating), 0) AS avg_rating, COUNT(DISTINCT song_rating.user_id) AS num_listeners FROM song LEFT JOIN song_rating ON song.id = song_rating.song_id AND song.artist_id = song_rating.artist_id WHERE song.id = @songId GROUP BY song.id, song.title ";
+                    command.CommandText = "SELECT song.title, IFNULL(AVG(song_rating.rating), 0) AS avg_rating,  COUNT(DISTINCT song_rating.user_id) AS num_listeners_rated, CASE   WHEN song.deleted = 1 THEN 'Yes'   ELSE 'No'  END AS is_deleted FROM  song  LEFT JOIN song_rating ON song.id = song_rating.song_id WHERE song.id = @songId GROUP BY  song.id,  song.title,  is_deleted";
                     command.Parameters.AddWithValue("@songId", SelectedSongId);
                     connection.Open();
 
@@ -216,8 +219,8 @@ namespace CoogMusic.Pages.Report
                         StringBuilder html = new StringBuilder();
                         List<Dictionary<string, string>> data = new List<Dictionary<string, string>>();
                         html.Append("<table>");
-                        html.Append("<tr><th>Song Title</th><th class='rating-column'>Rating</th><th class='listener-column'>Number of listeners rated</th></tr>");
-                        html.Append("<style>.rating-column { padding-left: 200px; } .listener-column { padding-left: 300px; }</style>");
+                        html.Append("<tr><th>Song Title</th><th class='rating-column'>Rating</th><th class='listener-column'>Number of listeners rated</th><th class='deleted-column'>Song Deleted</th></tr>");
+                        html.Append("<style>.rating-column { padding-left: 150px; } .listener-column { padding-left: 150px; }.deleted-column { padding-left: 100px; }</style>");
 
 
 
@@ -227,11 +230,12 @@ namespace CoogMusic.Pages.Report
                             Dictionary<string, string> item1 = new Dictionary<string, string>();
                             var songTitle = reader.GetString("title");
                             var rating = reader.GetFloat("avg_rating");
-                            var listenerCount = reader.GetInt32("num_listeners");
+                            var listenerCount = reader.GetInt32("num_listeners_rated");
+                            var deleted = reader.GetString("is_deleted");
                             item1.Add("title", songTitle);
                             if (rating == 0)
                             {
-                                item1.Add("rating", "No ratings yet");
+                                item1.Add("rating", "Not rated");
                             }
                             else
                             {
@@ -239,6 +243,7 @@ namespace CoogMusic.Pages.Report
                             }
 
                             item1.Add("listeners", listenerCount.ToString());
+                            item1.Add("deleted", deleted);
                             data.Add(item1);
 
                         }
@@ -248,9 +253,10 @@ namespace CoogMusic.Pages.Report
                             string title = item["title"];
                             string rating = item["rating"];
                             string listeners = item["listeners"];
+                            String deleted = item["deleted"];
 
-                            // Create a new row with the title, rating, and listeners values
-                            string newRow = "<tr><td>" + title + "</td><td class='rating-column'>" + rating + "</td><td class='listener-column'>" + listeners + "</td></tr>";
+                            // Create a new row with the title, rating, listeners and if song is deleted
+                            string newRow = "<tr><td>" + title + "</td><td class='rating-column'>" + rating + "</td><td class='listener-column'>" + listeners + "</td><td class='deleted-column'>" + deleted + "</td></tr>";
                             html.Append(newRow);
                         }
 
