@@ -26,11 +26,25 @@ body {
     margin-right: 5px;
 }
 
-.notification-message {
-    border-bottom: 1px solid #ccc;
-    padding: 10px;
+#notifications-container {
+    padding: 20px;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
 }
 
-    .notification-message:last-child {
-        border-bottom: none;
+.notification-message {
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+}
+
+    .notification-message h2 {
+        font-size: 16px;
+        margin-bottom: 10px;
+    }
+
+    .notification-message p {
+        font-size: 14px;
+        margin-bottom: 0;
     }

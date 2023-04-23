@@ -3,6 +3,32 @@
 @{
     ViewData["Title"] = "Notifications";
 }
+
+<!-- Include the jQuery library -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Include the notifications.js file -->
+<script src="/js/notifications.js"></script>
+
+
+
 <div class="text-center">
     <h1>Notifications</h1>
 </div>
+
+<!-- Create a container for the notifications -->
+<div id="notifications-container">
+    @if (Model.notifications.Any())
+        {
+            foreach (var item in Model.notifications)
+            {
+                <p>@item.Message</p>
+            }
+        }
+        else
+        {
+            <p>You have no notifications.</p>
+        }
+</div>
+
+

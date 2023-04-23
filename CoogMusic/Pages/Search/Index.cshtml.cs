@@ -130,13 +130,8 @@ namespace CoogMusic.Pages.Search
                 {
                     connection.Open();
 
-                    String sql = @"
-                        INSERT INTO follows (listener_id, artist_id)
-                        VALUES (@UserID, @ArtistID)
-                        ON DUPLICATE KEY UPDATE
-                        listener_id = IF(listener_id = @UserID, NULL, listener_id),
-                        artist_id = IF(artist_id = @ArtistID, NULL, artist_id);
-                    ";
+                    String sql = "INSERT INTO follows (listener_id, artist_id) VALUES (@UserID, @ArtistID)";
+
 
                     using (MySqlCommand followArtist = new MySqlCommand(sql, connection))
                     {
@@ -146,11 +141,11 @@ namespace CoogMusic.Pages.Search
 
                         if (rowsAffected > 0)
                         {
-                            return new JsonResult(new { success = true, message = "Followed artist successfully" });
+                            return new JsonResult(new { success = true, message = "Followed artist successfully" }); ;
                         }
                         else
                         {
-                            return new JsonResult(new { success = true, message = "Unfollowed artist successfully" });
+                            return new JsonResult(new { success = false, message = "Unfollowed artist successfully" });
                         }
                     }
                 }
