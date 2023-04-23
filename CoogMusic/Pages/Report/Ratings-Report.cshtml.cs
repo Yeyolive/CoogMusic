@@ -134,6 +134,7 @@ namespace CoogMusic.Pages.Report
                             Dictionary<string, string> item1 = new Dictionary<string, string>();
                             var songTitle = reader.GetString("title");
                             var rating = reader.GetFloat("avg_rating");
+                            rating = (float)Math.Round(rating, 1);
                             var listenerCount = reader.GetInt32("num_listeners_rated");
                             var deleted = reader.GetString("is_deleted");
                             item1.Add("title", songTitle);
@@ -174,7 +175,8 @@ namespace CoogMusic.Pages.Report
                         string Row = "<tr><td>" + "" + "</td><td class='rating-column'>" + "" + "</td><td class='listener-column'>" + "" + "</td><td class='deleted-column'>" + ""+ "</td></tr>";
                         if (empty == false)
                         {
-                            totalAlbumRating = totalAlbumRating / count;
+                            totalAlbumRating = (float)Math.Round(totalAlbumRating / count, 1);
+                            
                             html.Append(Row); // Add empty rows
                             html.Append(Row);
                             html.Append(Row);
@@ -229,7 +231,7 @@ namespace CoogMusic.Pages.Report
                             
                             Dictionary<string, string> item1 = new Dictionary<string, string>();
                             var songTitle = reader.GetString("title");
-                            var rating = reader.GetFloat("avg_rating");
+                            var rating = Math.Round(reader.GetFloat("avg_rating"), 1);
                             var listenerCount = reader.GetInt32("num_listeners_rated");
                             var deleted = reader.GetString("is_deleted");
                             item1.Add("title", songTitle);
